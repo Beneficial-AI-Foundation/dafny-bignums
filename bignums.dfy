@@ -202,10 +202,13 @@ method add(s1: string, s2: string) returns (res: string)
         var digit := sum % 2;
         carry := sum / 2;
 
-        if digit == 1 then
+        if digit == 1 {
             sb := sb + ['1'];
+        }
         else
+        {
             sb := sb + ['0'];
+        }
 
         if i >= 0 { i := i - 1; }
         if j >= 0 { j := j - 1; }
@@ -231,7 +234,7 @@ method str2int(s: string) returns (n: nat)
     requires ValidBitString(s)
     decreases s
 {
-    return if |s| == 0 { 0 } else { 2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' {1} else{0})}
+    return if |s| == 0 then { 0 } else { 2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' then {1} else{0})};
 }
 
 // ----------------------------------------------------
@@ -242,16 +245,20 @@ method str2int(s: string) returns (n: nat)
  method int2str(n: nat) returns(s: string)
     ensures str2int(s) == n
     decreases n
-{ 
-    if n == 0 then
+{
+    return if n == 0 then {
         "0"
-    else if n == 1 then
-        "1"
-    else
-        // Recursively build from most significant bits.
-        // The last character added is (n % 2).
-        int2str(n / 2) + (if n % 2 == 0 then "0" else "1")
 }
+    else {if n == 1
+          then {"1"}
+          else {
+            // Recursively build from most significant bits.
+            // The last character added is (n % 2).
+               int2str(n / 2) + (if n % 2 == 0 then "0" else "1")
+                }
+        };
+        }
+
 
 predicate ValidBitString(s: string)
     reads s
@@ -270,15 +277,19 @@ method normalizeBitString(s: string) returns(s: string)
     decreases s
 {
     // If all zero or empty, return "0"
-    if |s| == 0 then
-        "0"
+    return if |s| == 0 then
+        {"0"}
     else
+    {
         // find first '1'
         var firstOne :| 0 <= firstOne <= |s|;
         // pick the earliest i in 0..|s| if s[i] == '1'
         if (forall i | 0 <= i < |s| :: s[i] == '0') then
-            "0"
+            {"0"}
         else
+        {
             // firstOne is the leftmost '1'
             s[firstOne..|s|]
-}
+            }
+            }
+;}
