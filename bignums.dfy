@@ -115,12 +115,12 @@ method sub(s1: string, s2: string) returns (res: string)
         invariant 0 <= borrow <= 1
     {
         var bitX := 0;
-        if i >= 0 then
-            bitX := if x[i] == '1' then 1 else 0;
+        if i >= 0
+            { bitX := if x[i] == '1' then 1 else 0; }
         var bitY := 0;
-        if j >= 0 then
+        if j >= 0 {
             bitY := if y[j] == '1' then 1 else 0;
-
+}
         // Subtract with borrow:
         var diff := bitX - bitY - borrow;
         if diff < 0 {
@@ -130,10 +130,13 @@ method sub(s1: string, s2: string) returns (res: string)
             borrow := 0;
         }
 
-        if diff == 1 then
+        if diff == 1 {
             sb := sb + ['1'];
+        }
         else
+        {
             sb := sb + ['0'];
+        }
 
         if i >= 0 { i := i - 1; }
         if j >= 0 { j := j - 1; }
@@ -187,11 +190,13 @@ method add(s1: string, s2: string) returns (res: string)
         invariant i <= |x| - 1 && j <= |y| - 1
     {
         var bitX := 0;
-        if i >= 0 then
+        if i >= 0 {
             bitX := if x[i] == '1' then 1 else 0;
+        }
         var bitY := 0;
-        if j >= 0 then
+        if j >= 0 {
             bitY := if y[j] == '1' then 1 else 0;
+        }
 
         var sum := bitX + bitY + carry;
         var digit := sum % 2;
