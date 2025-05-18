@@ -262,7 +262,6 @@ function int2str(n: nat): string
 
 
 predicate ValidBitString(s: string)
-  reads s
 {
   // All characters must be '0' or '1'.
   forall i | 0 <= i < |s| :: s[i] == '0' || s[i] == '1'
