@@ -23,9 +23,7 @@
         with pkgs; {
           devShells.default = mkShell {
             buildInputs = [
-              ruff
-              nvtop-pkgs.nvtopPackages.nvidia
-              mdformat
+              dafny
             ];
           };
         }
