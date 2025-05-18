@@ -243,7 +243,8 @@ function str2int(s: string): nat
 //    - no leading zeros otherwise
 // ----------------------------------------------------
 function int2str(n: nat): string
-  ensures str2int(s) == n
+  ensures str2int(int2str(n)) == n
+  // TODO Should I check the other way, e.g. int2str(str2int(s)) = s?
   decreases n
 {
   if n == 0 then
