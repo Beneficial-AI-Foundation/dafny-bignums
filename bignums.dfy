@@ -247,7 +247,7 @@ function int2str(n: nat): string
   decreases n
 {
   if n == 0 then
-                   "0"
+    "0"
 
   else (if n == 1
         then "1"
