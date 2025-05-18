@@ -73,7 +73,10 @@ method mul(s1: string, s2: string) returns (res: string)
   {
     if y[idx] == '1' {
       // partial = x shifted by shiftCount
-      var partial := leftShift(x, shiftCount);
+      // It used to be var partial := leftShift(x, shiftCount);
+      // but leftShift doesn't exist. Not sure if the slice
+      // is the right way
+      var partial := x[shiftCount..];
       product := add(product, partial);
     }
     shiftCount := shiftCount + 1;
