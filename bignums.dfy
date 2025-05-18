@@ -230,11 +230,11 @@ method add(s1: string, s2: string) returns (res: string)
 // ----------------------------------------------------
 // 1) str2int: bit-string -> nat (reference function)
 // ----------------------------------------------------
-method str2int(s: string) returns (n: nat)
+function str2int(s: string): nat
   requires ValidBitString(s)
   decreases s
 {
-  return if |s| == 0 then { 0 } else { 2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' then {1} else{0})};
+  if |s| == 0 then { 0 } else { 2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' then {1} else{0})}
 }
 
 // ----------------------------------------------------
