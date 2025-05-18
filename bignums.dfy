@@ -111,7 +111,7 @@ method sub(s1: string, s2: string) returns (res: string)
   var i := |x| - 1; // pointer on x
   var j := |y| - 1; // pointer on y
   var borrow := 0;
-  var sb := new char[0];  // reversed result
+  var sb := [];  // reversed result
 
   while i >= 0 || j >= 0
     decreases i + j, borrow
@@ -185,7 +185,7 @@ method add(s1: string, s2: string) returns (res: string)
   var i := |x| - 1;  // index on x
   var j := |y| - 1;  // index on y
   var carry := 0;
-  var sb := new char[0]; // dynamic array of chars for result (in reverse order)
+  var sb := []; // dynamic seq of chars for result (in reverse order)
 
   while i >= 0 || j >= 0 || carry != 0
     decreases i + j, carry
