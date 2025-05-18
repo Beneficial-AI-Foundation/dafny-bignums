@@ -271,7 +271,7 @@ predicate ValidBitString(s: string)
 // Helpers for string-based arithmetic
 // ----------------------------------------------------
 
-method normalizeBitString(s: string) returns(s: string)
+method normalizeBitString(s: string) returns(t: string)
   // Remove leading zeros, except keep at least one digit
   ensures validbitstring(s)
   decreases s
