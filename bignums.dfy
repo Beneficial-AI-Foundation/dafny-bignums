@@ -242,21 +242,21 @@ function str2int(s: string): nat
 //    - "0" if n=0
 //    - no leading zeros otherwise
 // ----------------------------------------------------
-method int2str(n: nat) returns(s: string)
+function int2str(n: nat): string
   ensures str2int(s) == n
   decreases n
 {
-  return if n == 0 then {
-                          "0"
-                        }
-    else {if n == 1
-          then {"1"}
-          else {
-              // Recursively build from most significant bits.
-              // The last character added is (n % 2).
-              int2str(n / 2) + (if n % 2 == 0 then "0" else "1")
-            }
-         };
+  if n == 0 then {
+                   "0"
+                 }
+  else {if n == 1
+        then {"1"}
+        else {
+            // Recursively build from most significant bits.
+            // The last character added is (n % 2).
+            int2str(n / 2) + (if n % 2 == 0 then "0" else "1")
+          }
+       }
 }
 
 
