@@ -49,6 +49,7 @@ method mul(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
   ensures ValidBitString(res)
   ensures str2int(res) == str2int(s1) * str2int(s2)
+  // TODO Testing claims this is outputing wrong answers
 {
   var x := normalizeBitString(s1);
   var y := normalizeBitString(s2);
@@ -248,6 +249,8 @@ function str2int(s: string): nat
 function int2str(n: nat): string
   ensures str2int(int2str(n)) == n
   // TODO Should I check the other way, e.g. int2str(str2int(s)) = s?
+  // Actually that's more complicated, since not all strings are valid---we'd have
+  // to ensure that s is a valid bitstring
   decreases n
 {
   if n == 0 then
