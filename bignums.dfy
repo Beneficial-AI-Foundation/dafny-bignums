@@ -234,7 +234,7 @@ function str2int(s: string): nat
   requires ValidBitString(s)
   decreases s
 {
-  if |s| == 0 then { 0 } else { 2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' then {1} else{0})}
+  if |s| == 0 then  0  else  (2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0))
 }
 
 // ----------------------------------------------------
@@ -246,17 +246,17 @@ function int2str(n: nat): string
   ensures str2int(s) == n
   decreases n
 {
-  if n == 0 then {
+  if n == 0 then
                    "0"
-                 }
-  else {if n == 1
-        then {"1"}
-        else {
+
+  else (if n == 1
+        then "1"
+        else (
             // Recursively build from most significant bits.
             // The last character added is (n % 2).
             int2str(n / 2) + (if n % 2 == 0 then "0" else "1")
-          }
-       }
+          )
+       )
 }
 
 
@@ -278,18 +278,18 @@ method normalizeBitString(s: string) returns(t: string)
 {
   // If all zero or empty, return "0"
   return if |s| == 0 then
-      {"0"}
+      "0"
     else
-      {
+      (
         // find first '1'
         var firstOne :| 0 <= firstOne <= |s|;
         // pick the earliest i in 0..|s| if s[i] == '1'
         if (forall i | 0 <= i < |s| :: s[i] == '0') then
-          {"0"}
+          ("0")
         else
-          {
+          (
             // firstOne is the leftmost '1'
             s[firstOne..|s|]
-          }
-      }
+          )
+      )
       ;}
