@@ -269,6 +269,7 @@ method add(s1: string, s2: string) returns (res: string)
 // Annoyingly if you remove {:isolate_assertions}, this lemma sometimes times out.
 // So really I need to go over it again to reduce brittleness, as in
 // https://dafny.org/blog/2023/12/01/avoiding-verification-brittleness/
+// I didn't check whether some of the intermediate steps can be taken out
 lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
                                    old_j: int, i:int, j:int, carry:nat, bitX:nat, bitY:nat, digit:nat, sum:nat, old_carry:nat)
   requires ValidBitString(sb)
