@@ -188,6 +188,12 @@ method add(s1: string, s2: string) returns (res: string)
   var carry := 0;
   var sb := []; // dynamic seq of chars for result (in reverse order)
 
+  assert x[0..i+1] == x;
+  assert y[0..j+1] == y;
+  assert str2int(x) + str2int(y) ==
+         (if i >= 0 then str2int(x[0..i+1]) else 0) +
+         (if j >= 0 then str2int(y[0..j+1]) else 0);
+
   while i >= 0 || j >= 0 || carry != 0
     decreases i + j + 2, carry
     invariant 0 <= carry <= 1
