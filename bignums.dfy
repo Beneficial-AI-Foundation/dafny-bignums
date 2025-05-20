@@ -289,9 +289,11 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
   requires old_j >= 0 ==> (bitY == if y[old_j] == '1' then 1 else 0)
   requires old_i < 0 ==> bitX == 0
   requires old_j < 0 ==> bitY == 0
+  requires |old_sb| == |sb| - 1
   requires sum == bitX + bitY + old_carry
   requires digit == sum % 2
   requires carry == sum / 2
+  requires (if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb
   ensures str2int(old_sb) +
           (old_carry * pow2(|old_sb|)) +
           (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
@@ -354,6 +356,11 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
     (if old_j >= 0 then (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) + bitY * pow2(|old_sb|) else 0);
 
   == // Use associative property in the fourth term
+    {
+      if old_j >= 0 {
+        assert (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) == str2int(y[0..old_j]) * (2 * pow2(|old_sb|));
+      }
+    }
     str2int(old_sb) +
     (old_carry * pow2(|old_sb|)) +
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
@@ -403,6 +410,10 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
     (if old_i - 1 >= 0 then str2int(x[0..(old_i-1)+1]) * pow2(|old_sb| + 1) else 0) +
     (if old_j - 1 >= 0 then str2int(y[0..(old_j-1)+1]) * pow2(|old_sb| + 1) else 0);
   == // By definition of sb and updated i, j
+    {
+      assert pow2(|sb|) == pow2(|old_sb| + 1);
+      assert (if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb;
+    }
     str2int(sb) +
     (carry * pow2(|sb|)) +
     (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) +
