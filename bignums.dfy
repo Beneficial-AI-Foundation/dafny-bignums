@@ -248,7 +248,7 @@ function str2int(s: string): nat
 // ----------------------------------------------------
 function int2str(n: nat): string
   ensures str2int(int2str(n)) == n
-  // TODO Should I check the other way, e.g. int2str(str2int(s)) = s?
+  // TODO Should I also check the other way, e.g. int2str(str2int(s)) = s?
   // Actually that's more complicated, since not all strings are valid---we'd have
   // to ensure that s is a valid bitstring
   decreases n
