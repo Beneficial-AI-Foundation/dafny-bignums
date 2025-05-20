@@ -247,6 +247,7 @@ function str2int(s: string): nat
 //    - no leading zeros otherwise
 // ----------------------------------------------------
 function int2str(n: nat): string
+  ensures ValidBitString(int2str(n))
   ensures str2int(int2str(n)) == n
   // TODO Should I also check the other way, e.g. int2str(str2int(s)) = s?
   // Actually that's more complicated, since not all strings are valid---we'd have
@@ -261,6 +262,8 @@ function int2str(n: nat): string
         else (
             // Recursively build from most significant bits.
             // The last character added is (n % 2).
+            assert ValidBitString(int2str(n/2));
+            assert str2int(int2str(n/2)) == n/2;
             int2str(n / 2) + (if n % 2 == 0 then "0" else "1")
           )
        )
