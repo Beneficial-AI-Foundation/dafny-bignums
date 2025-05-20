@@ -533,7 +533,25 @@ lemma BitStringDecomposition(s: string, i: int)
   requires ValidBitString(s) && i < |s|
   ensures i >= 0 ==> str2int(s[0..i+1]) == str2int(s[0..i]) * 2 + (if s[i] == '1' then 1 else 0)
 {
-  // Proof implementation
+  if i >= 0 {
+    calc {
+      str2int(s[0..i+1]);
+    == // By definition of str2int
+      if |s[0..i+1]| == 0 then 0
+      else (2 * str2int(s[0..i+1][0..|s[0..i+1]|-1]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0));
+    == // Since i >= 0, |s[0..i+1]| = i+1 > 0
+      2 * str2int(s[0..i+1][0..|s[0..i+1]|-1]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0);
+    == // Simplify: s[0..i+1][0..|s[0..i+1]|-1] = s[0..i+1][0..i] = s[0..i]
+      2 * str2int(s[0..i+1][0..i]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0);
+    ==
+      { assert  s[0..i+1][0..i] == s[0..i];}
+      2 * str2int(s[0..i]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0);
+    ==
+      2 * str2int(s[0..i]) + (if s[0..i+1][i] == '1' then 1 else 0);
+    == // Simplify: s[0..i+1][i] = s[i]
+      2 * str2int(s[0..i]) + (if s[i] == '1' then 1 else 0);
+    }
+  }
 }
 
 lemma PrependDigitToString(digit: int, s: string)
