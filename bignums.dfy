@@ -234,7 +234,7 @@ method add(s1: string, s2: string) returns (res: string)
 // ----------------------------------------------------
 // 1) str2int: bit-string -> nat (reference function)
 // ----------------------------------------------------
-function str2int(s: string): nat
+function method str2int(s: string): nat
   requires ValidBitString(s)
   decreases s
 {
@@ -246,7 +246,7 @@ function str2int(s: string): nat
 //    - "0" if n=0
 //    - no leading zeros otherwise
 // ----------------------------------------------------
-function int2str(n: nat): string
+function method int2str(n: nat): string
   ensures ValidBitString(int2str(n))
   ensures str2int(int2str(n)) == n
   decreases n
