@@ -235,18 +235,17 @@ method add(s1: string, s2: string) returns (res: string)
       sb := ['0'] + sb;
     }
 
+    var old_i := i;
+    var old_j := j;
+
+    if i >= 0 { i := i - 1; }
+    if j >= 0 { j := j - 1; }
+
     assert str2int(x) + str2int(y) ==
            str2int(old_sb) +
            (old_carry * pow2(|old_sb|)) +
-           (if i >= 0 then str2int(x[0..i+1]) * pow2(|old_sb|) else 0) +
-           (if j >= 0 then str2int(y[0..j+1]) * pow2(|old_sb|) else 0);
-    assert str2int(x) + str2int(y) ==
-           str2int(sb[1..]) +
-           (old_carry * pow2(|sb[1..]|)) +
-           (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb[1..]|) else 0) +
-           (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb[1..]|) else 0);
-    if i >= 0 { i := i - 1; }
-    if j >= 0 { j := j - 1; }
+           (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
+           (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0);
   }
 
   assert str2int(x) + str2int(y) == str2int(sb);
