@@ -396,6 +396,16 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
   == // Distribute pow2(|old_sb|)
+    {
+      calc {
+        ((2 * carry + digit) * pow2(|old_sb|));
+        2 * carry * pow2(|old_sb|) + digit * pow2(|old_sb|);
+        {
+          pow2_inductive(|old_sb|);
+        }
+        (digit * pow2(|old_sb|)) + (carry * pow2(|old_sb| + 1));
+      }
+    }
     str2int(old_sb) +
     (digit * pow2(|old_sb|)) +
     (carry * pow2(|old_sb| + 1)) +
