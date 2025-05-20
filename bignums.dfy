@@ -529,6 +529,9 @@ lemma pow2_inductive(i: nat)
   reveal pow2();
 }
 
+// Claude was able to mostly prove this one via calc.
+// I wonder if it could be slightly easier to read by
+// defining t := s[0..i+1] and expanding str2int(t)
 lemma BitStringDecomposition(s: string, i: int)
   requires ValidBitString(s) && i < |s|
   ensures i >= 0 ==> str2int(s[0..i+1]) == str2int(s[0..i]) * 2 + (if s[i] == '1' then 1 else 0)
