@@ -562,6 +562,7 @@ lemma PrependDigitToString(digit: int, s: string)
   ensures str2int(if digit == 1 then ['1'] + s else ['0'] + s) ==
           str2int(s) + digit * pow2(|s|)
 {
+  reveal pow2();
   var i := 0;
   while i < |s|
     decreases |s| - i
@@ -569,6 +570,6 @@ lemma PrependDigitToString(digit: int, s: string)
     invariant str2int(if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]) == str2int(s[..i]) + digit * pow2(|s[..i]|)
   {
     i:= i+1;
-
   }
+  assert s[..i] == s;
 }
