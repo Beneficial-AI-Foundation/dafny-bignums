@@ -231,6 +231,7 @@ method add(s1: string, s2: string) returns (res: string)
   }
 
   res := normalizeBitString(rev);
+  return res;
 }
 
 // ----------------------------------------------------
