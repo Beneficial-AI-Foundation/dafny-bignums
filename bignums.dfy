@@ -287,6 +287,8 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
   requires old_j < 0 ==> j == old_j
   requires old_i >= 0 ==> (bitX == if x[old_i] == '1' then 1 else 0)
   requires old_j >= 0 ==> (bitY == if y[old_j] == '1' then 1 else 0)
+  requires old_i < 0 ==> bitX == 0
+  requires old_j < 0 ==> bitY == 0
   requires sum == bitX + bitY + old_carry
   requires digit == sum % 2
   requires carry == sum / 2
@@ -361,6 +363,9 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
   == // By definition of sum in the code
+    {
+       assert old_carry + (if old_i >= 0 then bitX else 0) + (if old_j >= 0 then bitY else 0) == sum;
+    }
     str2int(old_sb) +
     (sum * pow2(|old_sb|)) +
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
