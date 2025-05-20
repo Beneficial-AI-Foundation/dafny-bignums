@@ -263,6 +263,9 @@ method add(s1: string, s2: string) returns (res: string)
 
 lemma addAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
              old_j: int, i:int, j:int, carry:nat, bitX:nat, bitY:nat, digit:nat, sum:nat, old_carry:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
   ensures str2int(old_sb) +
           (old_carry * pow2(|old_sb|)) +
           (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
