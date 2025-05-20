@@ -246,6 +246,65 @@ method add(s1: string, s2: string) returns (res: string)
            (old_carry * pow2(|old_sb|)) +
            (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
            (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0);
+
+    calc {
+      str2int(x) + str2int(y);
+    == // By loop invariant at entry
+      str2int(old_sb) +
+      (old_carry * pow2(|old_sb|)) +
+      (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
+      (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0);
+    == // Split the x[0..old_i+1] into x[0..old_i] and the last bit
+      {
+        BitStringDecomposition(x, old_i);
+        BitStringDecomposition(y, old_j);
+      }
+      str2int(old_sb) +
+      (old_carry * pow2(|old_sb|)) +
+      (if old_i >= 0 then (str2int(x[0..old_i]) * 2 + bitX) * pow2(|old_sb|) else 0) +
+      (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
+    == // Distribute pow2(|old_sb|)
+      str2int(old_sb) +
+      (old_carry * pow2(|old_sb|)) +
+      (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
+      (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) + bitY * pow2(|old_sb|) else 0);
+    == // Group bitX, bitY and old_carry terms
+      str2int(old_sb) +
+      ((old_carry + (if old_i >= 0 then bitX else 0) + (if old_j >= 0 then bitY else 0)) * pow2(|old_sb|)) +
+      (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
+      (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
+    == // By definition of sum in the code
+      str2int(old_sb) +
+      (sum * pow2(|old_sb|)) +
+      (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
+      (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
+    == // sum = 2*carry + digit
+      str2int(old_sb) +
+      ((2 * carry + digit) * pow2(|old_sb|)) +
+      (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
+      (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
+    == // Distribute pow2(|old_sb|)
+      str2int(old_sb) +
+      (digit * pow2(|old_sb|)) +
+      (carry * pow2(|old_sb| + 1)) +
+      (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
+      (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
+    == // Definition of str2int for new digit + old_sb
+      {
+        PrependDigitToString(digit, old_sb);
+      }
+      str2int(if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) +
+      (carry * pow2(|old_sb| + 1)) +
+      (if old_i - 1 >= 0 then str2int(x[0..(old_i-1)+1]) * pow2(|old_sb| + 1) else 0) +
+      (if old_j - 1 >= 0 then str2int(y[0..(old_j-1)+1]) * pow2(|old_sb| + 1) else 0);
+    == // By definition of sb and updated i, j
+      str2int(sb) +
+      (carry * pow2(|sb|)) +
+      (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) +
+      (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0);
+    }
+
+
   }
 
   assert str2int(x) + str2int(y) == str2int(sb);
@@ -256,6 +315,22 @@ method add(s1: string, s2: string) returns (res: string)
 
   return res;
 }
+
+lemma BitStringDecomposition(s: string, i: int)
+  requires ValidBitString(s) && i < |s|
+  ensures i >= 0 ==> str2int(s[0..i+1]) == str2int(s[0..i]) * 2 + (if s[i] == '1' then 1 else 0)
+{
+  // Proof implementation
+}
+
+lemma PrependDigitToString(digit: int, s: string)
+  requires ValidBitString(s) && (digit == 0 || digit == 1)
+  ensures str2int(if digit == 1 then ['1'] + s else ['0'] + s) ==
+          str2int(s) + digit * pow2(|s|)
+{
+  // Proof implementation
+}
+
 
 // ----------------------------------------------------
 // 1) str2int: bit-string -> nat (reference function)
