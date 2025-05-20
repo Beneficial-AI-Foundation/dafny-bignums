@@ -397,6 +397,7 @@ method normalizeBitString(s: string) returns(t: string)
   ensures ValidBitString(t)
   ensures |t| > 0
   ensures |t| > 1 ==> t[0] != '0'
+  ensures ValidBitString(s) ==> str2int(s) == str2int(t)
   decreases s
 {
   // First pass: keep only valid bits
