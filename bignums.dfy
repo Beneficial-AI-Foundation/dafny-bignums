@@ -282,20 +282,28 @@ method normalizeBitString(s: string) returns(t: string)
   ensures ValidBitString(s)
   decreases s
 {
-  // If all zero or empty, return "0"
-  return if |s| == 0 then
-      "0"
-    else
-      (
-        // find first '1'
-        var firstOne :| 0 <= firstOne <= |s|;
-        // pick the earliest i in 0..|s| if s[i] == '1'
-        if (forall i | 0 <= i < |s| :: s[i] == '0') then
-          ("0")
-        else
-          (
-            // firstOne is the leftmost '1'
-            s[firstOne..|s|]
-          )
-      )
-      ;}
+  // First pass: keep only valid bits
+  var validBits := "";
+  var i := 0;
+  while i < |s|
+  {
+    if s[i] == '0' || s[i] == '1' {
+      validBits := validBits + [s[i]];
+    }
+    i := i + 1;
+  }
+
+  // Second pass: remove leading zeros
+  var j := 0;
+  while j < |validBits| && validBits[j] == '0'
+  {
+    j := j + 1;
+  }
+
+  // Extract substring after leading zeros
+  if j == |validBits| {
+    // All zeros or empty
+    return "0";
+  }
+  return validBits[j..];
+}
