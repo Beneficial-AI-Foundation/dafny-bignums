@@ -569,6 +569,13 @@ lemma PrependDigitToString(digit: int, s: string)
     invariant 0 <= i <= |s|
     invariant str2int(if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]) == str2int(s[..i]) + digit * pow2(|s[..i]|)
   {
+    calc {
+      str2int(if digit == 1 then ['1'] + s[..i+1] else ['0'] + s[..i+1]);
+      2 * str2int(if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]) + (if s[i] == '1' then 1 else 0);
+      2 * (str2int(s[..i]) + digit * pow2(|s[..i]|)) + (if s[i] == '1' then 1 else 0);
+      str2int(s[..i+1]) + digit * pow2(|s[..i+1]|);
+    }
+
     i:= i+1;
   }
   assert s[..i] == s;
