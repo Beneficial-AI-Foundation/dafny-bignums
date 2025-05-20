@@ -276,6 +276,8 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
   requires old_j >= 0 ==> j == old_j - 1
   requires old_i < 0 ==> i == old_i
   requires old_j < 0 ==> j == old_j
+  requires old_i >= 0 ==> (bitX == if x[old_i] == '1' then 1 else 0)
+  requires old_j >= 0 ==> (bitY == if y[old_j] == '1' then 1 else 0)
   ensures str2int(old_sb) +
           (old_carry * pow2(|old_sb|)) +
           (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
