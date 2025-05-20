@@ -333,7 +333,9 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
 
   == // Apply identity: 2 * pow2(n) = pow2(n+1) in the third term
     {
-      pow2_inductive(|old_sb| + 1);
+      assert pow2(|old_sb| + 1) == 2 * pow2(|old_sb|) by {
+        pow2_inductive(|old_sb|);
+      }
     }
     str2int(old_sb) +
     (old_carry * pow2(|old_sb|)) +
