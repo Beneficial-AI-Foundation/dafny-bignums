@@ -487,6 +487,31 @@ lemma ignoreInitialZeros(s : string, num_zeros:int)
   requires forall i :: 0<=i<num_zeros ==> s[i] == '0'
   ensures str2int(s) == str2int(s[num_zeros..])
 {
+  if num_zeros == 0 {
+    return;
+  }
+  if num_zeros == |s| {
+    assert str2int(s) == (2 * str2int(s[0..|s|-1]));
+    ignoreInitialZeros(s[..|s|-1], num_zeros-1);
+    return;
+  }
+  ignoreInitialZeros(s[..|s|-1], num_zeros);
+  var t := s[num_zeros..];
+  calc {
+    str2int(s);
+  ==
+    (2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0));
+  ==
+    (2 * str2int(s[num_zeros..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0));
+  ==
+    {
+      assert t[..|t|-1] == s[num_zeros..|s|-1];
+      assert t[|t|-1] == s[|s|-1];
+    }
+    (2 * str2int(t[..|t|-1]) + (if t[|t|-1] == '1' then 1 else 0));
+  ==
+    str2int(t);
+  }
 }
 
 method normalizeBitString(s: string) returns(t: string)
