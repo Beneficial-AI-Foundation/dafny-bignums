@@ -189,9 +189,11 @@ method add(s1: string, s2: string) returns (res: string)
   var sb := []; // dynamic seq of chars for result (in reverse order)
 
   while i >= 0 || j >= 0 || carry != 0
-    decreases i + j, carry
+    decreases i + j + 2, carry
     invariant 0 <= carry <= 1
     invariant i <= |x| - 1 && j <= |y| - 1
+    invariant i >= -1
+    invariant j >= -1
   {
     var bitX := 0;
     if i >= 0 {
