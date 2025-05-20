@@ -269,6 +269,7 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
   requires ValidBitString(old_sb)
   requires 0 <= carry <= 1
   requires i <= |x| - 1 && j <= |y| - 1
+  requires old_i <= |x| - 1 && old_j <= |y| - 1
   requires i >= -1
   requires j >= -1
   requires old_i >= 0 ==> i == old_i - 1
