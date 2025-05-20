@@ -164,13 +164,6 @@ opaque function pow2(n: nat): nat
   if n == 0 then 1 else 2 * pow2(n - 1)
 }
 
-lemma pow2_zero()
-  ensures pow2(0) == 1
-{}
-
-lemma pow2_inductive(i: nat)
-  ensures pow2(i+1) == 2*pow2(i)
-{}
 
 // ----------------------------------------------------
 // 3) add: string-based addition (no str2int / int2str)
@@ -437,22 +430,6 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
   }
 }
 
-lemma BitStringDecomposition(s: string, i: int)
-  requires ValidBitString(s) && i < |s|
-  ensures i >= 0 ==> str2int(s[0..i+1]) == str2int(s[0..i]) * 2 + (if s[i] == '1' then 1 else 0)
-{
-  // Proof implementation
-}
-
-lemma PrependDigitToString(digit: int, s: string)
-  requires ValidBitString(s) && (digit == 0 || digit == 1)
-  ensures str2int(if digit == 1 then ['1'] + s else ['0'] + s) ==
-          str2int(s) + digit * pow2(|s|)
-{
-  // Proof implementation
-}
-
-
 // ----------------------------------------------------
 // 1) str2int: bit-string -> nat (reference function)
 // ----------------------------------------------------
@@ -538,4 +515,27 @@ method normalizeBitString(s: string) returns(t: string)
   }
   assert j <= |validBits|;
   return validBits[j..];
+}
+
+lemma pow2_zero()
+  ensures pow2(0) == 1
+{}
+
+lemma pow2_inductive(i: nat)
+  ensures pow2(i+1) == 2*pow2(i)
+{}
+
+lemma BitStringDecomposition(s: string, i: int)
+  requires ValidBitString(s) && i < |s|
+  ensures i >= 0 ==> str2int(s[0..i+1]) == str2int(s[0..i]) * 2 + (if s[i] == '1' then 1 else 0)
+{
+  // Proof implementation
+}
+
+lemma PrependDigitToString(digit: int, s: string)
+  requires ValidBitString(s) && (digit == 0 || digit == 1)
+  ensures str2int(if digit == 1 then ['1'] + s else ['0'] + s) ==
+          str2int(s) + digit * pow2(|s|)
+{
+  // Proof implementation
 }
