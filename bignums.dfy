@@ -12,6 +12,7 @@
 //
 // All methods come with specifications ensuring they do what they claim, and we prove correctness using Dafny’s function specifications (`ensures`) by comparing the result against the reference functions `str2int` and `int2str`.
 
+// TODO Note that str2int/int2str are used in the proof inside the method bodies
 
 method Main() {
   print "Examples:\n";
