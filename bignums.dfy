@@ -279,7 +279,7 @@ predicate ValidBitString(s: string)
 
 method normalizeBitString(s: string) returns(t: string)
   // Remove leading zeros, except keep at least one digit
-  ensures ValidBitString(s)
+  ensures ValidBitString(t)
   decreases s
 {
   // First pass: keep only valid bits
