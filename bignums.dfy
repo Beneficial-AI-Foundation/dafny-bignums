@@ -374,7 +374,7 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
   == // By definition of sum in the code
     {
-       assert old_carry + (if old_i >= 0 then bitX else 0) + (if old_j >= 0 then bitY else 0) == sum;
+      assert old_carry + (if old_i >= 0 then bitX else 0) + (if old_j >= 0 then bitY else 0) == sum;
     }
     str2int(old_sb) +
     (sum * pow2(|old_sb|)) +
