@@ -480,6 +480,15 @@ predicate ValidBitString(s: string)
 // Helpers for string-based arithmetic
 // ----------------------------------------------------
 
+
+lemma ignoreInitialZeros(s : string, num_zeros:int)
+  requires ValidBitString(s)
+  requires 0<=num_zeros<=|s|
+  requires forall j :: 0<=j<num_zeros ==> s[j] == '0'
+  ensures str2int(s) == str2int(s[num_zeros..])
+{
+}
+
 method normalizeBitString(s: string) returns(t: string)
   // Remove leading zeros, except keep at least one digit
   ensures ValidBitString(t)
@@ -511,9 +520,14 @@ method normalizeBitString(s: string) returns(t: string)
   while j < |validBits| && validBits[j] == '0'
     invariant j <= |validBits|
     invariant forall idx :: 0 <= idx < j ==> validBits[idx] == '0'
-    invariant ValidBitString(s) ==> str2int(s[j..]) == str2int(s)
   {
     j := j + 1;
+  }
+  if ValidBitString(s){
+    assert str2int(s[j..]) == str2int(s) by
+    {
+      ignoreInitialZeros(s, j);
+    }
   }
 
   // Extract substring after leading zeros
