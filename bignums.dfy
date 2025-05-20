@@ -519,11 +519,15 @@ method normalizeBitString(s: string) returns(t: string)
 
 lemma pow2_zero()
   ensures pow2(0) == 1
-{}
+{
+  reveal pow2();
+}
 
 lemma pow2_inductive(i: nat)
   ensures pow2(i+1) == 2*pow2(i)
-{}
+{
+  reveal pow2();
+}
 
 lemma BitStringDecomposition(s: string, i: int)
   requires ValidBitString(s) && i < |s|
