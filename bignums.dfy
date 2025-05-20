@@ -332,6 +332,9 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
     (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
 
   == // Apply identity: 2 * pow2(n) = pow2(n+1) in the third term
+    {
+      pow2_inductive(|old_sb| + 1);
+    }
     str2int(old_sb) +
     (old_carry * pow2(|old_sb|)) +
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
