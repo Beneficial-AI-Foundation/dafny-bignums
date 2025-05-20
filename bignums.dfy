@@ -586,6 +586,19 @@ lemma PrependDigitToString(digit: int, s: string)
     ==
       2 * (str2int(s[..i]) + digit * pow2(|s[..i]|)) + (if s[i] == '1' then 1 else 0);
     ==
+      {
+        var u := s[..i+1];
+        calc {
+          2 * str2int(s[..i]) + (if s[i] == '1' then 1 else 0);
+        ==
+          { assert s[..i] == u[0..|u|-1];
+            assert s[i] == u[|u|-1];
+          }
+          2 * str2int(u[0..|u|-1]) + (if u[|u|-1] == '1' then 1 else 0);
+        ==
+          str2int(s[..i+1]);
+        }
+      }
       str2int(s[..i+1]) + digit * pow2(|s[..i+1]|);
     }
 
