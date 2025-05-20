@@ -246,7 +246,8 @@ method add(s1: string, s2: string) returns (res: string)
            (old_carry * pow2(|old_sb|)) +
            (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
            (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0);
-
+    addAux(x, y, old_sb, sb, old_i,
+  old_j, i, j, carry, bitX, bitY, digit, sum, old_carry);
 
 
   }
@@ -260,8 +261,13 @@ method add(s1: string, s2: string) returns (res: string)
   return res;
 }
 
-lemma addAux(x: string, y: string, old_sb: string, sb: string, old_i: nat,
-  old_j: nat, i:nat, j:nat, carry:nat, bitX:nat, bitY:nat, digit:nat, sum:nat, old_carry:nat)
+lemma addAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
+  old_j: int, i:int, j:int, carry:nat, bitX:nat, bitY:nat, digit:nat, sum:nat, old_carry:nat)
+  ensures str2int(x) + str2int(y) ==
+      str2int(sb) +
+      (carry * pow2(|sb|)) +
+      (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) +
+      (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
 {
     calc {
       str2int(x) + str2int(y);
