@@ -569,10 +569,23 @@ lemma PrependDigitToString(digit: int, s: string)
     invariant 0 <= i <= |s|
     invariant str2int(if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]) == str2int(s[..i]) + digit * pow2(|s[..i]|)
   {
+    var t := if digit == 1 then ['1'] + s[..i+1] else ['0'] + s[..i+1];
     calc {
-      str2int(if digit == 1 then ['1'] + s[..i+1] else ['0'] + s[..i+1]);
+      str2int(t);
+    ==
+      if |t| == 0 then  0  else  (2 * str2int(t[0..|t|-1]) + (if t[|t|-1] == '1' then 1 else 0));
+    ==
+      {assert |t| != 0;}
+      2 * str2int(t[0..|t|-1]) + (if t[|t|-1] == '1' then 1 else 0);
+    ==
+      {
+        assert t[|t|-1] == s[i];
+        assert t[0..|t|-1] == (if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]);
+      }
       2 * str2int(if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]) + (if s[i] == '1' then 1 else 0);
+    ==
       2 * (str2int(s[..i]) + digit * pow2(|s[..i]|)) + (if s[i] == '1' then 1 else 0);
+    ==
       str2int(s[..i+1]) + digit * pow2(|s[..i+1]|);
     }
 
