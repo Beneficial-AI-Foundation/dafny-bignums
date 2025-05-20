@@ -326,6 +326,11 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
     (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
 
   == // Use associative property: (a * b) * c = a * (b * c) in the third term
+    {
+      if old_i >= 0 {
+        assert (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) == str2int(x[0..old_i]) * (2 * pow2(|old_sb|));
+      }
+    }
     str2int(old_sb) +
     (old_carry * pow2(|old_sb|)) +
     (if old_i >= 0 then str2int(x[0..old_i]) * (2 * pow2(|old_sb|)) + bitX * pow2(|old_sb|) else 0) +
