@@ -507,8 +507,10 @@ method normalizeBitString(s: string) returns(t: string)
   assert ValidBitString(validBits);
   // Second pass: remove leading zeros
   var j := 0;
+  assert ValidBitString(s) ==> str2int(s[j..]) == str2int(s);
   while j < |validBits| && validBits[j] == '0'
     invariant j <= |validBits|
+    invariant ValidBitString(s) ==> str2int(s[j..]) == str2int(s)
   {
     j := j + 1;
   }
