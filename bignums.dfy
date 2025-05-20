@@ -271,6 +271,10 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
   requires i <= |x| - 1 && j <= |y| - 1
   requires i >= -1
   requires j >= -1
+  requires old_i >= 0 ==> i == old_i - 1
+  requires old_j >= 0 ==> j == old_j - 1
+  requires old_i < 0 ==> i == old_i
+  requires old_j < 0 ==> j == old_j
   ensures str2int(old_sb) +
           (old_carry * pow2(|old_sb|)) +
           (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
