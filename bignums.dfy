@@ -300,15 +300,52 @@ lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: str
       BitStringDecomposition(x, old_i);
       BitStringDecomposition(y, old_j);
     }
+
+
+
     str2int(old_sb) +
     (old_carry * pow2(|old_sb|)) +
     (if old_i >= 0 then (str2int(x[0..old_i]) * 2 + bitX) * pow2(|old_sb|) else 0) +
     (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
-  == // Distribute pow2(|old_sb|)
+
+  == // Start distributing pow2(|old_sb|) in the third term
+    str2int(old_sb) +
+    (old_carry * pow2(|old_sb|)) +
+    (if old_i >= 0 then (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) + bitX * pow2(|old_sb|) else 0) +
+    (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
+
+  == // Use associative property: (a * b) * c = a * (b * c) in the third term
+    str2int(old_sb) +
+    (old_carry * pow2(|old_sb|)) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * (2 * pow2(|old_sb|)) + bitX * pow2(|old_sb|) else 0) +
+    (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
+
+  == // Apply identity: 2 * pow2(n) = pow2(n+1) in the third term
+    str2int(old_sb) +
+    (old_carry * pow2(|old_sb|)) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
+    (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
+
+  == // Start distributing pow2(|old_sb|) in the fourth term
+    str2int(old_sb) +
+    (old_carry * pow2(|old_sb|)) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
+    (if old_j >= 0 then (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) + bitY * pow2(|old_sb|) else 0);
+
+  == // Use associative property in the fourth term
+    str2int(old_sb) +
+    (old_carry * pow2(|old_sb|)) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
+    (if old_j >= 0 then str2int(y[0..old_j]) * (2 * pow2(|old_sb|)) + bitY * pow2(|old_sb|) else 0);
+
+  == // Apply identity: 2 * pow2(n) = pow2(n+1) in the fourth term
     str2int(old_sb) +
     (old_carry * pow2(|old_sb|)) +
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) + bitY * pow2(|old_sb|) else 0);
+
+
+
   == // Group bitX, bitY and old_carry terms
     str2int(old_sb) +
     ((old_carry + (if old_i >= 0 then bitX else 0) + (if old_j >= 0 then bitY else 0)) * pow2(|old_sb|)) +
