@@ -261,7 +261,7 @@ method add(s1: string, s2: string) returns (res: string)
   return res;
 }
 
-lemma addAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
+lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
              old_j: int, i:int, j:int, carry:nat, bitX:nat, bitY:nat, digit:nat, sum:nat, old_carry:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
