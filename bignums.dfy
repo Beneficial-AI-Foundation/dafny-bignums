@@ -484,7 +484,7 @@ predicate ValidBitString(s: string)
 lemma ignoreInitialZeros(s : string, num_zeros:int)
   requires ValidBitString(s)
   requires 0<=num_zeros<=|s|
-  requires forall j :: 0<=j<num_zeros ==> s[j] == '0'
+  requires forall i :: 0<=i<num_zeros ==> s[i] == '0'
   ensures str2int(s) == str2int(s[num_zeros..])
 {
 }
