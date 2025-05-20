@@ -172,11 +172,6 @@ method add(s1: string, s2: string) returns (res: string)
   var x := normalizeBitString(s1);
   var y := normalizeBitString(s2);
 
-  // If either is "0", the sum is the other.
-  if x == "0" {
-    res := y;
-    return;
-  }
   if y == "0" {
     res := x;
     return;
