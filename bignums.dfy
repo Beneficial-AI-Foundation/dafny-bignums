@@ -510,6 +510,7 @@ method normalizeBitString(s: string) returns(t: string)
   assert ValidBitString(s) ==> str2int(s[j..]) == str2int(s);
   while j < |validBits| && validBits[j] == '0'
     invariant j <= |validBits|
+    invariant forall idx :: 0 <= idx < j ==> validBits[idx] == '0'
     invariant ValidBitString(s) ==> str2int(s[j..]) == str2int(s)
   {
     j := j + 1;
