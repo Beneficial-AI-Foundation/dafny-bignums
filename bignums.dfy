@@ -159,10 +159,18 @@ method sub(s1: string, s2: string) returns (res: string)
   res := normalizeBitString(rev);
 }
 
-function pow2(n: nat): nat
+opaque function pow2(n: nat): nat
 {
   if n == 0 then 1 else 2 * pow2(n - 1)
 }
+
+lemma pow2_zero()
+  ensures pow2(0) == 1
+{}
+
+lemma pow2_inductive(i: nat)
+  ensures pow2(i+1) == 2*pow2(i)
+{}
 
 // ----------------------------------------------------
 // 3) add: string-based addition (no str2int / int2str)
@@ -194,6 +202,7 @@ method add(s1: string, s2: string) returns (res: string)
          (if i >= 0 then str2int(x[0..i+1]) else 0) +
          (if j >= 0 then str2int(y[0..j+1]) else 0);
 
+  pow2_zero();
   while i >= 0 || j >= 0 || carry != 0
     decreases i + j + 2, carry
     invariant 0 <= carry <= 1
