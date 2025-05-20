@@ -247,6 +247,22 @@ method add(s1: string, s2: string) returns (res: string)
            (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
            (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0);
 
+
+
+  }
+
+  assert str2int(x) + str2int(y) == str2int(sb);
+
+  res := normalizeBitString(sb);
+
+  assert str2int(sb) == str2int(res);
+
+  return res;
+}
+
+lemma addAux(x: string, y: string, old_sb: string, sb: string, old_i: nat,
+  old_j: nat, i:nat, j:nat, carry:nat, bitX:nat, bitY:nat, digit:nat, sum:nat, old_carry:nat)
+{
     calc {
       str2int(x) + str2int(y);
     == // By loop invariant at entry
@@ -303,17 +319,6 @@ method add(s1: string, s2: string) returns (res: string)
       (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) +
       (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0);
     }
-
-
-  }
-
-  assert str2int(x) + str2int(y) == str2int(sb);
-
-  res := normalizeBitString(sb);
-
-  assert str2int(sb) == str2int(res);
-
-  return res;
 }
 
 lemma BitStringDecomposition(s: string, i: int)
