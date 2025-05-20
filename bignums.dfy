@@ -305,5 +305,7 @@ method normalizeBitString(s: string) returns(t: string)
     // All zeros or empty
     return "0";
   }
+  assert ValidBitString(validBits);
+  assert j < |validBits|;
   return validBits[j..];
 }
