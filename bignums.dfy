@@ -492,13 +492,18 @@ method normalizeBitString(s: string) returns(t: string)
   var i := 0;
   while i < |s|
     invariant ValidBitString(validBits)
+    invariant 0 <= i <= |s|
+    invariant i >= |validBits|
+    invariant |s| >= |validBits|
+    invariant ValidBitString(s) ==> i == |validBits|
+    invariant ValidBitString(s) ==> s[..i] == validBits[..i]
   {
     if s[i] == '0' || s[i] == '1' {
       validBits := validBits + [s[i]];
     }
     i := i + 1;
   }
-
+  assert ValidBitString(s) ==> s == validBits;
   assert ValidBitString(validBits);
   // Second pass: remove leading zeros
   var j := 0;
