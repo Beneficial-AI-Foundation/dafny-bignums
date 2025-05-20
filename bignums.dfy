@@ -207,6 +207,13 @@ method add(s1: string, s2: string) returns (res: string)
               (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) +
               (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
   {
+    var old_sb := sb;
+    var old_carry := carry;
+    assert str2int(x) + str2int(y) ==
+           str2int(sb) +
+           (carry * pow2(|sb|)) +
+           (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) +
+           (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0);
     var bitX := 0;
     if i >= 0 {
       bitX := if x[i] == '1' then 1 else 0;
@@ -228,6 +235,16 @@ method add(s1: string, s2: string) returns (res: string)
       sb := ['0'] + sb;
     }
 
+    assert str2int(x) + str2int(y) ==
+           str2int(old_sb) +
+           (old_carry * pow2(|old_sb|)) +
+           (if i >= 0 then str2int(x[0..i+1]) * pow2(|old_sb|) else 0) +
+           (if j >= 0 then str2int(y[0..j+1]) * pow2(|old_sb|) else 0);
+    assert str2int(x) + str2int(y) ==
+           str2int(sb[1..]) +
+           (old_carry * pow2(|sb[1..]|)) +
+           (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb[1..]|) else 0) +
+           (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb[1..]|) else 0);
     if i >= 0 { i := i - 1; }
     if j >= 0 { j := j - 1; }
   }
