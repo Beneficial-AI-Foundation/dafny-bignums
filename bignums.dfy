@@ -194,6 +194,7 @@ method add(s1: string, s2: string) returns (res: string)
     invariant i <= |x| - 1 && j <= |y| - 1
     invariant i >= -1
     invariant j >= -1
+    invariant ValidBitString(sb)
     invariant str2int(x) + str2int(y) ==
               str2int(sb) +
               (carry * pow2(|sb|)) +
@@ -225,7 +226,12 @@ method add(s1: string, s2: string) returns (res: string)
     if j >= 0 { j := j - 1; }
   }
 
+  assert str2int(x) + str2int(y) == str2int(sb);
+
   res := normalizeBitString(sb);
+
+  assert str2int(sb) == str2int(res);
+
   return res;
 }
 
