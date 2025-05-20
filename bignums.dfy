@@ -159,6 +159,11 @@ method sub(s1: string, s2: string) returns (res: string)
   res := normalizeBitString(rev);
 }
 
+function pow2(n: nat): nat
+{
+  if n == 0 then 1 else 2 * pow2(n - 1)
+}
+
 // ----------------------------------------------------
 // 3) add: string-based addition (no str2int / int2str)
 // ----------------------------------------------------
@@ -189,6 +194,11 @@ method add(s1: string, s2: string) returns (res: string)
     invariant i <= |x| - 1 && j <= |y| - 1
     invariant i >= -1
     invariant j >= -1
+    invariant str2int(x) + str2int(y) ==
+              str2int(sb) +
+              (carry * pow2(|sb|)) +
+              (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) +
+              (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
   {
     var bitX := 0;
     if i >= 0 {
