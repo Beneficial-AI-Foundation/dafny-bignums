@@ -268,7 +268,39 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
     (if old_j >= 0 then str2int(y[0..old_j]) * 2 * pow2(|old_sb|) + bitY * pow2(|old_sb|) else 0);
   == // Use pow2 relationship: 2 * pow2(n) = pow2(n+1)
     {
-      pow2_inductive(|old_sb|);
+      if old_i >= 0 {
+        calc {
+          str2int(x[0..old_i]) * 2 * pow2(|old_sb|) + bitX * pow2(|old_sb|);
+        ==
+          (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) + bitX * pow2(|old_sb|);
+        ==
+          str2int(x[0..old_i]) * (2 * pow2(|old_sb|)) + bitX * pow2(|old_sb|);
+        ==
+          {
+            pow2_inductive(|old_sb|);
+            assert pow2(|old_sb|+1) == 2 * pow2(|old_sb|);
+          }
+          str2int(x[0..old_i]) * pow2(|old_sb|+1) + bitX * pow2(|old_sb|);
+        }
+      }
+      if old_j >= 0 {
+        calc {
+          str2int(y[0..old_j]) * 2 * pow2(|old_sb|) + bitY * pow2(|old_sb|);
+        ==
+          (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) + bitY * pow2(|old_sb|);
+        ==
+          {
+            assert (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) == str2int(y[0..old_j]) * (2 * pow2(|old_sb|));
+          }
+          str2int(y[0..old_j]) * (2 * pow2(|old_sb|)) + bitY * pow2(|old_sb|);
+        ==
+          {
+            pow2_inductive(|old_sb|);
+            assert pow2(|old_sb|+1) == 2 * pow2(|old_sb|);
+          }
+          str2int(y[0..old_j]) * pow2(|old_sb|+1) + bitY * pow2(|old_sb|);
+        }
+      }
     }
     str2int(old_sb) -
     (old_borrow * pow2(|old_sb|)) +
