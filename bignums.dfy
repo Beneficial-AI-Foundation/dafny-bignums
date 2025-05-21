@@ -206,6 +206,7 @@ method sub(s1: string, s2: string) returns (res: string)
 // Helper lemma for subtraction reasoning
 lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
                                    old_j: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, diff:int, digit:nat, old_borrow:nat)
+  // TODO It might be cleaner to label and selectively reveal these preconditions
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
