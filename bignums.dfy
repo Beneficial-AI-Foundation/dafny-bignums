@@ -116,6 +116,32 @@ method sub(s1: string, s2: string) returns (res: string)
   var sb := [];  // reversed result
 
   pow2_zero();
+  assert borrow * pow2(|sb|) == 0;
+  calc {
+    if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0;
+  ==
+    str2int(x[0..i+1]) * pow2(|sb|);
+  ==
+    str2int(x[0..i+1]) * 1;
+  ==
+    str2int(x[0..i+1]);
+  ==
+    {assert x[0..i+1] == x;}
+    str2int(x);
+  }
+  calc {
+    if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0;
+  ==
+    str2int(y[0..j+1]) * pow2(|sb|);
+  ==
+    str2int(y[0..j+1]) * 1;
+  ==
+    str2int(y[0..j+1]);
+  ==
+    {assert y[0..j+1] == y;}
+    str2int(y);
+  }
+
   while i >= 0 || j >= 0
     decreases i + j + 2, borrow
     invariant 0 <= borrow <= 1
