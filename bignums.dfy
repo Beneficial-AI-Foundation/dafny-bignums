@@ -274,7 +274,10 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
         ==
           (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) + bitX * pow2(|old_sb|);
         ==
-          str2int(x[0..old_i]) * (2 * pow2(|old_sb|)) + bitX * pow2(|old_sb|);
+          {
+            assert (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) == str2int(x[0..old_i]) * (2 * pow2(|old_sb|));
+          }
+          str2int(x[0..old_i]) * (2 * pow2(|old_sb|)) + bitX * pow2(|old_sb|); // FIX
         ==
           {
             pow2_inductive(|old_sb|);
