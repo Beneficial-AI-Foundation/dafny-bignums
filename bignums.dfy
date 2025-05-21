@@ -337,6 +337,7 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
     ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0) - old_borrow) * pow2(|old_sb|);
   == // By the definition of diff in code
+    // TODO From here on, tweak to use rawDiff instead
     {
       assert ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0) - old_borrow) == diff;
     }
