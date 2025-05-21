@@ -337,34 +337,33 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
     ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0) - old_borrow) * pow2(|old_sb|);
   == // By the definition of diff in code
-    // TODO From here on, tweak to use rawDiff instead
     {
-      assert ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0) - old_borrow) == diff;
+      assert ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0) - old_borrow) == rawDiff;
     }
     str2int(old_sb) +
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
-    (diff * pow2(|old_sb|));
-  == // Apply relationship between diff, digit and borrow
+    (rawDiff * pow2(|old_sb|));
+  == // Apply relationship between rawDiff, diff and borrow
     {
-      if diff < 0 {
-        assert diff + 2 == digit;
+      if rawDiff < 0 {
+        assert rawDiff + 2 == diff;
         assert borrow == 1;
-        assert diff == digit - 2;
+        assert rawDiff == diff - 2;
       } else {
-        assert diff == digit;
+        assert rawDiff == diff;
         assert borrow == 0;
       }
     }
     str2int(old_sb) +
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
-    ((if diff < 0 then digit - 2 else digit) * pow2(|old_sb|));
+    ((if rawDiff < 0 then diff - 2 else diff) * pow2(|old_sb|));
   == // Rewrite in terms of borrow
     str2int(old_sb) +
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
-    (digit * pow2(|old_sb|) - (if borrow == 1 then 2 * pow2(|old_sb|) else 0));
+    (diff * pow2(|old_sb|) - (if borrow == 1 then 2 * pow2(|old_sb|) else 0));
   == // Use pow2 relationship again
     {
       if borrow == 1 {
@@ -374,24 +373,15 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
     str2int(old_sb) +
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
-    (digit * pow2(|old_sb|) - (borrow * pow2(|old_sb|+1)));
+    (diff * pow2(|old_sb|) - (borrow * pow2(|old_sb|+1)));
   == // Apply PrependDigitToString
     {
-      PrependDigitToString(digit, old_sb);
+      PrependDigitToString(diff, old_sb);
     }
-    str2int(if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) +
+    str2int(if diff == 1 then ['1'] + old_sb else ['0'] + old_sb) +
     (if i >= 0 then str2int(x[0..i+1]) * pow2(|old_sb|+1) else 0) -
     (if j >= 0 then str2int(y[0..j+1]) * pow2(|old_sb|+1) else 0) -
     (borrow * pow2(|old_sb|+1));
-  == // Clean up with known values
-    {
-      assert (if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb;
-      assert pow2(|sb|) == pow2(|old_sb|+1);
-    }
-    str2int(sb) +
-    (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) -
-    (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0) -
-    (borrow * pow2(|sb|));
   }
 }
 
