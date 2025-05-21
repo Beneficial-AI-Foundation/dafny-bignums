@@ -831,6 +831,8 @@ lemma BitStringDecomposition(s: string, i: int)
   }
 }
 
+// TODO Put lemmas in topological order
+
 lemma PrependDigitToString(digit: int, s: string)
   requires ValidBitString(s) && (digit == 0 || digit == 1)
   ensures str2int(if digit == 1 then ['1'] + s else ['0'] + s) ==
