@@ -210,6 +210,7 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
           (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) -
           (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
 {
+  assert false;
   // This mirrors the structure of addAux but modified for subtraction
   calc {
     str2int(old_sb) -
