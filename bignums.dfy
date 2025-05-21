@@ -886,5 +886,27 @@ lemma bound(s : string)
   requires ValidBitString(s)
   ensures pow2(|s|) > str2int(s)
 {
+  if |s| == 0 {
+    pow2_zero();
+  }
+  else {
+    calc {
+      str2int(s);
+    ==
+      2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0);
+    <=
+      {bound(s[0..|s|-1]);}
+      2 * (pow2(|s[0..|s|-1]|)-1) + (if s[|s|-1] == '1' then 1 else 0);
+    ==
+      2 * pow2(|s|-1) - 2  + (if s[|s|-1] == '1' then 1 else 0);
+    <=
+      2 * pow2(|s|-1) - 1;
+    ==
+      {pow2_inductive(|s|-1);}
+      pow2(|s|) - 1;
+    <
+      pow2(|s|);
+    }
+  }
 
 }
