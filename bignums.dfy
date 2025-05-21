@@ -149,6 +149,7 @@ method sub(s1: string, s2: string) returns (res: string)
       borrow := 0;
     }
 
+    assert diff == 1 || diff == 0;
     var digit := if diff == 1 then 1 else 0;
     if digit == 1 {
       sb := ['1'] + sb;
@@ -164,6 +165,10 @@ method sub(s1: string, s2: string) returns (res: string)
 
     subAux(x, y, old_sb, sb, old_i, old_j, i, j, borrow, bitX, bitY, diff, digit, old_borrow);
   }
+
+
+  assert borrow == 0;
+
 
   assert str2int(x) - str2int(y) == str2int(sb);
 
