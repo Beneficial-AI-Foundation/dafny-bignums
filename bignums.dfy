@@ -193,6 +193,10 @@ method sub(s1: string, s2: string) returns (res: string)
   }
 
 
+  // If borrow is 1, the RHS will be negative,
+  // but the LHS is nonnegative
+  assert str2int(x) - str2int(y) == str2int(sb) - (borrow * pow2(|sb|));
+  assert pow2(|sb|) > str2int(sb) by {bound(sb);}
   assert borrow == 0;
 
 
@@ -875,4 +879,12 @@ lemma PrependDigitToString(digit: int, s: string)
     i:= i+1;
   }
   assert s[..i] == s;
+}
+
+// TODO Really lemmas should be pascal case
+lemma bound(s : string)
+  requires ValidBitString(s)
+  ensures pow2(|s|) > str2int(s)
+{
+
 }
