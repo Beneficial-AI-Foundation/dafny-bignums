@@ -136,28 +136,19 @@ method sub(s1: string, s2: string) returns (res: string)
     }
 
     if diff == 1 {
-      sb := sb + ['1'];
+      sb := ['1'] + sb;
     }
     else
     {
-      sb := sb + ['0'];
+      sb := ['0'] + sb;
     }
 
     if i >= 0 { i := i - 1; }
     if j >= 0 { j := j - 1; }
   }
 
-  // Reverse result
-  var rev := "";
-  var k := |sb| - 1;
-  while k >= 0
-    decreases k
-  {
-    rev := rev + [sb[k]];
-    k := k - 1;
-  }
 
-  res := normalizeBitString(rev);
+  res := sb;
 }
 
 opaque function pow2(n: nat): nat
