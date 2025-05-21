@@ -234,7 +234,6 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
           (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) -
           (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
 {
-  assert false;
   // This mirrors the structure of addAux but modified for subtraction
   calc {
     str2int(old_sb) -
@@ -251,6 +250,18 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
     (if old_i >= 0 then (str2int(x[0..old_i]) * 2 + bitX) * pow2(|old_sb|) else 0) -
     (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
   == // Distribute pow2(|old_sb|)
+    {
+      if old_i >= 0 {
+        assert (str2int(x[0..old_i]) * 2 + bitX) * pow2(|old_sb|) == str2int(x[0..old_i]) * 2 * pow2(|old_sb|) + bitX * pow2(|old_sb|);
+      }
+      if old_j >= 0 {
+        calc {
+          (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|);
+        ==
+          str2int(y[0..old_j]) * 2 * pow2(|old_sb|) + bitY * pow2(|old_sb|);
+        }
+      }
+    }
     str2int(old_sb) -
     (old_borrow * pow2(|old_sb|)) +
     (if old_i >= 0 then str2int(x[0..old_i]) * 2 * pow2(|old_sb|) + bitX * pow2(|old_sb|) else 0) -
