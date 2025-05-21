@@ -115,17 +115,31 @@ method sub(s1: string, s2: string) returns (res: string)
   var borrow := 0;
   var sb := [];  // reversed result
 
+  pow2_zero();
   while i >= 0 || j >= 0
-    decreases i + j, borrow
+    decreases i + j + 2, borrow
     invariant 0 <= borrow <= 1
+    invariant i <= |x| - 1 && j <= |y| - 1
+    invariant i >= -1
+    invariant j >= -1
+    invariant ValidBitString(sb)
+    invariant str2int(x) - str2int(y) ==
+              str2int(sb) -
+              (borrow * pow2(|sb|)) +
+              (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) -
+              (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
   {
+    var old_sb := sb;
+    var old_borrow := borrow;
     var bitX := 0;
-    if i >= 0
-    { bitX := if x[i] == '1' then 1 else 0; }
+    if i >= 0 {
+      bitX := if x[i] == '1' then 1 else 0;
+    }
     var bitY := 0;
     if j >= 0 {
       bitY := if y[j] == '1' then 1 else 0;
     }
+
     // Subtract with borrow:
     var diff := bitX - bitY - borrow;
     if diff < 0 {
@@ -135,20 +149,27 @@ method sub(s1: string, s2: string) returns (res: string)
       borrow := 0;
     }
 
-    if diff == 1 {
+    var digit := if diff == 1 then 1 else 0;
+    if digit == 1 {
       sb := ['1'] + sb;
-    }
-    else
-    {
+    } else {
       sb := ['0'] + sb;
     }
 
+    var old_i := i;
+    var old_j := j;
+
     if i >= 0 { i := i - 1; }
     if j >= 0 { j := j - 1; }
+
+    subAux(x, y, old_sb, sb, old_i, old_j, i, j, borrow, bitX, bitY, diff, digit, old_borrow);
   }
 
+  assert str2int(x) - str2int(y) == str2int(sb);
 
-  res := sb;
+  res := normalizeBitString(sb);
+
+  assert str2int(sb) == str2int(res);
 }
 
 opaque function pow2(n: nat): nat
