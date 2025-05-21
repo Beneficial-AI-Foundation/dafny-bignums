@@ -263,6 +263,13 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
         calc {
           (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|);
         ==
+          {
+
+            var A:= str2int(y[0..old_j]);
+            var B:= bitY;
+            var C:= pow2(|old_sb|);
+            rearrange(A, B, C);
+          }
           str2int(y[0..old_j]) * 2 * pow2(|old_sb|) + bitY * pow2(|old_sb|);
         }
       }
@@ -379,6 +386,10 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
 }
 
 
+lemma rearrange(A:int, B:int, C:int)
+  ensures (A * 2 + B) * C == A * 2 * C + B * C
+{
+}
 
 
 opaque function pow2(n: nat): nat
