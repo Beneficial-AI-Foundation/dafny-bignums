@@ -167,17 +167,17 @@ method sub(s1: string, s2: string) returns (res: string)
     }
 
     // Subtract with borrow:
-    var diff := bitX - bitY - borrow;
-    if diff < 0 {
-      diff := diff + 2;
+    var rawDiff := bitX - bitY - borrow;
+    var diff := rawDiff;
+    if rawDiff < 0 {
+      diff := rawDiff + 2;
       borrow := 1;
     } else {
       borrow := 0;
     }
 
     assert diff == 1 || diff == 0;
-    var digit := if diff == 1 then 1 else 0;
-    if digit == 1 {
+    if diff == 1 {
       sb := ['1'] + sb;
     } else {
       sb := ['0'] + sb;
@@ -189,7 +189,7 @@ method sub(s1: string, s2: string) returns (res: string)
     if i >= 0 { i := i - 1; }
     if j >= 0 { j := j - 1; }
 
-    subAux(x, y, old_sb, sb, old_i, old_j, i, j, borrow, bitX, bitY, diff, digit, old_borrow);
+    subAux(x, y, old_sb, sb, old_i, old_j, i, j, borrow, bitX, bitY, rawDiff, diff, old_borrow);
   }
 
 
@@ -205,7 +205,7 @@ method sub(s1: string, s2: string) returns (res: string)
 
 // Helper lemma for subtraction reasoning
 lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
-                                   old_j: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, diff:int, digit:nat, old_borrow:nat)
+                                   old_j: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, old_borrow:nat)
   // TODO It might be cleaner to label and selectively reveal these preconditions
   requires ValidBitString(sb)
   requires ValidBitString(x)
@@ -225,7 +225,7 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
   requires old_i < 0 ==> bitX == 0
   requires old_j < 0 ==> bitY == 0
   requires |old_sb| == |sb| - 1
-  requires (if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb
+  requires (if diff == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb
   ensures str2int(old_sb) -
           (old_borrow * pow2(|old_sb|)) +
           (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) -
@@ -236,6 +236,7 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
           (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
 {
   // This mirrors the structure of addAux but modified for subtraction
+  var digit := 42; // TODO remove
   calc {
     str2int(old_sb) -
     (old_borrow * pow2(|old_sb|)) +
