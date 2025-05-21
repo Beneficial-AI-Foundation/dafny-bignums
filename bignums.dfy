@@ -224,8 +224,6 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
   requires old_i < 0 ==> bitX == 0
   requires old_j < 0 ==> bitY == 0
   requires |old_sb| == |sb| - 1
-  requires diff == bitX - bitY - old_borrow
-  requires if diff < 0 then diff + 2 == digit && borrow == 1 else diff == digit && borrow == 0
   requires (if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb
   ensures str2int(old_sb) -
           (old_borrow * pow2(|old_sb|)) +
