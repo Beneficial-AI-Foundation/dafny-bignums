@@ -172,6 +172,133 @@ method sub(s1: string, s2: string) returns (res: string)
   assert str2int(sb) == str2int(res);
 }
 
+// Helper lemma for subtraction reasoning
+lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
+                                   old_j: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, diff:int, digit:nat, old_borrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(old_sb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires old_i <= |x| - 1 && old_j <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires old_i >= 0 ==> i == old_i - 1
+  requires old_j >= 0 ==> j == old_j - 1
+  requires old_i < 0 ==> i == old_i
+  requires old_j < 0 ==> j == old_j
+  requires old_i >= 0 ==> (bitX == if x[old_i] == '1' then 1 else 0)
+  requires old_j >= 0 ==> (bitY == if y[old_j] == '1' then 1 else 0)
+  requires old_i < 0 ==> bitX == 0
+  requires old_j < 0 ==> bitY == 0
+  requires |old_sb| == |sb| - 1
+  requires diff == bitX - bitY - old_borrow
+  requires if diff < 0 then diff + 2 == digit && borrow == 1 else diff == digit && borrow == 0
+  requires (if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb
+  ensures str2int(old_sb) -
+          (old_borrow * pow2(|old_sb|)) +
+          (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) -
+          (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0) ==
+          str2int(sb) -
+          (borrow * pow2(|sb|)) +
+          (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) -
+          (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
+{
+  // This mirrors the structure of addAux but modified for subtraction
+  calc {
+    str2int(old_sb) -
+    (old_borrow * pow2(|old_sb|)) +
+    (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) -
+    (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0);
+  == // Apply BitStringDecomposition for both numbers
+    {
+      BitStringDecomposition(x, old_i);
+      BitStringDecomposition(y, old_j);
+    }
+    str2int(old_sb) -
+    (old_borrow * pow2(|old_sb|)) +
+    (if old_i >= 0 then (str2int(x[0..old_i]) * 2 + bitX) * pow2(|old_sb|) else 0) -
+    (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
+  == // Distribute pow2(|old_sb|)
+    str2int(old_sb) -
+    (old_borrow * pow2(|old_sb|)) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * 2 * pow2(|old_sb|) + bitX * pow2(|old_sb|) else 0) -
+    (if old_j >= 0 then str2int(y[0..old_j]) * 2 * pow2(|old_sb|) + bitY * pow2(|old_sb|) else 0);
+  == // Use pow2 relationship: 2 * pow2(n) = pow2(n+1)
+    {
+      pow2_inductive(|old_sb|);
+    }
+    str2int(old_sb) -
+    (old_borrow * pow2(|old_sb|)) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) + bitX * pow2(|old_sb|) else 0) -
+    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) + bitY * pow2(|old_sb|) else 0);
+  == // Rearrange to isolate the digit contribution
+    str2int(old_sb) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
+    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
+    ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0) - old_borrow) * pow2(|old_sb|);
+  == // By the definition of diff in code
+    {
+      assert ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0) - old_borrow) == diff;
+    }
+    str2int(old_sb) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
+    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
+    (diff * pow2(|old_sb|));
+  == // Apply relationship between diff, digit and borrow
+    {
+      if diff < 0 {
+        assert diff + 2 == digit;
+        assert borrow == 1;
+        assert diff == digit - 2;
+      } else {
+        assert diff == digit;
+        assert borrow == 0;
+      }
+    }
+    str2int(old_sb) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
+    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
+    ((if diff < 0 then digit - 2 else digit) * pow2(|old_sb|));
+  == // Rewrite in terms of borrow
+    str2int(old_sb) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
+    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
+    (digit * pow2(|old_sb|) - (if borrow == 1 then 2 * pow2(|old_sb|) else 0));
+  == // Use pow2 relationship again
+    {
+      if borrow == 1 {
+        assert 2 * pow2(|old_sb|) == pow2(|old_sb|+1) by { pow2_inductive(|old_sb|); }
+      }
+    }
+    str2int(old_sb) +
+    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
+    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
+    (digit * pow2(|old_sb|) - (borrow * pow2(|old_sb|+1)));
+  == // Apply PrependDigitToString
+    {
+      PrependDigitToString(digit, old_sb);
+    }
+    str2int(if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) +
+    (if i >= 0 then str2int(x[0..i+1]) * pow2(|old_sb|+1) else 0) -
+    (if j >= 0 then str2int(y[0..j+1]) * pow2(|old_sb|+1) else 0) -
+    (borrow * pow2(|old_sb|+1));
+  == // Clean up with known values
+    {
+      assert (if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb;
+      assert pow2(|sb|) == pow2(|old_sb|+1);
+    }
+    str2int(sb) +
+    (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) -
+    (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0) -
+    (borrow * pow2(|sb|));
+  }
+}
+
+
+
+
 opaque function pow2(n: nat): nat
 {
   if n == 0 then 1 else 2 * pow2(n - 1)
