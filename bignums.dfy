@@ -310,6 +310,16 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) + bitX * pow2(|old_sb|) else 0) -
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) + bitY * pow2(|old_sb|) else 0);
   == // Rearrange to isolate the digit contribution
+    {
+      assert (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) + bitX * pow2(|old_sb|) else 0) -
+        (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) + bitY * pow2(|old_sb|) else 0) == (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
+                                                                                                            (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
+                                                                                                            ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0)) * pow2(|old_sb|) by {assert false;}
+                                                                                                                // TODO The above assertion might not be the best one to use
+      assert false;
+
+
+    }
     str2int(old_sb) +
     (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
     (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
