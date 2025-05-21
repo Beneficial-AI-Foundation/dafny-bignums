@@ -20,3 +20,4 @@ lib
 bignums-py
 .aider*
 flycheck_bignums.dfy
+TestResults
