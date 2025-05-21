@@ -275,7 +275,13 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
           (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) + bitX * pow2(|old_sb|);
         ==
           {
-            assert (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) == str2int(x[0..old_i]) * (2 * pow2(|old_sb|));
+            assert (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) == str2int(x[0..old_i]) * (2 * pow2(|old_sb|))
+            by {
+              var A := str2int(x[0..old_i]);
+              var B := pow2(|old_sb|);
+              assert (A * 2) * B == A * (2 * B );
+            }
+
           }
           str2int(x[0..old_i]) * (2 * pow2(|old_sb|)) + bitX * pow2(|old_sb|); // FIX
         ==
@@ -293,7 +299,11 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
           (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) + bitY * pow2(|old_sb|);
         ==
           {
-            assert (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) == str2int(y[0..old_j]) * (2 * pow2(|old_sb|));
+            assert (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) == str2int(y[0..old_j]) * (2 * pow2(|old_sb|)) by {
+              var A := str2int(y[0..old_j]);
+              var B := pow2(|old_sb|);
+              assert (A * 2) * B == A * (2 * B );
+            }
           }
           str2int(y[0..old_j]) * (2 * pow2(|old_sb|)) + bitY * pow2(|old_sb|);
         ==
