@@ -1004,6 +1004,7 @@ lemma MulAux(x: string, y: string, prevProduct: string, product: string,
   requires idx + 1 < |y|
   requires y[idx+1] == '0' ==> prevProduct == product
   requires y[idx+1] == '1' ==> OStr2Int(product) == OStr2Int(prevProduct)+ OStr2Int(x + prevShift)
+  requires OStr2Int(x) * OStr2Int(y) == OStr2Int(prevProduct) + OStr2Int(x) * OStr2Int(y[..idx+2] + prevShift)
   ensures OStr2Int(x) * OStr2Int(y) ==
           OStr2Int(prevProduct) + OStr2Int(x) * OStr2Int(y[..idx+2] + prevShift) ==>
             OStr2Int(x) * OStr2Int(y) ==
@@ -1358,6 +1359,7 @@ method {:isolate_assertions} Mul(s1: string, s2: string) returns (res: string)
     if y[idx] == '1' {
       var partial := x + shift;
       product := Add(product, partial);
+      assert OStr2Int(product) == OStr2Int(prevProduct)+ OStr2Int(x + prevShift) by {reveal OStr2Int;}
     }
     shift := shift + ['0'];
     idx := idx - 1;
