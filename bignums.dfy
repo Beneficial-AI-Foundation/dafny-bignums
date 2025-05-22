@@ -1311,7 +1311,7 @@ method Sub(s1: string, s2: string) returns (res: string)
 // string-based multiplication
 //    No direct use of Str2Int/Int2Str
 // ----------------------------------------------------
-method {:isolate_assertions} Mul(s1: string, s2: string) returns (res: string)
+method Mul(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
   ensures ValidBitString(res)
   ensures Str2Int(res) == Str2Int(s1) * Str2Int(s2)
