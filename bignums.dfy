@@ -50,7 +50,6 @@ method mul(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
   ensures ValidBitString(res)
   ensures str2int(res) == str2int(s1) * str2int(s2)
-  // TODO Testing claims this is outputing wrong answers
 {
   var x := normalizeBitString(s1);
   var y := normalizeBitString(s2);
@@ -68,20 +67,16 @@ method mul(s1: string, s2: string) returns (res: string)
   // Use add(...) to accumulate partial sums.
 
   var product := "0";
-  var shiftCount := 0;
+  var shift := "";
   var idx := |y| - 1;
   while idx >= 0
     decreases idx
   {
     if y[idx] == '1' {
-      // partial = x shifted by shiftCount
-      // It used to be var partial := leftShift(x, shiftCount);
-      // but leftShift doesn't exist. Not sure if the slice
-      // is the right way
-      var partial := x[shiftCount..];
+      var partial := x + shift;
       product := add(product, partial);
     }
-    shiftCount := shiftCount + 1;
+    shift := shift + ['0'];
     idx := idx - 1;
   }
   res := product;
