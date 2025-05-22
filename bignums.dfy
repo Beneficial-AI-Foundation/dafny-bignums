@@ -127,7 +127,7 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
           assert str2int(y[..idx+1] + "1" + prev_shift) == str2int(y[..idx+1] + "1") * pow2(a-1);
           assert str2int(x) * str2int(y[..idx+1] + "1" + prev_shift) == str2int(x) * (str2int(y[..idx+1] + "1") * pow2(a-1));
           assert str2int(x) * (str2int(y[..idx+1] + "1") * pow2(a-1)) == str2int(x) * str2int(y[..idx+1] + "1") * pow2(a-1)
-          by {MultiplicationCommutes(str2int(x), str2int(y[..idx+1] + "1"), pow2(a-1));}
+          by {MulIsAssociative(str2int(x), str2int(y[..idx+1] + "1"), pow2(a-1));}
 
           assert str2int(x) * str2int(y[..idx+1] + "1" + prev_shift) == str2int(x) * str2int(y[..idx+1] + "1") * pow2(a-1);
         }
@@ -144,7 +144,7 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
            str2int(x) * (2*str2int(y[..idx+1])) * pow2(a-1);
          ==
            {
-             MultiplicationCommutes(str2int(x), 2*str2int(y[..idx+1]), pow2(a-1));
+             MulIsAssociative(str2int(x), 2*str2int(y[..idx+1]), pow2(a-1));
            }
            str2int(x) * ((2*str2int(y[..idx+1])) * pow2(a-1));
          ==
@@ -165,7 +165,7 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
           assert str2int(y[..idx+1]) * pow2(a) ==  str2int(y[..idx+1] + shift) by {
             TrailingZeros(y[..idx+1] + shift, a);
           }
-          MultiplicationCommutes(str2int(x), str2int(y[..idx+1]), pow2(a));
+          MulIsAssociative(str2int(x), str2int(y[..idx+1]), pow2(a));
           assert str2int(x) * str2int(y[..idx+1]) * pow2(a) ==  str2int(x) * str2int(y[..idx+1] + shift);
         }
         str2int(prev_product) + str2int(x + prev_shift) + str2int(x) * str2int(y[..idx+1] + shift);
@@ -1025,7 +1025,7 @@ lemma TrailingZeros(s: string, num_zeros: nat)
 {
 }
 
-lemma MultiplicationCommutes(a: nat, b: nat, c: nat)
+lemma MulIsAssociative(a: nat, b: nat, c: nat)
   ensures a * (b * c) == a * b * c
 {
 }
