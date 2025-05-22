@@ -479,6 +479,17 @@ lemma {:isolate_assertions} AddAux(x: string, y: string, oldSb: string, sb: stri
     (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb| + 1) + bitY * Pow2(|oldSb|) else 0);
 
 
+  ==
+    Str2Int(oldSb) +
+    ((oldCarry * Pow2(|oldSb|)) +
+     (if oldI >= 0 then bitX else 0) * Pow2(|oldSb|)) + (if oldJ >= 0 then bitY else 0) * Pow2(|oldSb|) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb| + 1) else 0) +
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb| + 1) else 0);
+  ==
+    Str2Int(oldSb) +
+    ((oldCarry * Pow2(|oldSb|)) + ((if oldI >= 0 then bitX else 0) + (if oldJ >= 0 then bitY else 0)) * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb| + 1) else 0) +
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb| + 1) else 0);
 
   == // Group bitX, bitY and oldCarry terms
     Str2Int(oldSb) +
