@@ -978,3 +978,9 @@ lemma bound(s : string)
   }
 
 }
+
+lemma TrailingZeros(s: string, num_zeros: nat)
+  requires forall i :: 0<= i < num_zeros ==> s[|s|-i] == '0'
+  ensures str2int(s) == str2int(s[..|s|-num_zeros]) * pow2(num_zeros)
+{
+}
