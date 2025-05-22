@@ -23,7 +23,6 @@ method Main() {
   var a := "1011";  // decimal 11
 
   var b := "1101";  // decimal 13
-  assert str2int(b) == 13;
 
   print "a = ", a, " (decimal=", str2int(a), ")\n";
   print "b = ", b, " (decimal=", str2int(b), ")\n";
@@ -33,6 +32,7 @@ method Main() {
 
   // sub needs to know that the result will be positive
   Eleven();
+  Thirteen();
   var d := sub(b, a);
   print "b - a = ", d, " (decimal=", str2int(d), ")\n";
 
