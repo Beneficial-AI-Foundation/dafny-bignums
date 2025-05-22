@@ -255,7 +255,6 @@ function Int2Str(n: nat): string
   ensures ValidBitString(Int2Str(n))
   ensures Str2Int(Int2Str(n)) == n
   decreases n
-  // Note this specification doesn't check that Int2Str(Str2Int(s)) = s.
 {
   if n == 0 then
     "0"
