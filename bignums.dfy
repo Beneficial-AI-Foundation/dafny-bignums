@@ -560,12 +560,432 @@ lemma {:isolate_assertions} AddAux(x: string, y: string, oldSb: string, sb: stri
   }
 }
 
+// Lemma 1: Apply BitStringDecomposition for both numbers
+lemma {:isolate_assertions} SubAux1(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(oldSb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
+  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
+  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  ensures OStr2Int(oldSb) -
+          (oldBorrow * Pow2(|oldSb|)) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI+1]) * Pow2(|oldSb|) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ+1]) * Pow2(|oldSb|) else 0) ==
+          OStr2Int(oldSb) -
+          (oldBorrow * Pow2(|oldSb|)) +
+          (if oldI >= 0 then (OStr2Int(x[0..oldI]) * 2 + bitX) * Pow2(|oldSb|) else 0) -
+          (if oldJ >= 0 then (OStr2Int(y[0..oldJ]) * 2 + bitY) * Pow2(|oldSb|) else 0)
+{
+  reveal OStr2Int;
+  BitStringDecomposition(x, oldI);
+  BitStringDecomposition(y, oldJ);
+}
+
+// Lemma 2: Distribute Pow2(|oldSb|)
+lemma {:isolate_assertions} SubAux2(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(oldSb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
+  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
+  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  ensures OStr2Int(oldSb) -
+          (oldBorrow * Pow2(|oldSb|)) +
+          (if oldI >= 0 then (OStr2Int(x[0..oldI]) * 2 + bitX) * Pow2(|oldSb|) else 0) -
+          (if oldJ >= 0 then (OStr2Int(y[0..oldJ]) * 2 + bitY) * Pow2(|oldSb|) else 0) ==
+          OStr2Int(oldSb) -
+          (oldBorrow * Pow2(|oldSb|)) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * 2 * Pow2(|oldSb|) + bitX * Pow2(|oldSb|) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * 2 * Pow2(|oldSb|) + bitY * Pow2(|oldSb|) else 0)
+{
+  if oldI >= 0 {
+    assert (OStr2Int(x[0..oldI]) * 2 + bitX) * Pow2(|oldSb|) == OStr2Int(x[0..oldI]) * 2 * Pow2(|oldSb|) + bitX * Pow2(|oldSb|);
+  }
+  if oldJ >= 0 {
+    var A := OStr2Int(y[0..oldJ]);
+    var B := bitY;
+    var C := Pow2(|oldSb|);
+    Rearrange(A, B, C);
+  }
+}
+
+// Lemma 3: Use Pow2 relationship: 2 * Pow2(n) = Pow2(n+1)
+lemma {:isolate_assertions} SubAux3(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(oldSb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
+  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
+  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  ensures OStr2Int(oldSb) -
+          (oldBorrow * Pow2(|oldSb|)) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * 2 * Pow2(|oldSb|) + bitX * Pow2(|oldSb|) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * 2 * Pow2(|oldSb|) + bitY * Pow2(|oldSb|) else 0) ==
+          OStr2Int(oldSb) -
+          (oldBorrow * Pow2(|oldSb|)) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) + bitX * Pow2(|oldSb|) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) + bitY * Pow2(|oldSb|) else 0)
+{
+  if oldI >= 0 {
+    var A := OStr2Int(x[0..oldI]);
+    var B := Pow2(|oldSb|);
+    assert (A * 2) * B == A * (2 * B) by { MulIsAssociative(A, 2, B); }
+    Pow2Inductive(|oldSb|);
+    assert Pow2(|oldSb|+1) == 2 * Pow2(|oldSb|);
+  }
+
+  if oldJ >= 0 {
+    var A := OStr2Int(y[0..oldJ]);
+    var B := Pow2(|oldSb|);
+    assert (A * 2) * B == A * (2 * B) by { MulIsAssociative(A, 2, B); }
+    Pow2Inductive(|oldSb|);
+    assert Pow2(|oldSb|+1) == 2 * Pow2(|oldSb|);
+  }
+}
+
+// Lemma 4: Rearrange to isolate the digit contribution
+lemma {:isolate_assertions} SubAux4(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(oldSb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
+  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
+  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  ensures OStr2Int(oldSb) -
+          (oldBorrow * Pow2(|oldSb|)) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) + bitX * Pow2(|oldSb|) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) + bitY * Pow2(|oldSb|) else 0) ==
+          OStr2Int(oldSb) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+          ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) * Pow2(|oldSb|)
+{
+  // Rearrangement step - just algebraic manipulation
+}
+
+// Lemma 5: By the definition of diff in code
+lemma {:isolate_assertions} SubAux5(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(oldSb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
+  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
+  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  ensures OStr2Int(oldSb) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+          ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) * Pow2(|oldSb|) ==
+          OStr2Int(oldSb) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+          (rawDiff * Pow2(|oldSb|))
+{
+  assert ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff;
+}
+
+// Lemma 6: Apply relationship between rawDiff, diff and borrow
+lemma {:isolate_assertions} SubAux6(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(oldSb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
+  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
+  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  ensures OStr2Int(oldSb) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+          (rawDiff * Pow2(|oldSb|)) ==
+          OStr2Int(oldSb) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+          ((if rawDiff < 0 then diff - 2 else diff) * Pow2(|oldSb|))
+{
+  if rawDiff < 0 {
+    assert rawDiff + 2 == diff;
+    assert borrow == 1;
+    assert rawDiff == diff - 2;
+  } else {
+    assert rawDiff == diff;
+    assert borrow == 0;
+  }
+}
+
+// Lemma 7: Rewrite in terms of borrow
+lemma {:isolate_assertions} SubAux7(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(oldSb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
+  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
+  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  ensures OStr2Int(oldSb) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+          ((if rawDiff < 0 then diff - 2 else diff) * Pow2(|oldSb|)) ==
+          OStr2Int(oldSb) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+          (diff * Pow2(|oldSb|) - (if borrow == 1 then 2 * Pow2(|oldSb|) else 0))
+{
+  // Rewrite using borrow
+}
+
+// Lemma 8: Use Pow2 relationship again
+lemma {:isolate_assertions} SubAux8(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(oldSb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
+  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
+  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  ensures OStr2Int(oldSb) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+          (diff * Pow2(|oldSb|) - (if borrow == 1 then 2 * Pow2(|oldSb|) else 0)) ==
+          OStr2Int(oldSb) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+          (diff * Pow2(|oldSb|) - (borrow * Pow2(|oldSb|+1)))
+{
+  if borrow == 1 {
+    assert 2 * Pow2(|oldSb|) == Pow2(|oldSb|+1) by { Pow2Inductive(|oldSb|); }
+  }
+}
+
+// Lemma 9: Rearrange terms
+lemma {:isolate_assertions} SubAux9(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(oldSb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
+  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
+  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  ensures OStr2Int(oldSb) +
+          (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+          (diff * Pow2(|oldSb|) - (borrow * Pow2(|oldSb|+1))) ==
+          OStr2Int(oldSb) +
+          diff * Pow2(|oldSb|) +
+          (if i >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if j >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) -
+          (borrow * Pow2(|oldSb|+1))
+{
+  reveal OStr2Int;
+}
+
+// Lemma 10: Apply PrependDigitToString
+lemma {:isolate_assertions} SubAux10(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                     oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+  requires ValidBitString(sb)
+  requires ValidBitString(x)
+  requires ValidBitString(y)
+  requires ValidBitString(oldSb)
+  requires 0 <= borrow <= 1
+  requires i <= |x| - 1 && j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
+  requires i >= -1
+  requires j >= -1
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
+  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
+  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  ensures OStr2Int(oldSb) +
+          diff * Pow2(|oldSb|) +
+          (if i >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+          (if j >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) -
+          (borrow * Pow2(|oldSb|+1)) ==
+          OStr2Int(if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) +
+          (if i >= 0 then OStr2Int(x[0..i+1]) * Pow2(|oldSb|+1) else 0) -
+          (if j >= 0 then OStr2Int(y[0..j+1]) * Pow2(|oldSb|+1) else 0) -
+          (borrow * Pow2(|oldSb|+1))
+{
+  // Apply PrependDigitToString to convert the expression
+  reveal OStr2Int;
+  PrependDigitToString(diff, oldSb);
+
+  // Establish that sb == (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb)
+  assert sb == (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb);
+
+  // Establish relationships between indices when working with slices
+  if i >= 0 {
+    assert oldI >= 0 && i == oldI - 1;
+    assert x[0..i+1] == x[0..oldI];  // Since i+1 == oldI
+  }
+
+  if j >= 0 {
+    assert oldJ >= 0 && j == oldJ - 1;
+    assert y[0..j+1] == y[0..oldJ];  // Since j+1 == oldJ
+  }
+}
 
 
-// Helper lemma for subtraction reasoning
-lemma {:isolate_assertions} SubAux(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                   oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
-  // It might be cleaner to label and selectively reveal these preconditions
+
+// Top-level lemma that combines all the individual steps
+lemma {:isolate_assertions} SubAuxTop(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                      oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -597,173 +1017,19 @@ lemma {:isolate_assertions} SubAux(x: string, y: string, oldSb: string, sb: stri
           (if i >= 0 then OStr2Int(x[0..i+1]) * Pow2(|sb|) else 0) -
           (if j >= 0 then OStr2Int(y[0..j+1]) * Pow2(|sb|) else 0)
 {
-  // This mirrors the structure of AddAux but modified for subtraction
-  calc {
-    OStr2Int(oldSb) -
-    (oldBorrow * Pow2(|oldSb|)) +
-    (if oldI >= 0 then OStr2Int(x[0..oldI+1]) * Pow2(|oldSb|) else 0) -
-    (if oldJ >= 0 then OStr2Int(y[0..oldJ+1]) * Pow2(|oldSb|) else 0);
-  == // Apply BitStringDecomposition for both numbers
-    {
-      reveal OStr2Int;
-      BitStringDecomposition(x, oldI);
-      BitStringDecomposition(y, oldJ);
-    }
-    OStr2Int(oldSb) -
-    (oldBorrow * Pow2(|oldSb|)) +
-    (if oldI >= 0 then (OStr2Int(x[0..oldI]) * 2 + bitX) * Pow2(|oldSb|) else 0) -
-    (if oldJ >= 0 then (OStr2Int(y[0..oldJ]) * 2 + bitY) * Pow2(|oldSb|) else 0);
-  == // Distribute Pow2(|oldSb|)
-    {
-      if oldI >= 0 {
-        assert (OStr2Int(x[0..oldI]) * 2 + bitX) * Pow2(|oldSb|) == OStr2Int(x[0..oldI]) * 2 * Pow2(|oldSb|) + bitX * Pow2(|oldSb|);
-      }
-      if oldJ >= 0 {
-        calc {
-          (OStr2Int(y[0..oldJ]) * 2 + bitY) * Pow2(|oldSb|);
-        ==
-          {
+  // Call all the sub-lemmas in sequence to establish the proof
+  SubAux1(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
+  SubAux2(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
+  SubAux3(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
+  SubAux4(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
+  SubAux5(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
+  SubAux6(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
+  SubAux7(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
+  SubAux8(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
+  SubAux9(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
+  SubAux10(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
 
-            var A:= OStr2Int(y[0..oldJ]);
-            var B:= bitY;
-            var C:= Pow2(|oldSb|);
-            Rearrange(A, B, C);
-          }
-          OStr2Int(y[0..oldJ]) * 2 * Pow2(|oldSb|) + bitY * Pow2(|oldSb|);
-        }
-      }
-    }
-    OStr2Int(oldSb) -
-    (oldBorrow * Pow2(|oldSb|)) +
-    (if oldI >= 0 then OStr2Int(x[0..oldI]) * 2 * Pow2(|oldSb|) + bitX * Pow2(|oldSb|) else 0) -
-    (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * 2 * Pow2(|oldSb|) + bitY * Pow2(|oldSb|) else 0);
-  == // Use Pow2 relationship: 2 * Pow2(n) = Pow2(n+1)
-    {
-      if oldI >= 0 {
-        calc {
-          OStr2Int(x[0..oldI]) * 2 * Pow2(|oldSb|) + bitX * Pow2(|oldSb|);
-        ==
-          (OStr2Int(x[0..oldI]) * 2) * Pow2(|oldSb|) + bitX * Pow2(|oldSb|);
-        ==
-          {
-            assert (OStr2Int(x[0..oldI]) * 2) * Pow2(|oldSb|) == OStr2Int(x[0..oldI]) * (2 * Pow2(|oldSb|))
-            by {
-              var A := OStr2Int(x[0..oldI]);
-              var B := Pow2(|oldSb|);
-              assert (A * 2) * B == A * (2 * B ) by {MulIsAssociative(A, 2, B);}
-            }
-
-          }
-          OStr2Int(x[0..oldI]) * (2 * Pow2(|oldSb|)) + bitX * Pow2(|oldSb|);
-        ==
-          {
-            Pow2Inductive(|oldSb|);
-            assert Pow2(|oldSb|+1) == 2 * Pow2(|oldSb|);
-          }
-          OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) + bitX * Pow2(|oldSb|);
-        }
-      }
-      if oldJ >= 0 {
-        calc {
-          OStr2Int(y[0..oldJ]) * 2 * Pow2(|oldSb|) + bitY * Pow2(|oldSb|);
-        ==
-          (OStr2Int(y[0..oldJ]) * 2) * Pow2(|oldSb|) + bitY * Pow2(|oldSb|);
-        ==
-          {
-            assert (OStr2Int(y[0..oldJ]) * 2) * Pow2(|oldSb|) == OStr2Int(y[0..oldJ]) * (2 * Pow2(|oldSb|)) by {
-              var A := OStr2Int(y[0..oldJ]);
-              var B := Pow2(|oldSb|);
-              assert (A * 2) * B == A * (2 * B ) by {MulIsAssociative(A, 2, B);}
-            }
-          }
-          OStr2Int(y[0..oldJ]) * (2 * Pow2(|oldSb|)) + bitY * Pow2(|oldSb|);
-        ==
-          {
-            Pow2Inductive(|oldSb|);
-            assert Pow2(|oldSb|+1) == 2 * Pow2(|oldSb|);
-          }
-          OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) + bitY * Pow2(|oldSb|);
-        }
-      }
-    }
-    OStr2Int(oldSb) -
-    (oldBorrow * Pow2(|oldSb|)) +
-    (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) + bitX * Pow2(|oldSb|) else 0) -
-    (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) + bitY * Pow2(|oldSb|) else 0);
-  == // Rearrange to isolate the digit contribution
-    OStr2Int(oldSb) +
-    (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
-    (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
-    ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) * Pow2(|oldSb|);
-  == // By the definition of diff in code
-    {
-      assert ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff;
-    }
-    OStr2Int(oldSb) +
-    (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
-    (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
-    (rawDiff * Pow2(|oldSb|));
-  == // Apply relationship between rawDiff, diff and borrow
-    {
-      if rawDiff < 0 {
-        assert rawDiff + 2 == diff;
-        assert borrow == 1;
-        assert rawDiff == diff - 2;
-      } else {
-        assert rawDiff == diff;
-        assert borrow == 0;
-      }
-    }
-    OStr2Int(oldSb) +
-    (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
-    (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
-    ((if rawDiff < 0 then diff - 2 else diff) * Pow2(|oldSb|));
-  == // Rewrite in terms of borrow
-    OStr2Int(oldSb) +
-    (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
-    (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
-    (diff * Pow2(|oldSb|) - (if borrow == 1 then 2 * Pow2(|oldSb|) else 0));
-  == // Use Pow2 relationship again
-    {
-      if borrow == 1 {
-        assert 2 * Pow2(|oldSb|) == Pow2(|oldSb|+1) by { Pow2Inductive(|oldSb|); }
-      }
-    }
-    OStr2Int(oldSb) +
-    (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
-    (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
-    (diff * Pow2(|oldSb|) - (borrow * Pow2(|oldSb|+1)));
-  ==
-    OStr2Int(oldSb) +
-    diff * Pow2(|oldSb|) +
-    (if oldI >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
-    (if oldJ >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) -
-    (borrow * Pow2(|oldSb|+1));
-  ==
-    {reveal OStr2Int;}
-    OStr2Int(oldSb) +
-    diff * Pow2(|oldSb|) +
-    (if i >= 0 then OStr2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
-    (if j >= 0 then OStr2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) -
-    (borrow * Pow2(|oldSb|+1));
-  == // Apply PrependDigitToString
-    {
-
-      calc {
-        OStr2Int(oldSb) + diff * Pow2(|oldSb|);
-      ==
-        { reveal OStr2Int;
-          PrependDigitToString(diff, oldSb);}
-        OStr2Int(if diff == 1 then ['1'] + oldSb else ['0'] + oldSb);
-      }
-    }
-    OStr2Int(if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) +
-    (if i >= 0 then OStr2Int(x[0..i+1]) * Pow2(|oldSb|+1) else 0) -
-    (if j >= 0 then OStr2Int(y[0..j+1]) * Pow2(|oldSb|+1) else 0) -
-    (borrow * Pow2(|oldSb|+1));
-  }
 }
-
 
 
 // ----------------------------------------------------
@@ -957,7 +1223,7 @@ method Sub(s1: string, s2: string) returns (res: string)
     if i >= 0 { i := i - 1; }
     if j >= 0 { j := j - 1; }
 
-    SubAux(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
+    SubAuxTop(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
     reveal OStr2Int;
   }
 
