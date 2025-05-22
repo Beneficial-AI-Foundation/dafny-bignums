@@ -12,10 +12,6 @@
 //
 // All methods come with specifications ensuring they do what they claim, and we prove correctness using Dafny’s function specifications (`ensures`) by comparing the result against the reference functions `str2int` and `int2str`.
 
-// TODO Note that str2int/int2str are used in the proof inside the method bodies
-// TODO Demonstrate with ghost functions
-// TODO Add my name
-// TODO Any dead functions?
 
 method Main() {
   print "Examples:\n";
@@ -319,7 +315,7 @@ method sub(s1: string, s2: string) returns (res: string)
 // Helper lemma for subtraction reasoning
 lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
                                    old_j: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, old_borrow:nat)
-  // TODO It might be cleaner to label and selectively reveal these preconditions
+  // It might be cleaner to label and selectively reveal these preconditions
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -785,7 +781,7 @@ function int2str(n: nat): string
   ensures ValidBitString(int2str(n))
   ensures str2int(int2str(n)) == n
   decreases n
-  // TODO Should I also check the other way, e.g. int2str(str2int(s)) = s?
+  // Note this specification doesn't check the other way, e.g. int2str(str2int(s)) = s.
   // That would be a little more complicated, since not all strings are valid---we'd have
   // to ensure that s is a valid bitstring
 {
@@ -939,7 +935,6 @@ lemma BitStringDecomposition(s: string, i: int)
   }
 }
 
-// TODO Put lemmas in topological order
 
 lemma PrependDigitToString(digit: int, s: string)
   requires ValidBitString(s) && (digit == 0 || digit == 1)
@@ -991,7 +986,6 @@ lemma PrependDigitToString(digit: int, s: string)
   assert s[..i] == s;
 }
 
-// TODO Really lemmas should be pascal case
 lemma bound(s : string)
   requires ValidBitString(s)
   ensures pow2(|s|) > str2int(s)
