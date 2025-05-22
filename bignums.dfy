@@ -242,6 +242,11 @@ lemma MulIsAssociative(a: nat, b: nat, c: nat)
 }
 
 
+lemma Expand(A:nat, B:nat, C:nat)
+  ensures A * (B + 1) * C == A * C + A * B * C
+{
+}
+
 lemma Rearrange(A:int, B:int, C:int)
   ensures (A * 2 + B) * C == A * 2 * C + B * C
 {
@@ -1054,6 +1059,9 @@ method {:isolate_assertions} Mul(s1: string, s2: string) returns (res: string)
       ==
         Str2Int(prevProduct) + Str2Int(x) * (2*Str2Int(y[..idx+1]) + 1) * Pow2(a-1);
       ==
+        {
+          Expand(Str2Int(x), 2*Str2Int(y[..idx+1]), Pow2(a-1));
+        }
         Str2Int(prevProduct) + Str2Int(x) * Pow2(a-1) + Str2Int(x) * (2*Str2Int(y[..idx+1])) * Pow2(a-1);
       ==
         {assert Str2Int(x) * Pow2(a-1) == Str2Int(x + prevShift) by {
@@ -1075,6 +1083,7 @@ method {:isolate_assertions} Mul(s1: string, s2: string) returns (res: string)
            }
            Str2Int(x) * (Str2Int(y[..idx+1]) * Pow2(a));
          ==
+           {MulIsAssociative(Str2Int(x), Str2Int(y[..idx+1]), Pow2(a));}
            Str2Int(x) * Str2Int(y[..idx+1]) * Pow2(a);
          }
         }
