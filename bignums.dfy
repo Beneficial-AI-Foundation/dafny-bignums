@@ -1003,7 +1003,7 @@ lemma MulAux(x: string, y: string, prevProduct: string, product: string,
   requires shift == prevShift + ['0']
   requires idx + 1 < |y|
   requires y[idx+1] == '0' ==> prevProduct == product
-  requires y[idx+1] == '1' ==> product == Add(prevProduct, x + prevShift)
+  requires y[idx+1] == '1' ==> OStr2Int(product) == OStr2Int(prevProduct)+ OStr2Int(x + prevShift)
   ensures OStr2Int(x) * OStr2Int(y) ==
           OStr2Int(prevProduct) + OStr2Int(x) * OStr2Int(y[..idx+2] + prevShift) ==>
             OStr2Int(x) * OStr2Int(y) ==
