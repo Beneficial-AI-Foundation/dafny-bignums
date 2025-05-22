@@ -561,31 +561,37 @@ lemma {:isolate_assertions} AddAux(x: string, y: string, oldSb: string, sb: stri
   }
 }
 
+predicate SubAuxPred(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                     oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+{
+  ValidBitString(sb) &&
+  ValidBitString(x) &&
+  ValidBitString(y) &&
+  ValidBitString(oldSb) &&
+  0 <= borrow <= 1 &&
+  i <= |x| - 1 && j <= |y| - 1 &&
+  oldI <= |x| - 1 && oldJ <= |y| - 1 &&
+  i >= -1 &&
+  j >= -1 &&
+  (oldI >= 0 ==> i == oldI - 1) &&
+  (oldJ >= 0 ==> j == oldJ - 1) &&
+  (oldI < 0 ==> i == oldI) &&
+  (oldJ < 0 ==> j == oldJ) &&
+  (oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)) &&
+  (oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)) &&
+  (oldI < 0 ==> bitX == 0) &&
+  (oldJ < 0 ==> bitY == 0) &&
+  |oldSb| == |sb| - 1 &&
+  (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb &&
+  ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff &&
+  (rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1) &&
+  (rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0)
+}
+
 // Lemma 1: Apply BitStringDecomposition for both numbers
 lemma SubAux1(x: string, y: string, oldSb: string, sb: string, oldI: int,
               oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
-  requires ValidBitString(sb)
-  requires ValidBitString(x)
-  requires ValidBitString(y)
-  requires ValidBitString(oldSb)
-  requires 0 <= borrow <= 1
-  requires i <= |x| - 1 && j <= |y| - 1
-  requires oldI <= |x| - 1 && oldJ <= |y| - 1
-  requires i >= -1
-  requires j >= -1
-  requires oldI >= 0 ==> i == oldI - 1
-  requires oldJ >= 0 ==> j == oldJ - 1
-  requires oldI < 0 ==> i == oldI
-  requires oldJ < 0 ==> j == oldJ
-  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
-  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
-  requires oldI < 0 ==> bitX == 0
-  requires oldJ < 0 ==> bitY == 0
-  requires |oldSb| == |sb| - 1
-  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
-  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
-  requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
-  requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
+  requires SubAuxPred(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow)
   ensures OStr2Int(oldSb) -
           (oldBorrow * Pow2(|oldSb|)) +
           (if oldI >= 0 then OStr2Int(x[0..oldI+1]) * Pow2(|oldSb|) else 0) -
