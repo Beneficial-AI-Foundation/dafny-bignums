@@ -122,6 +122,14 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
       ==
         str2int(prev_product) + str2int(x) * str2int(y[..idx+1] + "1" + prev_shift);
       ==
+        { TrailingZeros(y[..idx+1] + "1" + prev_shift, a-1);
+          assert str2int(y[..idx+1] + "1" + prev_shift) == str2int(y[..idx+1] + "1") * pow2(a-1);
+          assert str2int(x) * str2int(y[..idx+1] + "1" + prev_shift) == str2int(x) * (str2int(y[..idx+1] + "1") * pow2(a-1));
+          assert str2int(x) * (str2int(y[..idx+1] + "1") * pow2(a-1)) == str2int(x) * str2int(y[..idx+1] + "1") * pow2(a-1)
+          by {MultiplicationCommutes(str2int(x), str2int(y[..idx+1] + "1"), pow2(a-1));}
+
+          assert str2int(x) * str2int(y[..idx+1] + "1" + prev_shift) == str2int(x) * str2int(y[..idx+1] + "1") * pow2(a-1);
+        }
         str2int(prev_product) + str2int(x) * str2int(y[..idx+1] + "1") * pow2(a-1);
       ==
         str2int(prev_product) + str2int(x) * (2*str2int(y[..idx+1]) + 1) * pow2(a-1);
@@ -984,5 +992,10 @@ lemma TrailingZeros(s: string, num_zeros: nat)
   requires num_zeros <= |s|
   requires forall i :: |s| - num_zeros <= i < |s| ==> s[i] == '0'
   ensures str2int(s) == str2int(s[..|s|-num_zeros]) * pow2(num_zeros)
+{
+}
+
+lemma MultiplicationCommutes(a: nat, b: nat, c: nat)
+  ensures a * (b * c) == a * b * c
 {
 }
