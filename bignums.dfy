@@ -703,13 +703,30 @@ lemma {:isolate_assertions} SubAux(x: string, y: string, oldSb: string, sb: stri
       }
     }
     Str2Int(oldSb) +
-    Str2Int(oldSb) +
     (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
     (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
     (diff * Pow2(|oldSb|) - (borrow * Pow2(|oldSb|+1)));
+  ==
+    Str2Int(oldSb) +
+    diff * Pow2(|oldSb|) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) -
+    (borrow * Pow2(|oldSb|+1));
+  ==
+    Str2Int(oldSb) +
+    diff * Pow2(|oldSb|) +
+    (if i >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+    (if j >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) -
+    (borrow * Pow2(|oldSb|+1));
   == // Apply PrependDigitToString
     {
-      PrependDigitToString(diff, oldSb);
+
+      calc {
+        Str2Int(oldSb) + diff * Pow2(|oldSb|);
+      ==
+        {PrependDigitToString(diff, oldSb);}
+        Str2Int(if diff == 1 then ['1'] + oldSb else ['0'] + oldSb);
+      }
     }
     Str2Int(if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) +
     (if i >= 0 then Str2Int(x[0..i+1]) * Pow2(|oldSb|+1) else 0) -
