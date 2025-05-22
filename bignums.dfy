@@ -52,6 +52,7 @@ function Str2Int(s: string): nat
 }
 
 
+// Make an opaque version to speed up verification
 opaque function OStr2Int(s: string): nat
   requires ValidBitString(s)
 {
@@ -984,6 +985,8 @@ lemma SubAux10(x: string, y: string, oldSb: string, sb: string, oldI: int,
 
 
 // Top-level lemma that combines all the individual steps
+// Originally all these steps happened in 1 calc statement instead of
+// 10 lemmas, but the one massive lemma would time out
 lemma SubAuxTop(x: string, y: string, oldSb: string, sb: string, oldI: int,
                 oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
