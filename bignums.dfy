@@ -234,6 +234,8 @@ lemma TrailingZeros(s: string, numZeros: nat)
   }
 }
 
+// Useful because Dafny often struggles with this step
+// in complicated expressions
 lemma MulIsAssociative(a: nat, b: nat, c: nat)
   ensures a * (b * c) == a * b * c
 {
