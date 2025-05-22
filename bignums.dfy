@@ -46,7 +46,7 @@ method Main() {
 // 5) mul: string-based multiplication
 //    No direct use of str2int/int2str
 // ----------------------------------------------------
-method mul(s1: string, s2: string) returns (res: string)
+method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
   ensures ValidBitString(res)
   ensures str2int(res) == str2int(s1) * str2int(s2)
