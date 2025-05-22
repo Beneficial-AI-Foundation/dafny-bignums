@@ -21,7 +21,9 @@ method Main() {
   print "Examples:\n";
 
   var a := "1011";  // decimal 11
+
   var b := "1101";  // decimal 13
+  assert str2int(b) == 13;
 
   print "a = ", a, " (decimal=", str2int(a), ")\n";
   print "b = ", b, " (decimal=", str2int(b), ")\n";
@@ -29,6 +31,8 @@ method Main() {
   var s := add(a, b);
   print "a + b = ", s, " (decimal=", str2int(s), ")\n";
 
+  // sub needs to know that the result will be positive
+  Eleven();
   var d := sub(b, a);
   print "b - a = ", d, " (decimal=", str2int(d), ")\n";
 
@@ -1060,4 +1064,25 @@ lemma TrailingZeros(s: string, num_zeros: nat)
 lemma MulIsAssociative(a: nat, b: nat, c: nat)
   ensures a * (b * c) == a * b * c
 {
+}
+
+lemma Eleven()
+  ensures str2int("1011") == 11
+{
+  var s := "1011";
+  calc {
+    str2int(s);
+  ==
+    2*str2int(s[..3]) + 1;
+  ==
+    {assert s[..3] == "101";}
+    2*str2int("101") + 1;
+  ==
+    {
+      assert 2*str2int("10")+1 == str2int("101");}
+    2*(2*str2int("10")+1) + 1;
+  ==
+    4*str2int("10") + 3;
+  ==
+    11;}
 }
