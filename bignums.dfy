@@ -2,15 +2,15 @@
 
 // - Represents natural numbers as binary strings consisting only of `'0'` and `'1'`.
 // - Has two **conversion** functions:
-//   1. `str2int(s)`: Convert a valid bit-string `s` into a natural number.
-//   2. `int2str(n)`: Convert a natural number `n` into its binary representation (with no leading zeros except if `n = 0`).
-// 
-// - Has three **pure string-based** arithmetic methods, each **not** using `str2int` or `int2str` inside the method body:
-// 1. `add(s1, s2)`: Returns the bit-string representing the sum of `s1` and `s2`.
-// 2. `sub(s1, s2)`: Returns the bit-string representing `s1 - s2`, assuming `s1 >= s2`.
-//  3. `mul(s1, s2)`: Returns the bit-string representing the product `s1 * s2`.
+//   1. `Str2Int(s)`: Convert a valid bit-string `s` into a natural number.
+//   2. `Int2Str(n)`: Convert a natural number `n` into its binary representation (with no leading zeros except if `n = 0`).
 //
-// All methods come with specifications ensuring they do what they claim, and we prove correctness using Dafny’s function specifications (`ensures`) by comparing the result against the reference functions `str2int` and `int2str`.
+// - Has three **pure string-based** arithmetic methods, each **not** using `Str2Int` or `Int2Str` inside the method body:
+// 1. `Add(s1, s2)`: Returns the bit-string representing the sum of `s1` and `s2`.
+// 2. `Sub(s1, s2)`: Returns the bit-string representing `s1 - s2`, assuming `s1 >= s2`.
+//  3. `Mul(s1, s2)`: Returns the bit-string representing the product `s1 * s2`.
+//
+// All methods come with specifications ensuring they do what they claim, and we prove correctness using Dafny's function specifications (`ensures`) by comparing the result against the reference functions `Str2Int` and `Int2Str`.
 
 
 method Main() {
@@ -20,42 +20,42 @@ method Main() {
 
   var b := "1101";  // decimal 13
 
-  print "a = ", a, " (decimal=", str2int(a), ")\n";
-  print "b = ", b, " (decimal=", str2int(b), ")\n";
+  print "a = ", a, " (decimal=", Str2Int(a), ")\n";
+  print "b = ", b, " (decimal=", Str2Int(b), ")\n";
 
-  var s := add(a, b);
-  print "a + b = ", s, " (decimal=", str2int(s), ")\n";
+  var s := Add(a, b);
+  print "a + b = ", s, " (decimal=", Str2Int(s), ")\n";
 
   // sub needs to know that the result will be positive
   Eleven();
   Thirteen();
-  var d := sub(b, a);
-  print "b - a = ", d, " (decimal=", str2int(d), ")\n";
+  var d := Sub(b, a);
+  print "b - a = ", d, " (decimal=", Str2Int(d), ")\n";
 
-  var m := mul(a, b);
-  print "a * b = ", m, " (decimal=", str2int(m), ")\n";
+  var m := Mul(a, b);
+  print "a * b = ", m, " (decimal=", Str2Int(m), ")\n";
 
   var z := "0";
-  var sumZ := add(a, z);
-  print a, " + 0 = ", sumZ, " (decimal=", str2int(sumZ), ")\n";
+  var sumZ := Add(a, z);
+  print a, " + 0 = ", sumZ, " (decimal=", Str2Int(sumZ), ")\n";
 
   // Convert integer -> string, then back
   var n := 9999;
-  var sN := int2str(n);
-  print "9999 -> ", sN, " -> ", str2int(sN), "\n";
+  var sN := Int2Str(n);
+  print "9999 -> ", sN, " -> ", Str2Int(sN), "\n";
 }
 
 // ----------------------------------------------------
 // 5) mul: string-based multiplication
-//    No direct use of str2int/int2str
+//    No direct use of Str2Int/Int2Str
 // ----------------------------------------------------
-method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
+method {:isolate_assertions} Mul(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
   ensures ValidBitString(res)
-  ensures str2int(res) == str2int(s1) * str2int(s2)
+  ensures Str2Int(res) == Str2Int(s1) * Str2Int(s2)
 {
-  var x := normalizeBitString(s1);
-  var y := normalizeBitString(s2);
+  var x := NormalizeBitString(s1);
+  var y := NormalizeBitString(s2);
 
   // If either is "0", result is "0"
   if x == "0" || y == "0" {
@@ -67,20 +67,20 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
   //   product = 0
   //   for each bit of y (from right to left):
   //       if that bit == 1, add (x << position) to product
-  // Use add(...) to accumulate partial sums.
+  // Use Add(...) to accumulate partial sums.
 
   var product := "0";
   var shift := "";
   var idx := |y| - 1;
   calc {
-    str2int(x) * str2int(y);
+    Str2Int(x) * Str2Int(y);
   ==
     {
-      assert str2int(product) == 0;
+      assert Str2Int(product) == 0;
       assert y[..idx+1] + shift == y;
-      assert str2int(y[..idx+1] + shift) == str2int(y);
+      assert Str2Int(y[..idx+1] + shift) == Str2Int(y);
     }
-    str2int(product) + str2int(x) * str2int(y[..idx+1] + shift);
+    Str2Int(product) + Str2Int(x) * Str2Int(y[..idx+1] + shift);
   }
   while idx >= 0
     decreases idx
@@ -89,105 +89,105 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
     invariant ValidBitString(product)
     invariant ValidBitString(shift)
     invariant forall i :: 0<=i<|shift| ==> shift[i] == '0'
-    invariant str2int(x) * str2int(y) == str2int(product) + str2int(x) * str2int(y[..idx+1] + shift)
+    invariant Str2Int(x) * Str2Int(y) == Str2Int(product) + Str2Int(x) * Str2Int(y[..idx+1] + shift)
   {
-    var prev_product := product;
-    var prev_idx := idx;
-    var prev_shift := shift;
+    var prevProduct := product;
+    var prevIdx := idx;
+    var prevShift := shift;
     if y[idx] == '1' {
       var partial := x + shift;
-      product := add(product, partial);
+      product := Add(product, partial);
     }
     shift := shift + ['0'];
     idx := idx - 1;
     assert ValidBitString(y[..idx+1] + shift);
     if y[idx+1] == '0' {
       calc {
-        str2int(x) * str2int(y);
+        Str2Int(x) * Str2Int(y);
       ==
-        str2int(prev_product) + str2int(x) * str2int(y[..idx+2] + prev_shift);
+        Str2Int(prevProduct) + Str2Int(x) * Str2Int(y[..idx+2] + prevShift);
       ==
         {
-          assert prev_product == product;
-          assert y[..idx+2] + prev_shift == y[..idx+1] + shift;
+          assert prevProduct == product;
+          assert y[..idx+2] + prevShift == y[..idx+1] + shift;
         }
-        str2int(product) + str2int(x) * str2int(y[..idx+1] + shift);
+        Str2Int(product) + Str2Int(x) * Str2Int(y[..idx+1] + shift);
       }
     }
     else {
-      var a:= |shift|;
+      var shiftLength := |shift|;
       calc {
-        str2int(x) * str2int(y);
+        Str2Int(x) * Str2Int(y);
       ==
-        str2int(prev_product) + str2int(x) * str2int(y[..idx+2] + prev_shift);
+        Str2Int(prevProduct) + Str2Int(x) * Str2Int(y[..idx+2] + prevShift);
       ==
-        { assert y[..idx+2] + prev_shift == y[..idx+1] + "1" + prev_shift;}
-        str2int(prev_product) + str2int(x) * str2int(y[..idx+1] + "1" + prev_shift);
+        { assert y[..idx+2] + prevShift == y[..idx+1] + "1" + prevShift;}
+        Str2Int(prevProduct) + Str2Int(x) * Str2Int(y[..idx+1] + "1" + prevShift);
       ==
-        { TrailingZeros(y[..idx+1] + "1" + prev_shift, a-1);
-          assert str2int(y[..idx+1] + "1" + prev_shift) == str2int(y[..idx+1] + "1") * pow2(a-1);
-          assert str2int(x) * str2int(y[..idx+1] + "1" + prev_shift) == str2int(x) * (str2int(y[..idx+1] + "1") * pow2(a-1));
-          assert str2int(x) * (str2int(y[..idx+1] + "1") * pow2(a-1)) == str2int(x) * str2int(y[..idx+1] + "1") * pow2(a-1)
-          by {MulIsAssociative(str2int(x), str2int(y[..idx+1] + "1"), pow2(a-1));}
+        { TrailingZeros(y[..idx+1] + "1" + prevShift, shiftLength-1);
+          assert Str2Int(y[..idx+1] + "1" + prevShift) == Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1);
+          assert Str2Int(x) * Str2Int(y[..idx+1] + "1" + prevShift) == Str2Int(x) * (Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1));
+          assert Str2Int(x) * (Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1)) == Str2Int(x) * Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1)
+          by {MulIsAssociative(Str2Int(x), Str2Int(y[..idx+1] + "1"), Pow2(shiftLength-1));}
 
-          assert str2int(x) * str2int(y[..idx+1] + "1" + prev_shift) == str2int(x) * str2int(y[..idx+1] + "1") * pow2(a-1);
+          assert Str2Int(x) * Str2Int(y[..idx+1] + "1" + prevShift) == Str2Int(x) * Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1);
         }
-        str2int(prev_product) + str2int(x) * str2int(y[..idx+1] + "1") * pow2(a-1);
+        Str2Int(prevProduct) + Str2Int(x) * Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1);
       ==
-        str2int(prev_product) + str2int(x) * (2*str2int(y[..idx+1]) + 1) * pow2(a-1);
+        Str2Int(prevProduct) + Str2Int(x) * (2*Str2Int(y[..idx+1]) + 1) * Pow2(shiftLength-1);
       ==
-        str2int(prev_product) + str2int(x) * pow2(a-1) + str2int(x) * (2*str2int(y[..idx+1])) * pow2(a-1);
+        Str2Int(prevProduct) + Str2Int(x) * Pow2(shiftLength-1) + Str2Int(x) * (2*Str2Int(y[..idx+1])) * Pow2(shiftLength-1);
       ==
-        {assert str2int(x) * pow2(a-1) == str2int(x + prev_shift) by {
-           TrailingZeros(x+ prev_shift, a-1);
+        {assert Str2Int(x) * Pow2(shiftLength-1) == Str2Int(x + prevShift) by {
+           TrailingZeros(x+ prevShift, shiftLength-1);
          }
          calc {
-           str2int(x) * (2*str2int(y[..idx+1])) * pow2(a-1);
+           Str2Int(x) * (2*Str2Int(y[..idx+1])) * Pow2(shiftLength-1);
          ==
            {
-             MulIsAssociative(str2int(x), 2*str2int(y[..idx+1]), pow2(a-1));
+             MulIsAssociative(Str2Int(x), 2*Str2Int(y[..idx+1]), Pow2(shiftLength-1));
            }
-           str2int(x) * ((2*str2int(y[..idx+1])) * pow2(a-1));
+           Str2Int(x) * ((2*Str2Int(y[..idx+1])) * Pow2(shiftLength-1));
          ==
            {
-             assert (2*str2int(y[..idx+1])) * pow2(a-1) == str2int(y[..idx+1]) * pow2(a)
+             assert (2*Str2Int(y[..idx+1])) * Pow2(shiftLength-1) == Str2Int(y[..idx+1]) * Pow2(shiftLength)
              by{
-               pow2_inductive(a-1);
+               Pow2Inductive(shiftLength-1);
              }
            }
-           str2int(x) * (str2int(y[..idx+1]) * pow2(a));
+           Str2Int(x) * (Str2Int(y[..idx+1]) * Pow2(shiftLength));
          ==
-           str2int(x) * str2int(y[..idx+1]) * pow2(a);
+           Str2Int(x) * Str2Int(y[..idx+1]) * Pow2(shiftLength);
          }
         }
-        str2int(prev_product) + str2int(x + prev_shift) + str2int(x) * str2int(y[..idx+1]) * pow2(a);
+        Str2Int(prevProduct) + Str2Int(x + prevShift) + Str2Int(x) * Str2Int(y[..idx+1]) * Pow2(shiftLength);
       ==
         {
-          assert str2int(y[..idx+1]) * pow2(a) ==  str2int(y[..idx+1] + shift) by {
-            TrailingZeros(y[..idx+1] + shift, a);
+          assert Str2Int(y[..idx+1]) * Pow2(shiftLength) ==  Str2Int(y[..idx+1] + shift) by {
+            TrailingZeros(y[..idx+1] + shift, shiftLength);
           }
-          MulIsAssociative(str2int(x), str2int(y[..idx+1]), pow2(a));
-          assert str2int(x) * str2int(y[..idx+1]) * pow2(a) ==  str2int(x) * str2int(y[..idx+1] + shift);
+          MulIsAssociative(Str2Int(x), Str2Int(y[..idx+1]), Pow2(shiftLength));
+          assert Str2Int(x) * Str2Int(y[..idx+1]) * Pow2(shiftLength) ==  Str2Int(x) * Str2Int(y[..idx+1] + shift);
         }
-        str2int(prev_product) + str2int(x + prev_shift) + str2int(x) * str2int(y[..idx+1] + shift);
+        Str2Int(prevProduct) + Str2Int(x + prevShift) + Str2Int(x) * Str2Int(y[..idx+1] + shift);
       ==
-        str2int(product) + str2int(x) * str2int(y[..idx+1] + shift);
+        Str2Int(product) + Str2Int(x) * Str2Int(y[..idx+1] + shift);
       }
     }
   }
   assert idx == -1;
   calc {
-    str2int(x) * str2int(y);
+    Str2Int(x) * Str2Int(y);
   ==
-    str2int(product) + str2int(x) * str2int(y[..idx+1] + shift);
+    Str2Int(product) + Str2Int(x) * Str2Int(y[..idx+1] + shift);
   ==
     { assert y[..idx+1] == "";
       assert y[..idx+1] + shift == shift;
     }
-    str2int(product) + str2int(x) * str2int(shift);
+    Str2Int(product) + Str2Int(x) * Str2Int(shift);
   ==
-    {ignoreInitialZeros(shift, |shift|);}
-    str2int(product);
+    {IgnoreInitialZeros(shift, |shift|);}
+    Str2Int(product);
   }
   res := product;
 }
@@ -195,14 +195,14 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
 // ----------------------------------------------------
 // 4) sub: string-based subtraction (s1 >= s2)
 // ----------------------------------------------------
-method sub(s1: string, s2: string) returns (res: string)
+method Sub(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
-  requires str2int(s1) >= str2int(s2)
+  requires Str2Int(s1) >= Str2Int(s2)
   ensures ValidBitString(res)
-  ensures str2int(res) == str2int(s1) - str2int(s2)
+  ensures Str2Int(res) == Str2Int(s1) - Str2Int(s2)
 {
-  var x := normalizeBitString(s1);
-  var y := normalizeBitString(s2);
+  var x := NormalizeBitString(s1);
+  var y := NormalizeBitString(s2);
 
   // If y == "0", the difference is x
   if y == "0" {
@@ -220,31 +220,31 @@ method sub(s1: string, s2: string) returns (res: string)
   var borrow := 0;
   var sb := [];  // reversed result
 
-  pow2_zero();
-  assert borrow * pow2(|sb|) == 0;
+  Pow2Zero();
+  assert borrow * Pow2(|sb|) == 0;
   calc {
-    if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0;
+    if i >= 0 then Str2Int(x[0..i+1]) * Pow2(|sb|) else 0;
   ==
-    str2int(x[0..i+1]) * pow2(|sb|);
+    Str2Int(x[0..i+1]) * Pow2(|sb|);
   ==
-    str2int(x[0..i+1]) * 1;
+    Str2Int(x[0..i+1]) * 1;
   ==
-    str2int(x[0..i+1]);
+    Str2Int(x[0..i+1]);
   ==
     {assert x[0..i+1] == x;}
-    str2int(x);
+    Str2Int(x);
   }
   calc {
-    if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0;
+    if j >= 0 then Str2Int(y[0..j+1]) * Pow2(|sb|) else 0;
   ==
-    str2int(y[0..j+1]) * pow2(|sb|);
+    Str2Int(y[0..j+1]) * Pow2(|sb|);
   ==
-    str2int(y[0..j+1]) * 1;
+    Str2Int(y[0..j+1]) * 1;
   ==
-    str2int(y[0..j+1]);
+    Str2Int(y[0..j+1]);
   ==
     {assert y[0..j+1] == y;}
-    str2int(y);
+    Str2Int(y);
   }
 
   while i >= 0 || j >= 0
@@ -254,14 +254,14 @@ method sub(s1: string, s2: string) returns (res: string)
     invariant i >= -1
     invariant j >= -1
     invariant ValidBitString(sb)
-    invariant str2int(x) - str2int(y) ==
-              str2int(sb) -
-              (borrow * pow2(|sb|)) +
-              (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) -
-              (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
+    invariant Str2Int(x) - Str2Int(y) ==
+              Str2Int(sb) -
+              (borrow * Pow2(|sb|)) +
+              (if i >= 0 then Str2Int(x[0..i+1]) * Pow2(|sb|) else 0) -
+              (if j >= 0 then Str2Int(y[0..j+1]) * Pow2(|sb|) else 0)
   {
-    var old_sb := sb;
-    var old_borrow := borrow;
+    var oldSb := sb;
+    var oldBorrow := borrow;
     var bitX := 0;
     if i >= 0 {
       bitX := if x[i] == '1' then 1 else 0;
@@ -288,170 +288,170 @@ method sub(s1: string, s2: string) returns (res: string)
       sb := ['0'] + sb;
     }
 
-    var old_i := i;
-    var old_j := j;
+    var oldI := i;
+    var oldJ := j;
 
     if i >= 0 { i := i - 1; }
     if j >= 0 { j := j - 1; }
 
-    subAux(x, y, old_sb, sb, old_i, old_j, i, j, borrow, bitX, bitY, rawDiff, diff, old_borrow);
+    SubAux(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow);
   }
 
 
   // If borrow is 1, the RHS will be negative,
   // but the LHS is nonnegative
-  assert str2int(x) - str2int(y) == str2int(sb) - (borrow * pow2(|sb|));
-  assert pow2(|sb|) > str2int(sb) by {bound(sb);}
+  assert Str2Int(x) - Str2Int(y) == Str2Int(sb) - (borrow * Pow2(|sb|));
+  assert Pow2(|sb|) > Str2Int(sb) by {Bound(sb);}
   assert borrow == 0;
 
 
-  assert str2int(x) - str2int(y) == str2int(sb);
+  assert Str2Int(x) - Str2Int(y) == Str2Int(sb);
 
-  res := normalizeBitString(sb);
+  res := NormalizeBitString(sb);
 
-  assert str2int(sb) == str2int(res);
+  assert Str2Int(sb) == Str2Int(res);
 }
 
 // Helper lemma for subtraction reasoning
-lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
-                                   old_j: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, old_borrow:nat)
+lemma {:isolate_assertions} SubAux(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                   oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   // It might be cleaner to label and selectively reveal these preconditions
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
-  requires ValidBitString(old_sb)
+  requires ValidBitString(oldSb)
   requires 0 <= borrow <= 1
   requires i <= |x| - 1 && j <= |y| - 1
-  requires old_i <= |x| - 1 && old_j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
   requires i >= -1
   requires j >= -1
-  requires old_i >= 0 ==> i == old_i - 1
-  requires old_j >= 0 ==> j == old_j - 1
-  requires old_i < 0 ==> i == old_i
-  requires old_j < 0 ==> j == old_j
-  requires old_i >= 0 ==> (bitX == if x[old_i] == '1' then 1 else 0)
-  requires old_j >= 0 ==> (bitY == if y[old_j] == '1' then 1 else 0)
-  requires old_i < 0 ==> bitX == 0
-  requires old_j < 0 ==> bitY == 0
-  requires |old_sb| == |sb| - 1
-  requires (if diff == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb
-  requires ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0) - old_borrow) == rawDiff
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires (if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  requires ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff
   requires rawDiff < 0 ==> (diff == rawDiff + 2) && borrow == 1
   requires rawDiff >= 0 ==> (diff == rawDiff) && borrow == 0
-  ensures str2int(old_sb) -
-          (old_borrow * pow2(|old_sb|)) +
-          (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) -
-          (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0) ==
-          str2int(sb) -
-          (borrow * pow2(|sb|)) +
-          (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) -
-          (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
+  ensures Str2Int(oldSb) -
+          (oldBorrow * Pow2(|oldSb|)) +
+          (if oldI >= 0 then Str2Int(x[0..oldI+1]) * Pow2(|oldSb|) else 0) -
+          (if oldJ >= 0 then Str2Int(y[0..oldJ+1]) * Pow2(|oldSb|) else 0) ==
+          Str2Int(sb) -
+          (borrow * Pow2(|sb|)) +
+          (if i >= 0 then Str2Int(x[0..i+1]) * Pow2(|sb|) else 0) -
+          (if j >= 0 then Str2Int(y[0..j+1]) * Pow2(|sb|) else 0)
 {
-  // This mirrors the structure of addAux but modified for subtraction
+  // This mirrors the structure of AddAux but modified for subtraction
   calc {
-    str2int(old_sb) -
-    (old_borrow * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) -
-    (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0);
+    Str2Int(oldSb) -
+    (oldBorrow * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI+1]) * Pow2(|oldSb|) else 0) -
+    (if oldJ >= 0 then Str2Int(y[0..oldJ+1]) * Pow2(|oldSb|) else 0);
   == // Apply BitStringDecomposition for both numbers
     {
-      BitStringDecomposition(x, old_i);
-      BitStringDecomposition(y, old_j);
+      BitStringDecomposition(x, oldI);
+      BitStringDecomposition(y, oldJ);
     }
-    str2int(old_sb) -
-    (old_borrow * pow2(|old_sb|)) +
-    (if old_i >= 0 then (str2int(x[0..old_i]) * 2 + bitX) * pow2(|old_sb|) else 0) -
-    (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
-  == // Distribute pow2(|old_sb|)
+    Str2Int(oldSb) -
+    (oldBorrow * Pow2(|oldSb|)) +
+    (if oldI >= 0 then (Str2Int(x[0..oldI]) * 2 + bitX) * Pow2(|oldSb|) else 0) -
+    (if oldJ >= 0 then (Str2Int(y[0..oldJ]) * 2 + bitY) * Pow2(|oldSb|) else 0);
+  == // Distribute Pow2(|oldSb|)
     {
-      if old_i >= 0 {
-        assert (str2int(x[0..old_i]) * 2 + bitX) * pow2(|old_sb|) == str2int(x[0..old_i]) * 2 * pow2(|old_sb|) + bitX * pow2(|old_sb|);
+      if oldI >= 0 {
+        assert (Str2Int(x[0..oldI]) * 2 + bitX) * Pow2(|oldSb|) == Str2Int(x[0..oldI]) * 2 * Pow2(|oldSb|) + bitX * Pow2(|oldSb|);
       }
-      if old_j >= 0 {
+      if oldJ >= 0 {
         calc {
-          (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|);
+          (Str2Int(y[0..oldJ]) * 2 + bitY) * Pow2(|oldSb|);
         ==
           {
 
-            var A:= str2int(y[0..old_j]);
+            var A:= Str2Int(y[0..oldJ]);
             var B:= bitY;
-            var C:= pow2(|old_sb|);
-            rearrange(A, B, C);
+            var C:= Pow2(|oldSb|);
+            Rearrange(A, B, C);
           }
-          str2int(y[0..old_j]) * 2 * pow2(|old_sb|) + bitY * pow2(|old_sb|);
+          Str2Int(y[0..oldJ]) * 2 * Pow2(|oldSb|) + bitY * Pow2(|oldSb|);
         }
       }
     }
-    str2int(old_sb) -
-    (old_borrow * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * 2 * pow2(|old_sb|) + bitX * pow2(|old_sb|) else 0) -
-    (if old_j >= 0 then str2int(y[0..old_j]) * 2 * pow2(|old_sb|) + bitY * pow2(|old_sb|) else 0);
-  == // Use pow2 relationship: 2 * pow2(n) = pow2(n+1)
+    Str2Int(oldSb) -
+    (oldBorrow * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * 2 * Pow2(|oldSb|) + bitX * Pow2(|oldSb|) else 0) -
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * 2 * Pow2(|oldSb|) + bitY * Pow2(|oldSb|) else 0);
+  == // Use Pow2 relationship: 2 * Pow2(n) = Pow2(n+1)
     {
-      if old_i >= 0 {
+      if oldI >= 0 {
         calc {
-          str2int(x[0..old_i]) * 2 * pow2(|old_sb|) + bitX * pow2(|old_sb|);
+          Str2Int(x[0..oldI]) * 2 * Pow2(|oldSb|) + bitX * Pow2(|oldSb|);
         ==
-          (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) + bitX * pow2(|old_sb|);
+          (Str2Int(x[0..oldI]) * 2) * Pow2(|oldSb|) + bitX * Pow2(|oldSb|);
         ==
           {
-            assert (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) == str2int(x[0..old_i]) * (2 * pow2(|old_sb|))
+            assert (Str2Int(x[0..oldI]) * 2) * Pow2(|oldSb|) == Str2Int(x[0..oldI]) * (2 * Pow2(|oldSb|))
             by {
-              var A := str2int(x[0..old_i]);
-              var B := pow2(|old_sb|);
+              var A := Str2Int(x[0..oldI]);
+              var B := Pow2(|oldSb|);
               assert (A * 2) * B == A * (2 * B );
             }
 
           }
-          str2int(x[0..old_i]) * (2 * pow2(|old_sb|)) + bitX * pow2(|old_sb|); // FIX
+          Str2Int(x[0..oldI]) * (2 * Pow2(|oldSb|)) + bitX * Pow2(|oldSb|); // FIX
         ==
           {
-            pow2_inductive(|old_sb|);
-            assert pow2(|old_sb|+1) == 2 * pow2(|old_sb|);
+            Pow2Inductive(|oldSb|);
+            assert Pow2(|oldSb|+1) == 2 * Pow2(|oldSb|);
           }
-          str2int(x[0..old_i]) * pow2(|old_sb|+1) + bitX * pow2(|old_sb|);
+          Str2Int(x[0..oldI]) * Pow2(|oldSb|+1) + bitX * Pow2(|oldSb|);
         }
       }
-      if old_j >= 0 {
+      if oldJ >= 0 {
         calc {
-          str2int(y[0..old_j]) * 2 * pow2(|old_sb|) + bitY * pow2(|old_sb|);
+          Str2Int(y[0..oldJ]) * 2 * Pow2(|oldSb|) + bitY * Pow2(|oldSb|);
         ==
-          (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) + bitY * pow2(|old_sb|);
+          (Str2Int(y[0..oldJ]) * 2) * Pow2(|oldSb|) + bitY * Pow2(|oldSb|);
         ==
           {
-            assert (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) == str2int(y[0..old_j]) * (2 * pow2(|old_sb|)) by {
-              var A := str2int(y[0..old_j]);
-              var B := pow2(|old_sb|);
+            assert (Str2Int(y[0..oldJ]) * 2) * Pow2(|oldSb|) == Str2Int(y[0..oldJ]) * (2 * Pow2(|oldSb|)) by {
+              var A := Str2Int(y[0..oldJ]);
+              var B := Pow2(|oldSb|);
               assert (A * 2) * B == A * (2 * B );
             }
           }
-          str2int(y[0..old_j]) * (2 * pow2(|old_sb|)) + bitY * pow2(|old_sb|);
+          Str2Int(y[0..oldJ]) * (2 * Pow2(|oldSb|)) + bitY * Pow2(|oldSb|);
         ==
           {
-            pow2_inductive(|old_sb|);
-            assert pow2(|old_sb|+1) == 2 * pow2(|old_sb|);
+            Pow2Inductive(|oldSb|);
+            assert Pow2(|oldSb|+1) == 2 * Pow2(|oldSb|);
           }
-          str2int(y[0..old_j]) * pow2(|old_sb|+1) + bitY * pow2(|old_sb|);
+          Str2Int(y[0..oldJ]) * Pow2(|oldSb|+1) + bitY * Pow2(|oldSb|);
         }
       }
     }
-    str2int(old_sb) -
-    (old_borrow * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) + bitX * pow2(|old_sb|) else 0) -
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) + bitY * pow2(|old_sb|) else 0);
+    Str2Int(oldSb) -
+    (oldBorrow * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb|+1) + bitX * Pow2(|oldSb|) else 0) -
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb|+1) + bitY * Pow2(|oldSb|) else 0);
   == // Rearrange to isolate the digit contribution
-    str2int(old_sb) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
-    ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0) - old_borrow) * pow2(|old_sb|);
+    Str2Int(oldSb) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+    ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) * Pow2(|oldSb|);
   == // By the definition of diff in code
     {
-      assert ((if old_i >= 0 then bitX else 0) - (if old_j >= 0 then bitY else 0) - old_borrow) == rawDiff;
+      assert ((if oldI >= 0 then bitX else 0) - (if oldJ >= 0 then bitY else 0) - oldBorrow) == rawDiff;
     }
-    str2int(old_sb) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
-    (rawDiff * pow2(|old_sb|));
+    Str2Int(oldSb) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+    (rawDiff * Pow2(|oldSb|));
   == // Apply relationship between rawDiff, diff and borrow
     {
       if rawDiff < 0 {
@@ -463,61 +463,62 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
         assert borrow == 0;
       }
     }
-    str2int(old_sb) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
-    ((if rawDiff < 0 then diff - 2 else diff) * pow2(|old_sb|));
+    Str2Int(oldSb) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+    ((if rawDiff < 0 then diff - 2 else diff) * Pow2(|oldSb|));
   == // Rewrite in terms of borrow
-    str2int(old_sb) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
-    (diff * pow2(|old_sb|) - (if borrow == 1 then 2 * pow2(|old_sb|) else 0));
-  == // Use pow2 relationship again
+    Str2Int(oldSb) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+    (diff * Pow2(|oldSb|) - (if borrow == 1 then 2 * Pow2(|oldSb|) else 0));
+  == // Use Pow2 relationship again
     {
       if borrow == 1 {
-        assert 2 * pow2(|old_sb|) == pow2(|old_sb|+1) by { pow2_inductive(|old_sb|); }
+        assert 2 * Pow2(|oldSb|) == Pow2(|oldSb|+1) by { Pow2Inductive(|oldSb|); }
       }
     }
-    str2int(old_sb) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb|+1) else 0) -
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb|+1) else 0) +
-    (diff * pow2(|old_sb|) - (borrow * pow2(|old_sb|+1)));
+    Str2Int(oldSb) +
+    Str2Int(oldSb) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb|+1) else 0) -
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb|+1) else 0) +
+    (diff * Pow2(|oldSb|) - (borrow * Pow2(|oldSb|+1)));
   == // Apply PrependDigitToString
     {
-      PrependDigitToString(diff, old_sb);
+      PrependDigitToString(diff, oldSb);
     }
-    str2int(if diff == 1 then ['1'] + old_sb else ['0'] + old_sb) +
-    (if i >= 0 then str2int(x[0..i+1]) * pow2(|old_sb|+1) else 0) -
-    (if j >= 0 then str2int(y[0..j+1]) * pow2(|old_sb|+1) else 0) -
-    (borrow * pow2(|old_sb|+1));
+    Str2Int(if diff == 1 then ['1'] + oldSb else ['0'] + oldSb) +
+    (if i >= 0 then Str2Int(x[0..i+1]) * Pow2(|oldSb|+1) else 0) -
+    (if j >= 0 then Str2Int(y[0..j+1]) * Pow2(|oldSb|+1) else 0) -
+    (borrow * Pow2(|oldSb|+1));
   }
 }
 
 
-lemma rearrange(A:int, B:int, C:int)
+lemma Rearrange(A:int, B:int, C:int)
   ensures (A * 2 + B) * C == A * 2 * C + B * C
 {
 }
 
 
-opaque function pow2(n: nat): nat
+opaque function Pow2(n: nat): nat
 {
-  if n == 0 then 1 else 2 * pow2(n - 1)
+  if n == 0 then 1 else 2 * Pow2(n - 1)
 }
 
 
 // ----------------------------------------------------
-// 3) add: string-based addition (no str2int / int2str)
+// 3) add: string-based addition (no Str2Int / Int2Str)
 // ----------------------------------------------------
-method add(s1: string, s2: string) returns (res: string)
+method Add(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
   ensures ValidBitString(res)
-  ensures str2int(res) == str2int(s1) + str2int(s2)
+  ensures Str2Int(res) == Str2Int(s1) + Str2Int(s2)
 {
   // We implement classic binary addition from right to left.
   // Step 1: Normalize inputs (drop leading zeros if needed).
-  var x := normalizeBitString(s1);
-  var y := normalizeBitString(s2);
+  var x := NormalizeBitString(s1);
+  var y := NormalizeBitString(s2);
 
   if y == "0" {
     res := x;
@@ -532,11 +533,11 @@ method add(s1: string, s2: string) returns (res: string)
 
   assert x[0..i+1] == x;
   assert y[0..j+1] == y;
-  assert str2int(x) + str2int(y) ==
-         (if i >= 0 then str2int(x[0..i+1]) else 0) +
-         (if j >= 0 then str2int(y[0..j+1]) else 0);
+  assert Str2Int(x) + Str2Int(y) ==
+         (if i >= 0 then Str2Int(x[0..i+1]) else 0) +
+         (if j >= 0 then Str2Int(y[0..j+1]) else 0);
 
-  pow2_zero();
+  Pow2Zero();
   while i >= 0 || j >= 0 || carry != 0
     decreases i + j + 2, carry
     invariant 0 <= carry <= 1
@@ -544,14 +545,14 @@ method add(s1: string, s2: string) returns (res: string)
     invariant i >= -1
     invariant j >= -1
     invariant ValidBitString(sb)
-    invariant str2int(x) + str2int(y) ==
-              str2int(sb) +
-              (carry * pow2(|sb|)) +
-              (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) +
-              (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
+    invariant Str2Int(x) + Str2Int(y) ==
+              Str2Int(sb) +
+              (carry * Pow2(|sb|)) +
+              (if i >= 0 then Str2Int(x[0..i+1]) * Pow2(|sb|) else 0) +
+              (if j >= 0 then Str2Int(y[0..j+1]) * Pow2(|sb|) else 0)
   {
-    var old_sb := sb;
-    var old_carry := carry;
+    var oldSb := sb;
+    var oldCarry := carry;
     var bitX := 0;
     if i >= 0 {
       bitX := if x[i] == '1' then 1 else 0;
@@ -573,23 +574,23 @@ method add(s1: string, s2: string) returns (res: string)
       sb := ['0'] + sb;
     }
 
-    var old_i := i;
-    var old_j := j;
+    var oldI := i;
+    var oldJ := j;
 
     if i >= 0 { i := i - 1; }
     if j >= 0 { j := j - 1; }
 
-    addAux(x, y, old_sb, sb, old_i,
-           old_j, i, j, carry, bitX, bitY, digit, sum, old_carry);
+    AddAux(x, y, oldSb, sb, oldI,
+           oldJ, i, j, carry, bitX, bitY, digit, sum, oldCarry);
 
 
   }
 
-  assert str2int(x) + str2int(y) == str2int(sb);
+  assert Str2Int(x) + Str2Int(y) == Str2Int(sb);
 
-  res := normalizeBitString(sb);
+  res := NormalizeBitString(sb);
 
-  assert str2int(sb) == str2int(res);
+  assert Str2Int(sb) == Str2Int(res);
 
   return res;
 }
@@ -601,187 +602,187 @@ method add(s1: string, s2: string) returns (res: string)
 // So really I need to go over it again to reduce brittleness, as in
 // https://dafny.org/blog/2023/12/01/avoiding-verification-brittleness/
 // I didn't check whether some of the intermediate steps can be taken out
-lemma {:isolate_assertions} addAux(x: string, y: string, old_sb: string, sb: string, old_i: int,
-                                   old_j: int, i:int, j:int, carry:nat, bitX:nat, bitY:nat, digit:nat, sum:nat, old_carry:nat)
+lemma {:isolate_assertions} AddAux(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                                   oldJ: int, i:int, j:int, carry:nat, bitX:nat, bitY:nat, digit:nat, sum:nat, oldCarry:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
-  requires ValidBitString(old_sb)
+  requires ValidBitString(oldSb)
   requires 0 <= carry <= 1
   requires i <= |x| - 1 && j <= |y| - 1
-  requires old_i <= |x| - 1 && old_j <= |y| - 1
+  requires oldI <= |x| - 1 && oldJ <= |y| - 1
   requires i >= -1
   requires j >= -1
-  requires old_i >= 0 ==> i == old_i - 1
-  requires old_j >= 0 ==> j == old_j - 1
-  requires old_i < 0 ==> i == old_i
-  requires old_j < 0 ==> j == old_j
-  requires old_i >= 0 ==> (bitX == if x[old_i] == '1' then 1 else 0)
-  requires old_j >= 0 ==> (bitY == if y[old_j] == '1' then 1 else 0)
-  requires old_i < 0 ==> bitX == 0
-  requires old_j < 0 ==> bitY == 0
-  requires |old_sb| == |sb| - 1
-  requires sum == bitX + bitY + old_carry
+  requires oldI >= 0 ==> i == oldI - 1
+  requires oldJ >= 0 ==> j == oldJ - 1
+  requires oldI < 0 ==> i == oldI
+  requires oldJ < 0 ==> j == oldJ
+  requires oldI >= 0 ==> (bitX == if x[oldI] == '1' then 1 else 0)
+  requires oldJ >= 0 ==> (bitY == if y[oldJ] == '1' then 1 else 0)
+  requires oldI < 0 ==> bitX == 0
+  requires oldJ < 0 ==> bitY == 0
+  requires |oldSb| == |sb| - 1
+  requires sum == bitX + bitY + oldCarry
   requires digit == sum % 2
   requires carry == sum / 2
-  requires (if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb
-  ensures str2int(old_sb) +
-          (old_carry * pow2(|old_sb|)) +
-          (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
-          (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0) ==
-          str2int(sb) +
-          (carry * pow2(|sb|)) +
-          (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) +
-          (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
+  requires (if digit == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb
+  ensures Str2Int(oldSb) +
+          (oldCarry * Pow2(|oldSb|)) +
+          (if oldI >= 0 then Str2Int(x[0..oldI+1]) * Pow2(|oldSb|) else 0) +
+          (if oldJ >= 0 then Str2Int(y[0..oldJ+1]) * Pow2(|oldSb|) else 0) ==
+          Str2Int(sb) +
+          (carry * Pow2(|sb|)) +
+          (if i >= 0 then Str2Int(x[0..i+1]) * Pow2(|sb|) else 0) +
+          (if j >= 0 then Str2Int(y[0..j+1]) * Pow2(|sb|) else 0)
 {
   calc {
-    str2int(old_sb) +
-    (old_carry * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i+1]) * pow2(|old_sb|) else 0) +
-    (if old_j >= 0 then str2int(y[0..old_j+1]) * pow2(|old_sb|) else 0);
-  == // Split the x[0..old_i+1] into x[0..old_i] and the last bit
+    Str2Int(oldSb) +
+    (oldCarry * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI+1]) * Pow2(|oldSb|) else 0) +
+    (if oldJ >= 0 then Str2Int(y[0..oldJ+1]) * Pow2(|oldSb|) else 0);
+  == // Split the x[0..oldI+1] into x[0..oldI] and the last bit
     {
-      BitStringDecomposition(x, old_i);
-      BitStringDecomposition(y, old_j);
+      BitStringDecomposition(x, oldI);
+      BitStringDecomposition(y, oldJ);
     }
 
 
 
-    str2int(old_sb) +
-    (old_carry * pow2(|old_sb|)) +
-    (if old_i >= 0 then (str2int(x[0..old_i]) * 2 + bitX) * pow2(|old_sb|) else 0) +
-    (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
+    Str2Int(oldSb) +
+    (oldCarry * Pow2(|oldSb|)) +
+    (if oldI >= 0 then (Str2Int(x[0..oldI]) * 2 + bitX) * Pow2(|oldSb|) else 0) +
+    (if oldJ >= 0 then (Str2Int(y[0..oldJ]) * 2 + bitY) * Pow2(|oldSb|) else 0);
 
-  == // Start distributing pow2(|old_sb|) in the third term
-    str2int(old_sb) +
-    (old_carry * pow2(|old_sb|)) +
-    (if old_i >= 0 then (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) + bitX * pow2(|old_sb|) else 0) +
-    (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
+  == // Start distributing Pow2(|oldSb|) in the third term
+    Str2Int(oldSb) +
+    (oldCarry * Pow2(|oldSb|)) +
+    (if oldI >= 0 then (Str2Int(x[0..oldI]) * 2) * Pow2(|oldSb|) + bitX * Pow2(|oldSb|) else 0) +
+    (if oldJ >= 0 then (Str2Int(y[0..oldJ]) * 2 + bitY) * Pow2(|oldSb|) else 0);
 
   == // Use associative property: (a * b) * c = a * (b * c) in the third term
     {
-      if old_i >= 0 {
-        assert (str2int(x[0..old_i]) * 2) * pow2(|old_sb|) == str2int(x[0..old_i]) * (2 * pow2(|old_sb|));
+      if oldI >= 0 {
+        assert (Str2Int(x[0..oldI]) * 2) * Pow2(|oldSb|) == Str2Int(x[0..oldI]) * (2 * Pow2(|oldSb|));
       }
     }
-    str2int(old_sb) +
-    (old_carry * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * (2 * pow2(|old_sb|)) + bitX * pow2(|old_sb|) else 0) +
-    (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
+    Str2Int(oldSb) +
+    (oldCarry * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * (2 * Pow2(|oldSb|)) + bitX * Pow2(|oldSb|) else 0) +
+    (if oldJ >= 0 then (Str2Int(y[0..oldJ]) * 2 + bitY) * Pow2(|oldSb|) else 0);
 
-  == // Apply identity: 2 * pow2(n) = pow2(n+1) in the third term
+  == // Apply identity: 2 * Pow2(n) = Pow2(n+1) in the third term
     {
-      assert pow2(|old_sb| + 1) == 2 * pow2(|old_sb|) by {
-        pow2_inductive(|old_sb|);
+      assert Pow2(|oldSb| + 1) == 2 * Pow2(|oldSb|) by {
+        Pow2Inductive(|oldSb|);
       }
     }
-    str2int(old_sb) +
-    (old_carry * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
-    (if old_j >= 0 then (str2int(y[0..old_j]) * 2 + bitY) * pow2(|old_sb|) else 0);
+    Str2Int(oldSb) +
+    (oldCarry * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb| + 1) + bitX * Pow2(|oldSb|) else 0) +
+    (if oldJ >= 0 then (Str2Int(y[0..oldJ]) * 2 + bitY) * Pow2(|oldSb|) else 0);
 
-  == // Start distributing pow2(|old_sb|) in the fourth term
-    str2int(old_sb) +
-    (old_carry * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
-    (if old_j >= 0 then (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) + bitY * pow2(|old_sb|) else 0);
+  == // Start distributing Pow2(|oldSb|) in the fourth term
+    Str2Int(oldSb) +
+    (oldCarry * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb| + 1) + bitX * Pow2(|oldSb|) else 0) +
+    (if oldJ >= 0 then (Str2Int(y[0..oldJ]) * 2) * Pow2(|oldSb|) + bitY * Pow2(|oldSb|) else 0);
 
   == // Use associative property in the fourth term
     {
-      if old_j >= 0 {
-        assert (str2int(y[0..old_j]) * 2) * pow2(|old_sb|) == str2int(y[0..old_j]) * (2 * pow2(|old_sb|));
+      if oldJ >= 0 {
+        assert (Str2Int(y[0..oldJ]) * 2) * Pow2(|oldSb|) == Str2Int(y[0..oldJ]) * (2 * Pow2(|oldSb|));
       }
     }
-    str2int(old_sb) +
-    (old_carry * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
-    (if old_j >= 0 then str2int(y[0..old_j]) * (2 * pow2(|old_sb|)) + bitY * pow2(|old_sb|) else 0);
+    Str2Int(oldSb) +
+    (oldCarry * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb| + 1) + bitX * Pow2(|oldSb|) else 0) +
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * (2 * Pow2(|oldSb|)) + bitY * Pow2(|oldSb|) else 0);
 
-  == // Apply identity: 2 * pow2(n) = pow2(n+1) in the fourth term
+  == // Apply identity: 2 * Pow2(n) = Pow2(n+1) in the fourth term
     {
-      pow2_inductive(|old_sb|);
+      Pow2Inductive(|oldSb|);
     }
-    str2int(old_sb) +
-    (old_carry * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) + bitX * pow2(|old_sb|) else 0) +
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) + bitY * pow2(|old_sb|) else 0);
+    Str2Int(oldSb) +
+    (oldCarry * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb| + 1) + bitX * Pow2(|oldSb|) else 0) +
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb| + 1) + bitY * Pow2(|oldSb|) else 0);
 
 
 
-  == // Group bitX, bitY and old_carry terms
-    str2int(old_sb) +
-    ((old_carry + (if old_i >= 0 then bitX else 0) + (if old_j >= 0 then bitY else 0)) * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
+  == // Group bitX, bitY and oldCarry terms
+    Str2Int(oldSb) +
+    ((oldCarry + (if oldI >= 0 then bitX else 0) + (if oldJ >= 0 then bitY else 0)) * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb| + 1) else 0) +
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb| + 1) else 0);
   == // By definition of sum in the code
     {
-      assert old_carry + (if old_i >= 0 then bitX else 0) + (if old_j >= 0 then bitY else 0) == sum;
+      assert oldCarry + (if oldI >= 0 then bitX else 0) + (if oldJ >= 0 then bitY else 0) == sum;
     }
-    str2int(old_sb) +
-    (sum * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
+    Str2Int(oldSb) +
+    (sum * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb| + 1) else 0) +
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb| + 1) else 0);
   == // sum = 2*carry + digit
-    str2int(old_sb) +
-    ((2 * carry + digit) * pow2(|old_sb|)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
-  == // Distribute pow2(|old_sb|)
+    Str2Int(oldSb) +
+    ((2 * carry + digit) * Pow2(|oldSb|)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb| + 1) else 0) +
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb| + 1) else 0);
+  == // Distribute Pow2(|oldSb|)
     {
       calc {
-        ((2 * carry + digit) * pow2(|old_sb|));
-        2 * carry * pow2(|old_sb|) + digit * pow2(|old_sb|);
+        ((2 * carry + digit) * Pow2(|oldSb|));
+        2 * carry * Pow2(|oldSb|) + digit * Pow2(|oldSb|);
         {
-          pow2_inductive(|old_sb|);
+          Pow2Inductive(|oldSb|);
         }
-        (digit * pow2(|old_sb|)) + (carry * pow2(|old_sb| + 1));
+        (digit * Pow2(|oldSb|)) + (carry * Pow2(|oldSb| + 1));
       }
     }
-    str2int(old_sb) +
-    (digit * pow2(|old_sb|)) +
-    (carry * pow2(|old_sb| + 1)) +
-    (if old_i >= 0 then str2int(x[0..old_i]) * pow2(|old_sb| + 1) else 0) +
-    (if old_j >= 0 then str2int(y[0..old_j]) * pow2(|old_sb| + 1) else 0);
-  == // Definition of str2int for new digit + old_sb
+    Str2Int(oldSb) +
+    (digit * Pow2(|oldSb|)) +
+    (carry * Pow2(|oldSb| + 1)) +
+    (if oldI >= 0 then Str2Int(x[0..oldI]) * Pow2(|oldSb| + 1) else 0) +
+    (if oldJ >= 0 then Str2Int(y[0..oldJ]) * Pow2(|oldSb| + 1) else 0);
+  == // Definition of Str2Int for new digit + oldSb
     {
-      PrependDigitToString(digit, old_sb);
+      PrependDigitToString(digit, oldSb);
     }
-    str2int(if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) +
-    (carry * pow2(|old_sb| + 1)) +
-    (if old_i - 1 >= 0 then str2int(x[0..(old_i-1)+1]) * pow2(|old_sb| + 1) else 0) +
-    (if old_j - 1 >= 0 then str2int(y[0..(old_j-1)+1]) * pow2(|old_sb| + 1) else 0);
+    Str2Int(if digit == 1 then ['1'] + oldSb else ['0'] + oldSb) +
+    (carry * Pow2(|oldSb| + 1)) +
+    (if oldI - 1 >= 0 then Str2Int(x[0..(oldI-1)+1]) * Pow2(|oldSb| + 1) else 0) +
+    (if oldJ - 1 >= 0 then Str2Int(y[0..(oldJ-1)+1]) * Pow2(|oldSb| + 1) else 0);
   == // By definition of sb and updated i, j
     {
-      assert pow2(|sb|) == pow2(|old_sb| + 1);
-      assert (if digit == 1 then ['1'] + old_sb else ['0'] + old_sb) == sb;
+      assert Pow2(|sb|) == Pow2(|oldSb| + 1);
+      assert (if digit == 1 then ['1'] + oldSb else ['0'] + oldSb) == sb;
     }
-    str2int(sb) +
-    (carry * pow2(|sb|)) +
-    (if i >= 0 then str2int(x[0..i+1]) * pow2(|sb|) else 0) +
-    (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0);
+    Str2Int(sb) +
+    (carry * Pow2(|sb|)) +
+    (if i >= 0 then Str2Int(x[0..i+1]) * Pow2(|sb|) else 0) +
+    (if j >= 0 then Str2Int(y[0..j+1]) * Pow2(|sb|) else 0);
   }
 }
 
 // ----------------------------------------------------
-// 1) str2int: bit-string -> nat (reference function)
+// 1) Str2Int: bit-string -> nat (reference function)
 // ----------------------------------------------------
-function str2int(s: string): nat
+function Str2Int(s: string): nat
   requires ValidBitString(s)
   decreases s
 {
-  if |s| == 0 then  0  else  (2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0))
+  if |s| == 0 then  0  else  (2 * Str2Int(s[0..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0))
 }
 
 // ----------------------------------------------------
-// 2) int2str: nat -> bit-string (reference function)
+// 2) Int2Str: nat -> bit-string (reference function)
 //    - "0" if n=0
 //    - no leading zeros otherwise
 // ----------------------------------------------------
-function int2str(n: nat): string
-  ensures ValidBitString(int2str(n))
-  ensures str2int(int2str(n)) == n
+function Int2Str(n: nat): string
+  ensures ValidBitString(Int2Str(n))
+  ensures Str2Int(Int2Str(n)) == n
   decreases n
-  // Note this specification doesn't check the other way, e.g. int2str(str2int(s)) = s.
+  // Note this specification doesn't check the other way, e.g. Int2Str(Str2Int(s)) = s.
   // That would be a little more complicated, since not all strings are valid---we'd have
   // to ensure that s is a valid bitstring
 {
@@ -793,9 +794,9 @@ function int2str(n: nat): string
         else (
             // Recursively build from most significant bits.
             // The last character added is (n % 2).
-            assert ValidBitString(int2str(n/2));
-            assert str2int(int2str(n/2)) == n/2;
-            int2str(n / 2) + (if n % 2 == 0 then "0" else "1")
+            assert ValidBitString(Int2Str(n/2));
+            assert Str2Int(Int2Str(n/2)) == n/2;
+            Int2Str(n / 2) + (if n % 2 == 0 then "0" else "1")
           )
        )
 }
@@ -812,45 +813,45 @@ predicate ValidBitString(s: string)
 // ----------------------------------------------------
 
 
-lemma ignoreInitialZeros(s : string, num_zeros:int)
+lemma IgnoreInitialZeros(s : string, numZeros:int)
   requires ValidBitString(s)
-  requires 0<=num_zeros<=|s|
-  requires forall i :: 0<=i<num_zeros ==> s[i] == '0'
-  ensures str2int(s) == str2int(s[num_zeros..])
+  requires 0<=numZeros<=|s|
+  requires forall i :: 0<=i<numZeros ==> s[i] == '0'
+  ensures Str2Int(s) == Str2Int(s[numZeros..])
 {
-  if num_zeros == 0 {
+  if numZeros == 0 {
     return;
   }
-  if num_zeros == |s| {
-    assert str2int(s) == (2 * str2int(s[0..|s|-1]));
-    ignoreInitialZeros(s[..|s|-1], num_zeros-1);
+  if numZeros == |s| {
+    assert Str2Int(s) == (2 * Str2Int(s[0..|s|-1]));
+    IgnoreInitialZeros(s[..|s|-1], numZeros-1);
     return;
   }
-  ignoreInitialZeros(s[..|s|-1], num_zeros);
-  var t := s[num_zeros..];
+  IgnoreInitialZeros(s[..|s|-1], numZeros);
+  var t := s[numZeros..];
   calc {
-    str2int(s);
+    Str2Int(s);
   ==
-    (2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0));
+    (2 * Str2Int(s[0..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0));
   ==
-    (2 * str2int(s[num_zeros..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0));
+    (2 * Str2Int(s[numZeros..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0));
   ==
     {
-      assert t[..|t|-1] == s[num_zeros..|s|-1];
+      assert t[..|t|-1] == s[numZeros..|s|-1];
       assert t[|t|-1] == s[|s|-1];
     }
-    (2 * str2int(t[..|t|-1]) + (if t[|t|-1] == '1' then 1 else 0));
+    (2 * Str2Int(t[..|t|-1]) + (if t[|t|-1] == '1' then 1 else 0));
   ==
-    str2int(t);
+    Str2Int(t);
   }
 }
 
-method normalizeBitString(s: string) returns(t: string)
+method NormalizeBitString(s: string) returns(t: string)
   // Remove leading zeros, except keep at least one digit
   ensures ValidBitString(t)
   ensures |t| > 0
   ensures |t| > 1 ==> t[0] != '0'
-  ensures ValidBitString(s) ==> str2int(s) == str2int(t)
+  ensures ValidBitString(s) ==> Str2Int(s) == Str2Int(t)
 {
   // First pass: keep only valid bits
   var validBits := "";
@@ -872,7 +873,7 @@ method normalizeBitString(s: string) returns(t: string)
   assert ValidBitString(validBits);
   // Second pass: remove leading zeros
   var j := 0;
-  assert ValidBitString(s) ==> str2int(s[j..]) == str2int(s);
+  assert ValidBitString(s) ==> Str2Int(s[j..]) == Str2Int(s);
   while j < |validBits| && validBits[j] == '0'
     invariant j <= |validBits|
     invariant forall idx :: 0 <= idx < j ==> validBits[idx] == '0'
@@ -880,9 +881,9 @@ method normalizeBitString(s: string) returns(t: string)
     j := j + 1;
   }
   if ValidBitString(s){
-    assert str2int(s[j..]) == str2int(s) by
+    assert Str2Int(s[j..]) == Str2Int(s) by
     {
-      ignoreInitialZeros(s, j);
+      IgnoreInitialZeros(s, j);
     }
   }
 
@@ -895,42 +896,42 @@ method normalizeBitString(s: string) returns(t: string)
   return validBits[j..];
 }
 
-lemma pow2_zero()
-  ensures pow2(0) == 1
+lemma Pow2Zero()
+  ensures Pow2(0) == 1
 {
-  reveal pow2();
+  reveal Pow2();
 }
 
-lemma pow2_inductive(i: nat)
-  ensures pow2(i+1) == 2*pow2(i)
+lemma Pow2Inductive(i: nat)
+  ensures Pow2(i+1) == 2*Pow2(i)
 {
-  reveal pow2();
+  reveal Pow2();
 }
 
 // Claude was able to mostly prove this one via calc.
 // I wonder if it could be slightly easier to read by
-// defining t := s[0..i+1] and expanding str2int(t)
+// defining t := s[0..i+1] and expanding Str2Int(t)
 lemma BitStringDecomposition(s: string, i: int)
   requires ValidBitString(s) && i < |s|
-  ensures i >= 0 ==> str2int(s[0..i+1]) == str2int(s[0..i]) * 2 + (if s[i] == '1' then 1 else 0)
+  ensures i >= 0 ==> Str2Int(s[0..i+1]) == Str2Int(s[0..i]) * 2 + (if s[i] == '1' then 1 else 0)
 {
   if i >= 0 {
     calc {
-      str2int(s[0..i+1]);
-    == // By definition of str2int
+      Str2Int(s[0..i+1]);
+    == // By definition of Str2Int
       if |s[0..i+1]| == 0 then 0
-      else (2 * str2int(s[0..i+1][0..|s[0..i+1]|-1]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0));
+      else (2 * Str2Int(s[0..i+1][0..|s[0..i+1]|-1]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0));
     == // Since i >= 0, |s[0..i+1]| = i+1 > 0
-      2 * str2int(s[0..i+1][0..|s[0..i+1]|-1]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0);
+      2 * Str2Int(s[0..i+1][0..|s[0..i+1]|-1]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0);
     == // Simplify: s[0..i+1][0..|s[0..i+1]|-1] = s[0..i+1][0..i] = s[0..i]
-      2 * str2int(s[0..i+1][0..i]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0);
+      2 * Str2Int(s[0..i+1][0..i]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0);
     ==
       { assert  s[0..i+1][0..i] == s[0..i];}
-      2 * str2int(s[0..i]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0);
+      2 * Str2Int(s[0..i]) + (if s[0..i+1][|s[0..i+1]|-1] == '1' then 1 else 0);
     ==
-      2 * str2int(s[0..i]) + (if s[0..i+1][i] == '1' then 1 else 0);
+      2 * Str2Int(s[0..i]) + (if s[0..i+1][i] == '1' then 1 else 0);
     == // Simplify: s[0..i+1][i] = s[i]
-      2 * str2int(s[0..i]) + (if s[i] == '1' then 1 else 0);
+      2 * Str2Int(s[0..i]) + (if s[i] == '1' then 1 else 0);
     }
   }
 }
@@ -938,47 +939,47 @@ lemma BitStringDecomposition(s: string, i: int)
 
 lemma PrependDigitToString(digit: int, s: string)
   requires ValidBitString(s) && (digit == 0 || digit == 1)
-  ensures str2int(if digit == 1 then ['1'] + s else ['0'] + s) ==
-          str2int(s) + digit * pow2(|s|)
+  ensures Str2Int(if digit == 1 then ['1'] + s else ['0'] + s) ==
+          Str2Int(s) + digit * Pow2(|s|)
 {
-  reveal pow2();
+  reveal Pow2();
   var i := 0;
   while i < |s|
     decreases |s| - i
     invariant 0 <= i <= |s|
-    invariant str2int(if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]) == str2int(s[..i]) + digit * pow2(|s[..i]|)
+    invariant Str2Int(if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]) == Str2Int(s[..i]) + digit * Pow2(|s[..i]|)
   {
     var t := if digit == 1 then ['1'] + s[..i+1] else ['0'] + s[..i+1];
     calc {
-      str2int(t);
+      Str2Int(t);
     ==
-      if |t| == 0 then  0  else  (2 * str2int(t[0..|t|-1]) + (if t[|t|-1] == '1' then 1 else 0));
+      if |t| == 0 then  0  else  (2 * Str2Int(t[0..|t|-1]) + (if t[|t|-1] == '1' then 1 else 0));
     ==
       {assert |t| != 0;}
-      2 * str2int(t[0..|t|-1]) + (if t[|t|-1] == '1' then 1 else 0);
+      2 * Str2Int(t[0..|t|-1]) + (if t[|t|-1] == '1' then 1 else 0);
     ==
       {
         assert t[|t|-1] == s[i];
         assert t[0..|t|-1] == (if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]);
       }
-      2 * str2int(if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]) + (if s[i] == '1' then 1 else 0);
+      2 * Str2Int(if digit == 1 then ['1'] + s[..i] else ['0'] + s[..i]) + (if s[i] == '1' then 1 else 0);
     ==
-      2 * (str2int(s[..i]) + digit * pow2(|s[..i]|)) + (if s[i] == '1' then 1 else 0);
+      2 * (Str2Int(s[..i]) + digit * Pow2(|s[..i]|)) + (if s[i] == '1' then 1 else 0);
     ==
       {
         var u := s[..i+1];
         calc {
-          2 * str2int(s[..i]) + (if s[i] == '1' then 1 else 0);
+          2 * Str2Int(s[..i]) + (if s[i] == '1' then 1 else 0);
         ==
           { assert s[..i] == u[0..|u|-1];
             assert s[i] == u[|u|-1];
           }
-          2 * str2int(u[0..|u|-1]) + (if u[|u|-1] == '1' then 1 else 0);
+          2 * Str2Int(u[0..|u|-1]) + (if u[|u|-1] == '1' then 1 else 0);
         ==
-          str2int(s[..i+1]);
+          Str2Int(s[..i+1]);
         }
       }
-      str2int(s[..i+1]) + digit * pow2(|s[..i+1]|);
+      Str2Int(s[..i+1]) + digit * Pow2(|s[..i+1]|);
     }
 
     i:= i+1;
@@ -986,71 +987,71 @@ lemma PrependDigitToString(digit: int, s: string)
   assert s[..i] == s;
 }
 
-lemma bound(s : string)
+lemma Bound(s : string)
   requires ValidBitString(s)
-  ensures pow2(|s|) > str2int(s)
+  ensures Pow2(|s|) > Str2Int(s)
 {
   if |s| == 0 {
-    pow2_zero();
+    Pow2Zero();
   }
   else {
     calc {
-      str2int(s);
+      Str2Int(s);
     ==
-      2 * str2int(s[0..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0);
+      2 * Str2Int(s[0..|s|-1]) + (if s[|s|-1] == '1' then 1 else 0);
     <=
-      {bound(s[0..|s|-1]);}
-      2 * (pow2(|s[0..|s|-1]|)-1) + (if s[|s|-1] == '1' then 1 else 0);
+      {Bound(s[0..|s|-1]);}
+      2 * (Pow2(|s[0..|s|-1]|)-1) + (if s[|s|-1] == '1' then 1 else 0);
     ==
-      2 * pow2(|s|-1) - 2  + (if s[|s|-1] == '1' then 1 else 0);
+      2 * Pow2(|s|-1) - 2  + (if s[|s|-1] == '1' then 1 else 0);
     <=
-      2 * pow2(|s|-1) - 1;
+      2 * Pow2(|s|-1) - 1;
     ==
-      {pow2_inductive(|s|-1);}
-      pow2(|s|) - 1;
+      {Pow2Inductive(|s|-1);}
+      Pow2(|s|) - 1;
     <
-      pow2(|s|);
+      Pow2(|s|);
     }
   }
 
 }
 
-lemma TrailingZeros(s: string, num_zeros: nat)
+lemma TrailingZeros(s: string, numZeros: nat)
   requires ValidBitString(s)
-  requires num_zeros <= |s|
-  requires forall i :: |s| - num_zeros <= i < |s| ==> s[i] == '0'
-  ensures str2int(s) == str2int(s[..|s|-num_zeros]) * pow2(num_zeros)
+  requires numZeros <= |s|
+  requires forall i :: |s| - numZeros <= i < |s| ==> s[i] == '0'
+  ensures Str2Int(s) == Str2Int(s[..|s|-numZeros]) * Pow2(numZeros)
 {
-  if num_zeros == 0 {
+  if numZeros == 0 {
     calc {
-      str2int(s[..|s|-num_zeros]) * pow2(num_zeros);
+      Str2Int(s[..|s|-numZeros]) * Pow2(numZeros);
     ==
-      {pow2_zero();}
-      str2int(s[..|s|]) * 1;
+      {Pow2Zero();}
+      Str2Int(s[..|s|]) * 1;
     ==
       {assert s[..|s|] == s;}
-      str2int(s);
+      Str2Int(s);
     }
     return;
   }
   calc {
-    str2int(s);
+    Str2Int(s);
   ==
-    2 * str2int(s[..|s|-1]);
+    2 * Str2Int(s[..|s|-1]);
   ==
-    {TrailingZeros(s[..|s|-1], num_zeros-1);
-     assert s[..|s|-1][..|s|-num_zeros] == s[..|s|-num_zeros];
+    {TrailingZeros(s[..|s|-1], numZeros-1);
+     assert s[..|s|-1][..|s|-numZeros] == s[..|s|-numZeros];
     }
-    2 * (str2int(s[..|s|-num_zeros]) * pow2(num_zeros-1));
+    2 * (Str2Int(s[..|s|-numZeros]) * Pow2(numZeros-1));
   ==
-    str2int(s[..|s|-num_zeros]) * pow2(num_zeros-1) * 2;
+    Str2Int(s[..|s|-numZeros]) * Pow2(numZeros-1) * 2;
   ==
-    str2int(s[..|s|-num_zeros]) * (pow2(num_zeros-1) * 2);
+    Str2Int(s[..|s|-numZeros]) * (Pow2(numZeros-1) * 2);
   ==
     {
-      pow2_inductive(num_zeros-1);
+      Pow2Inductive(numZeros-1);
     }
-    str2int(s[..|s|-num_zeros]) * pow2(num_zeros);
+    Str2Int(s[..|s|-numZeros]) * Pow2(numZeros);
   }
 }
 
@@ -1060,45 +1061,45 @@ lemma MulIsAssociative(a: nat, b: nat, c: nat)
 }
 
 lemma Eleven()
-  ensures str2int("1011") == 11
+  ensures Str2Int("1011") == 11
 {
   var s := "1011";
   calc {
-    str2int(s);
+    Str2Int(s);
   ==
-    2*str2int(s[..3]) + 1;
+    2*Str2Int(s[..3]) + 1;
   ==
     {assert s[..3] == "101";}
-    2*str2int("101") + 1;
+    2*Str2Int("101") + 1;
   ==
     {
-      assert 2*str2int("10")+1 == str2int("101");}
-    2*(2*str2int("10")+1) + 1;
+      assert 2*Str2Int("10")+1 == Str2Int("101");}
+    2*(2*Str2Int("10")+1) + 1;
   ==
-    4*str2int("10") + 3;
+    4*Str2Int("10") + 3;
   ==
     11;}
 }
 
 lemma Thirteen()
-  ensures str2int("1101") == 13
+  ensures Str2Int("1101") == 13
 {
   var s := "1101";
   calc {
-    str2int(s);
+    Str2Int(s);
   ==
-    2*str2int(s[..3]) + 1;
+    2*Str2Int(s[..3]) + 1;
   ==
     {assert s[..3] == "110";}
-    2*str2int("110") + 1;
+    2*Str2Int("110") + 1;
   ==
     {
-      assert 2*str2int("11")+0 == str2int("110");}
-    2*(2*str2int("11")+0) + 1;
+      assert 2*Str2Int("11")+0 == Str2Int("110");}
+    2*(2*Str2Int("11")+0) + 1;
   ==
-    4*str2int("11") + 1;
+    4*Str2Int("11") + 1;
   ==
-    {assert str2int("11") == 3;}
+    {assert Str2Int("11") == 3;}
     4*3 + 1;
   ==
     13;
