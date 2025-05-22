@@ -1086,3 +1086,28 @@ lemma Eleven()
   ==
     11;}
 }
+
+lemma Thirteen()
+  ensures str2int("1101") == 13
+{
+  var s := "1101";
+  calc {
+    str2int(s);
+  ==
+    2*str2int(s[..3]) + 1;
+  ==
+    {assert s[..3] == "110";}
+    2*str2int("110") + 1;
+  ==
+    {
+      assert 2*str2int("11")+0 == str2int("110");}
+    2*(2*str2int("11")+0) + 1;
+  ==
+    4*str2int("11") + 1;
+  ==
+    {assert str2int("11") == 3;}
+    4*3 + 1;
+  ==
+    13;
+  }
+}
