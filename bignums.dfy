@@ -806,9 +806,6 @@ predicate ValidBitString(s: string)
   forall i | 0 <= i < |s| :: s[i] == '0' || s[i] == '1'
 }
 
-// ----------------------------------------------------
-// Helpers for string-based arithmetic
-// ----------------------------------------------------
 
 
 lemma IgnoreInitialZeros(s : string, numZeros:int)
