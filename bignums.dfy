@@ -115,7 +115,7 @@ method {:isolate_assertions} Mul(s1: string, s2: string) returns (res: string)
       }
     }
     else {
-      var shiftLength := |shift|;
+      var a := |shift|;
       calc {
         Str2Int(x) * Str2Int(y);
       ==
@@ -124,50 +124,50 @@ method {:isolate_assertions} Mul(s1: string, s2: string) returns (res: string)
         { assert y[..idx+2] + prevShift == y[..idx+1] + "1" + prevShift;}
         Str2Int(prevProduct) + Str2Int(x) * Str2Int(y[..idx+1] + "1" + prevShift);
       ==
-        { TrailingZeros(y[..idx+1] + "1" + prevShift, shiftLength-1);
-          assert Str2Int(y[..idx+1] + "1" + prevShift) == Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1);
-          assert Str2Int(x) * Str2Int(y[..idx+1] + "1" + prevShift) == Str2Int(x) * (Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1));
-          assert Str2Int(x) * (Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1)) == Str2Int(x) * Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1)
-          by {MulIsAssociative(Str2Int(x), Str2Int(y[..idx+1] + "1"), Pow2(shiftLength-1));}
+        { TrailingZeros(y[..idx+1] + "1" + prevShift, a-1);
+          assert Str2Int(y[..idx+1] + "1" + prevShift) == Str2Int(y[..idx+1] + "1") * Pow2(a-1);
+          assert Str2Int(x) * Str2Int(y[..idx+1] + "1" + prevShift) == Str2Int(x) * (Str2Int(y[..idx+1] + "1") * Pow2(a-1));
+          assert Str2Int(x) * (Str2Int(y[..idx+1] + "1") * Pow2(a-1)) == Str2Int(x) * Str2Int(y[..idx+1] + "1") * Pow2(a-1)
+          by {MulIsAssociative(Str2Int(x), Str2Int(y[..idx+1] + "1"), Pow2(a-1));}
 
-          assert Str2Int(x) * Str2Int(y[..idx+1] + "1" + prevShift) == Str2Int(x) * Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1);
+          assert Str2Int(x) * Str2Int(y[..idx+1] + "1" + prevShift) == Str2Int(x) * Str2Int(y[..idx+1] + "1") * Pow2(a-1);
         }
-        Str2Int(prevProduct) + Str2Int(x) * Str2Int(y[..idx+1] + "1") * Pow2(shiftLength-1);
+        Str2Int(prevProduct) + Str2Int(x) * Str2Int(y[..idx+1] + "1") * Pow2(a-1);
       ==
-        Str2Int(prevProduct) + Str2Int(x) * (2*Str2Int(y[..idx+1]) + 1) * Pow2(shiftLength-1);
+        Str2Int(prevProduct) + Str2Int(x) * (2*Str2Int(y[..idx+1]) + 1) * Pow2(a-1);
       ==
-        Str2Int(prevProduct) + Str2Int(x) * Pow2(shiftLength-1) + Str2Int(x) * (2*Str2Int(y[..idx+1])) * Pow2(shiftLength-1);
+        Str2Int(prevProduct) + Str2Int(x) * Pow2(a-1) + Str2Int(x) * (2*Str2Int(y[..idx+1])) * Pow2(a-1);
       ==
-        {assert Str2Int(x) * Pow2(shiftLength-1) == Str2Int(x + prevShift) by {
-           TrailingZeros(x+ prevShift, shiftLength-1);
+        {assert Str2Int(x) * Pow2(a-1) == Str2Int(x + prevShift) by {
+           TrailingZeros(x+ prevShift, a-1);
          }
          calc {
-           Str2Int(x) * (2*Str2Int(y[..idx+1])) * Pow2(shiftLength-1);
+           Str2Int(x) * (2*Str2Int(y[..idx+1])) * Pow2(a-1);
          ==
            {
-             MulIsAssociative(Str2Int(x), 2*Str2Int(y[..idx+1]), Pow2(shiftLength-1));
+             MulIsAssociative(Str2Int(x), 2*Str2Int(y[..idx+1]), Pow2(a-1));
            }
-           Str2Int(x) * ((2*Str2Int(y[..idx+1])) * Pow2(shiftLength-1));
+           Str2Int(x) * ((2*Str2Int(y[..idx+1])) * Pow2(a-1));
          ==
            {
-             assert (2*Str2Int(y[..idx+1])) * Pow2(shiftLength-1) == Str2Int(y[..idx+1]) * Pow2(shiftLength)
+             assert (2*Str2Int(y[..idx+1])) * Pow2(a-1) == Str2Int(y[..idx+1]) * Pow2(a)
              by{
-               Pow2Inductive(shiftLength-1);
+               Pow2Inductive(a-1);
              }
            }
-           Str2Int(x) * (Str2Int(y[..idx+1]) * Pow2(shiftLength));
+           Str2Int(x) * (Str2Int(y[..idx+1]) * Pow2(a));
          ==
-           Str2Int(x) * Str2Int(y[..idx+1]) * Pow2(shiftLength);
+           Str2Int(x) * Str2Int(y[..idx+1]) * Pow2(a);
          }
         }
-        Str2Int(prevProduct) + Str2Int(x + prevShift) + Str2Int(x) * Str2Int(y[..idx+1]) * Pow2(shiftLength);
+        Str2Int(prevProduct) + Str2Int(x + prevShift) + Str2Int(x) * Str2Int(y[..idx+1]) * Pow2(a);
       ==
         {
-          assert Str2Int(y[..idx+1]) * Pow2(shiftLength) ==  Str2Int(y[..idx+1] + shift) by {
-            TrailingZeros(y[..idx+1] + shift, shiftLength);
+          assert Str2Int(y[..idx+1]) * Pow2(a) ==  Str2Int(y[..idx+1] + shift) by {
+            TrailingZeros(y[..idx+1] + shift, a);
           }
-          MulIsAssociative(Str2Int(x), Str2Int(y[..idx+1]), Pow2(shiftLength));
-          assert Str2Int(x) * Str2Int(y[..idx+1]) * Pow2(shiftLength) ==  Str2Int(x) * Str2Int(y[..idx+1] + shift);
+          MulIsAssociative(Str2Int(x), Str2Int(y[..idx+1]), Pow2(a));
+          assert Str2Int(x) * Str2Int(y[..idx+1]) * Pow2(a) ==  Str2Int(x) * Str2Int(y[..idx+1] + shift);
         }
         Str2Int(prevProduct) + Str2Int(x + prevShift) + Str2Int(x) * Str2Int(y[..idx+1] + shift);
       ==
