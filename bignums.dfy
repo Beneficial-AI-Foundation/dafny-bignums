@@ -52,6 +52,11 @@ function Str2Int(s: string): nat
 }
 
 
+opaque function OStr2Int(s: string): nat {
+  Str2Int(s)
+}
+
+
 lemma IgnoreInitialZeros(s : string, numZeros:int)
   requires ValidBitString(s)
   requires 0<=numZeros<=|s|
