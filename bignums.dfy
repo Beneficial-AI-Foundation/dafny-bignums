@@ -137,6 +137,28 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
       ==
         str2int(prev_product) + str2int(x) * pow2(a-1) + str2int(x) * (2*str2int(y[..idx+1])) * pow2(a-1);
       ==
+        {assert str2int(x) * pow2(a-1) == str2int(x + prev_shift) by {
+           TrailingZeros(x+ prev_shift, a-1);
+         }
+         calc {
+           str2int(x) * (2*str2int(y[..idx+1])) * pow2(a-1);
+         ==
+           {
+             MultiplicationCommutes(str2int(x), 2*str2int(y[..idx+1]), pow2(a-1));
+           }
+           str2int(x) * ((2*str2int(y[..idx+1])) * pow2(a-1));
+         ==
+           {
+             assert (2*str2int(y[..idx+1])) * pow2(a-1) == str2int(y[..idx+1]) * pow2(a)
+             by{
+               pow2_inductive(a-1);
+             }
+           }
+           str2int(x) * (str2int(y[..idx+1]) * pow2(a));
+         ==
+           str2int(x) * str2int(y[..idx+1]) * pow2(a);
+         }
+        }
         str2int(prev_product) + str2int(x + prev_shift) + str2int(x) * str2int(y[..idx+1]) * pow2(a);
       ==
         str2int(prev_product) + str2int(x + prev_shift) + str2int(x) * str2int(y[..idx+1] + shift);
