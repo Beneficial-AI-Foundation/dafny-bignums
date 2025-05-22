@@ -1023,6 +1023,19 @@ lemma TrailingZeros(s: string, num_zeros: nat)
   requires forall i :: |s| - num_zeros <= i < |s| ==> s[i] == '0'
   ensures str2int(s) == str2int(s[..|s|-num_zeros]) * pow2(num_zeros)
 {
+  if num_zeros == 0 {
+    calc {
+      str2int(s[..|s|-num_zeros]) * pow2(num_zeros);
+    ==
+      {pow2_zero();}
+      str2int(s[..|s|]) * 1;
+    ==
+      {assert s[..|s|] == s;}
+      str2int(s);
+    }
+    return;
+  }
+  assert false;
 }
 
 lemma MulIsAssociative(a: nat, b: nat, c: nat)
