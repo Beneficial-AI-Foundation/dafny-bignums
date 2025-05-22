@@ -1035,7 +1035,26 @@ lemma TrailingZeros(s: string, num_zeros: nat)
     }
     return;
   }
-  assert false;
+  calc {
+    str2int(s);
+  ==
+    2 * str2int(s[..|s|-1]);
+  ==
+    {TrailingZeros(s[..|s|-1], num_zeros-1);
+     assert s[..|s|-1][..|s|-num_zeros] == s[..|s|-num_zeros];
+     assert str2int(s[..|s|-1]) == str2int(s[..|s|-num_zeros]) * pow2(num_zeros-1);
+    }
+    2 * (str2int(s[..|s|-num_zeros]) * pow2(num_zeros-1));
+  ==
+    str2int(s[..|s|-num_zeros]) * pow2(num_zeros-1) * 2;
+  ==
+    str2int(s[..|s|-num_zeros]) * (pow2(num_zeros-1) * 2);
+  ==
+    {
+      pow2_inductive(num_zeros-1);
+    }
+    str2int(s[..|s|-num_zeros]) * pow2(num_zeros);
+  }
 }
 
 lemma MulIsAssociative(a: nat, b: nat, c: nat)
