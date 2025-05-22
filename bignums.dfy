@@ -120,6 +120,7 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
       ==
         str2int(prev_product) + str2int(x) * str2int(y[..idx+2] + prev_shift);
       ==
+        { assert y[..idx+2] + prev_shift == y[..idx+1] + "1" + prev_shift;}
         str2int(prev_product) + str2int(x) * str2int(y[..idx+1] + "1" + prev_shift);
       ==
         { TrailingZeros(y[..idx+1] + "1" + prev_shift, a-1);
