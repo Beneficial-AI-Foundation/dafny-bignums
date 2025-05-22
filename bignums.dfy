@@ -352,7 +352,6 @@ lemma {:isolate_assertions} subAux(x: string, y: string, old_sb: string, sb: str
           (if j >= 0 then str2int(y[0..j+1]) * pow2(|sb|) else 0)
 {
   // This mirrors the structure of addAux but modified for subtraction
-  var digit := 42; // TODO remove
   calc {
     str2int(old_sb) -
     (old_borrow * pow2(|old_sb|)) +
