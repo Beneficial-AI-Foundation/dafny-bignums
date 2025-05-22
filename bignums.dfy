@@ -37,7 +37,7 @@ predicate ValidBitString(s: string)
 }
 
 // ----------------------------------------------------
-// 1) Str2Int: bit-string -> nat (reference function)
+// Str2Int: bit-string -> nat (reference function)
 // ----------------------------------------------------
 function Str2Int(s: string): nat
   requires ValidBitString(s)
@@ -242,7 +242,7 @@ lemma Rearrange(A:int, B:int, C:int)
 
 
 // ----------------------------------------------------
-// 2) Int2Str: nat -> bit-string (reference function)
+// Int2Str: nat -> bit-string (reference function)
 //    - "0" if n=0
 //    - no leading zeros otherwise
 // ----------------------------------------------------
@@ -721,7 +721,7 @@ lemma {:isolate_assertions} SubAux(x: string, y: string, oldSb: string, sb: stri
 
 
 // ----------------------------------------------------
-// 3) string-based addition (no Str2Int / Int2Str)
+// string-based addition (no Str2Int / Int2Str)
 // ----------------------------------------------------
 method Add(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
@@ -810,7 +810,7 @@ method Add(s1: string, s2: string) returns (res: string)
 
 
 // ----------------------------------------------------
-// 4) string-based subtraction (s1 >= s2)
+// string-based subtraction (s1 >= s2)
 // ----------------------------------------------------
 method Sub(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
@@ -940,7 +940,7 @@ method Sub(s1: string, s2: string) returns (res: string)
 
 
 // ----------------------------------------------------
-// 5) string-based multiplication
+// string-based multiplication
 //    No direct use of Str2Int/Int2Str
 // ----------------------------------------------------
 method {:isolate_assertions} Mul(s1: string, s2: string) returns (res: string)
