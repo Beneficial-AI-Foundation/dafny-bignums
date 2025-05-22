@@ -46,7 +46,7 @@ method Main() {
 }
 
 // ----------------------------------------------------
-// 5) mul: string-based multiplication
+// 5) string-based multiplication
 //    No direct use of Str2Int/Int2Str
 // ----------------------------------------------------
 method {:isolate_assertions} Mul(s1: string, s2: string) returns (res: string)
@@ -193,7 +193,7 @@ method {:isolate_assertions} Mul(s1: string, s2: string) returns (res: string)
 }
 
 // ----------------------------------------------------
-// 4) sub: string-based subtraction (s1 >= s2)
+// 4) string-based subtraction (s1 >= s2)
 // ----------------------------------------------------
 method Sub(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
@@ -508,7 +508,7 @@ opaque function Pow2(n: nat): nat
 
 
 // ----------------------------------------------------
-// 3) add: string-based addition (no Str2Int / Int2Str)
+// 3) string-based addition (no Str2Int / Int2Str)
 // ----------------------------------------------------
 method Add(s1: string, s2: string) returns (res: string)
   requires ValidBitString(s1) && ValidBitString(s2)
@@ -595,9 +595,9 @@ method Add(s1: string, s2: string) returns (res: string)
   return res;
 }
 
-// I pulled this code out of add in the hope that Dafny would avoid timeouts
+// I pulled this code out of `Add` in the hope that Dafny would avoid timeouts
 // if it was in the narrower context of a lemma. Unfortunately that didn't
-// fix the timeouts, but add is easier to read with this long calculation removed.
+// fix the timeouts, but `Add` is easier to read with this long calculation removed.
 // Annoyingly if you remove {:isolate_assertions}, this lemma sometimes times out.
 // So really I need to go over it again to reduce brittleness, as in
 // https://dafny.org/blog/2023/12/01/avoiding-verification-brittleness/
