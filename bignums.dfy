@@ -963,13 +963,6 @@ method Sub(s1: string, s2: string) returns (res: string)
 
 
 
-
-
-
-
-
-
-
 // ----------------------------------------------------
 // string-based multiplication
 //    No direct use of Str2Int/Int2Str
