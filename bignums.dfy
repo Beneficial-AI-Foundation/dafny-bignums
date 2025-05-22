@@ -52,7 +52,9 @@ function Str2Int(s: string): nat
 }
 
 
-opaque function OStr2Int(s: string): nat {
+opaque function OStr2Int(s: string): nat
+  requires ValidBitString(s)
+{
   Str2Int(s)
 }
 
