@@ -70,6 +70,16 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
   var product := "0";
   var shift := "";
   var idx := |y| - 1;
+  calc {
+    str2int(x) * str2int(y);
+  ==
+    {
+      assert str2int(product) == 0;
+      assert y[..idx+1] + shift == y;
+      assert str2int(y[..idx+1] + shift) == str2int(y);
+    }
+    str2int(product) + str2int(x) * str2int(y[..idx+1] + shift);
+  }
   while idx >= 0
     decreases idx
     invariant -1 <= idx < |y|
