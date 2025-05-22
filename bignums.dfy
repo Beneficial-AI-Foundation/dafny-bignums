@@ -403,7 +403,7 @@ lemma {:isolate_assertions} SubAux(x: string, y: string, oldSb: string, sb: stri
             }
 
           }
-          Str2Int(x[0..oldI]) * (2 * Pow2(|oldSb|)) + bitX * Pow2(|oldSb|); // FIX
+          Str2Int(x[0..oldI]) * (2 * Pow2(|oldSb|)) + bitX * Pow2(|oldSb|);
         ==
           {
             Pow2Inductive(|oldSb|);
