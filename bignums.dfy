@@ -89,6 +89,9 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
     invariant forall i :: 0<=i<|shift| ==> shift[i] == '0'
     invariant str2int(x) * str2int(y) == str2int(product) + str2int(x) * str2int(y[..idx+1] + shift)
   {
+    var prev_product := product;
+    var prev_idx := idx;
+    var prev_shift := shift;
     if y[idx] == '1' {
       var partial := x + shift;
       product := add(product, partial);
@@ -96,6 +99,19 @@ method {:isolate_assertions} mul(s1: string, s2: string) returns (res: string)
     shift := shift + ['0'];
     idx := idx - 1;
     assert ValidBitString(y[..idx+1] + shift);
+    if y[idx+1] == '0' {
+      calc {
+        str2int(x) * str2int(y);
+      ==
+        str2int(prev_product) + str2int(x) * str2int(y[..idx+2] + prev_shift);
+      ==
+        {
+          assert prev_product == product;
+          assert y[..idx+2] + prev_shift == y[..idx+1] + shift;
+        }
+        str2int(product) + str2int(x) * str2int(y[..idx+1] + shift);
+      }
+    }
   }
   assert idx == -1;
   calc {
