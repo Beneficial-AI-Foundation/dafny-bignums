@@ -72,6 +72,7 @@ method mul(s1: string, s2: string) returns (res: string)
   while idx >= 0
     decreases idx
     invariant -1 <= idx < |y|
+    invariant ValidBitString(y[..idx+1] + shift)
     invariant str2int(x) * str2int(y) == str2int(product) + str2int(x) * str2int(y[..idx+1] + shift)
   {
     if y[idx] == '1' {
@@ -80,6 +81,7 @@ method mul(s1: string, s2: string) returns (res: string)
     }
     shift := shift + ['0'];
     idx := idx - 1;
+    assert ValidBitString(y[..idx+1] + shift);
   }
   res := product;
 }
