@@ -73,6 +73,7 @@ method mul(s1: string, s2: string) returns (res: string)
     decreases idx
     invariant -1 <= idx < |y|
     invariant ValidBitString(y[..idx+1] + shift)
+    invariant ValidBitString(product)
     invariant str2int(x) * str2int(y) == str2int(product) + str2int(x) * str2int(y[..idx+1] + shift)
   {
     if y[idx] == '1' {
