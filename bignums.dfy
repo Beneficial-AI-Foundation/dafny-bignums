@@ -15,6 +15,7 @@
 // TODO Note that str2int/int2str are used in the proof inside the method bodies
 // TODO Demonstrate with ghost functions
 // TODO Add my name
+// TODO Any dead functions?
 
 method Main() {
   print "Examples:\n";
