@@ -561,8 +561,8 @@ lemma {:isolate_assertions} AddAux(x: string, y: string, oldSb: string, sb: stri
 }
 
 // Lemma 1: Apply BitStringDecomposition for both numbers
-lemma {:isolate_assertions} SubAux1(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAux1(x: string, y: string, oldSb: string, sb: string, oldI: int,
+              oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -600,8 +600,8 @@ lemma {:isolate_assertions} SubAux1(x: string, y: string, oldSb: string, sb: str
 }
 
 // Lemma 2: Distribute Pow2(|oldSb|)
-lemma {:isolate_assertions} SubAux2(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAux2(x: string, y: string, oldSb: string, sb: string, oldI: int,
+              oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -645,8 +645,8 @@ lemma {:isolate_assertions} SubAux2(x: string, y: string, oldSb: string, sb: str
 }
 
 // Lemma 3: Use Pow2 relationship: 2 * Pow2(n) = Pow2(n+1)
-lemma {:isolate_assertions} SubAux3(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAux3(x: string, y: string, oldSb: string, sb: string, oldI: int,
+              oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -696,8 +696,8 @@ lemma {:isolate_assertions} SubAux3(x: string, y: string, oldSb: string, sb: str
 }
 
 // Lemma 4: Rearrange to isolate the digit contribution
-lemma {:isolate_assertions} SubAux4(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAux4(x: string, y: string, oldSb: string, sb: string, oldI: int,
+              oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -733,8 +733,8 @@ lemma {:isolate_assertions} SubAux4(x: string, y: string, oldSb: string, sb: str
 }
 
 // Lemma 5: By the definition of diff in code
-lemma {:isolate_assertions} SubAux5(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAux5(x: string, y: string, oldSb: string, sb: string, oldI: int,
+              oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -770,8 +770,8 @@ lemma {:isolate_assertions} SubAux5(x: string, y: string, oldSb: string, sb: str
 }
 
 // Lemma 6: Apply relationship between rawDiff, diff and borrow
-lemma {:isolate_assertions} SubAux6(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAux6(x: string, y: string, oldSb: string, sb: string, oldI: int,
+              oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -814,8 +814,8 @@ lemma {:isolate_assertions} SubAux6(x: string, y: string, oldSb: string, sb: str
 }
 
 // Lemma 7: Rewrite in terms of borrow
-lemma {:isolate_assertions} SubAux7(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAux7(x: string, y: string, oldSb: string, sb: string, oldI: int,
+              oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -851,8 +851,8 @@ lemma {:isolate_assertions} SubAux7(x: string, y: string, oldSb: string, sb: str
 }
 
 // Lemma 8: Use Pow2 relationship again
-lemma {:isolate_assertions} SubAux8(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAux8(x: string, y: string, oldSb: string, sb: string, oldI: int,
+              oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -890,8 +890,8 @@ lemma {:isolate_assertions} SubAux8(x: string, y: string, oldSb: string, sb: str
 }
 
 // Lemma 9: Rearrange terms
-lemma {:isolate_assertions} SubAux9(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                    oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAux9(x: string, y: string, oldSb: string, sb: string, oldI: int,
+              oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -928,8 +928,8 @@ lemma {:isolate_assertions} SubAux9(x: string, y: string, oldSb: string, sb: str
 }
 
 // Lemma 10: Apply PrependDigitToString
-lemma {:isolate_assertions} SubAux10(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                     oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAux10(x: string, y: string, oldSb: string, sb: string, oldI: int,
+               oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
@@ -984,8 +984,8 @@ lemma {:isolate_assertions} SubAux10(x: string, y: string, oldSb: string, sb: st
 
 
 // Top-level lemma that combines all the individual steps
-lemma {:isolate_assertions} SubAuxTop(x: string, y: string, oldSb: string, sb: string, oldI: int,
-                                      oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
+lemma SubAuxTop(x: string, y: string, oldSb: string, sb: string, oldI: int,
+                oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires ValidBitString(sb)
   requires ValidBitString(x)
   requires ValidBitString(y)
