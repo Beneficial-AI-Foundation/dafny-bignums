@@ -211,35 +211,39 @@ lemma TrailingZeros(s: string, numZeros: nat)
 {
   if numZeros == 0 {
     calc {
-      Str2Int(s[..|s|-numZeros]) * Pow2(numZeros);
+      OStr2Int(s[..|s|-numZeros]) * Pow2(numZeros);
     ==
       {Pow2Zero();}
-      Str2Int(s[..|s|]) * 1;
+      OStr2Int(s[..|s|]) * 1;
     ==
       {assert s[..|s|] == s;}
-      Str2Int(s);
+      OStr2Int(s);
     }
+    reveal OStr2Int;
     return;
   }
   calc {
-    Str2Int(s);
+    OStr2Int(s);
   ==
-    2 * Str2Int(s[..|s|-1]);
+    {reveal OStr2Int;}
+    2 * OStr2Int(s[..|s|-1]);
   ==
     {TrailingZeros(s[..|s|-1], numZeros-1);
      assert s[..|s|-1][..|s|-numZeros] == s[..|s|-numZeros];
+     reveal OStr2Int;
     }
-    2 * (Str2Int(s[..|s|-numZeros]) * Pow2(numZeros-1));
+    2 * (OStr2Int(s[..|s|-numZeros]) * Pow2(numZeros-1));
   ==
-    Str2Int(s[..|s|-numZeros]) * Pow2(numZeros-1) * 2;
+    OStr2Int(s[..|s|-numZeros]) * Pow2(numZeros-1) * 2;
   ==
-    Str2Int(s[..|s|-numZeros]) * (Pow2(numZeros-1) * 2);
+    OStr2Int(s[..|s|-numZeros]) * (Pow2(numZeros-1) * 2);
   ==
     {
       Pow2Inductive(numZeros-1);
     }
-    Str2Int(s[..|s|-numZeros]) * Pow2(numZeros);
+    OStr2Int(s[..|s|-numZeros]) * Pow2(numZeros);
   }
+  reveal OStr2Int;
 }
 
 // Useful because Dafny often struggles with this step
