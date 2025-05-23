@@ -277,6 +277,7 @@ lemma Rearrange(A:int, B:int, C:int)
 //    - no leading zeros otherwise
 // ----------------------------------------------------
 function Int2Str(n: nat): string
+  // I added the following post-condition because Str2Int requires it
   ensures ValidBitString(Int2Str(n))
   ensures Str2Int(Int2Str(n)) == n
   decreases n
@@ -300,6 +301,7 @@ function Int2Str(n: nat): string
 method NormalizeBitString(s: string) returns(t: string)
   // Remove leading zeros, except keep at least one digit
   ensures ValidBitString(t)
+  // I added and proved some extra post-conditions:
   ensures |t| > 0
   ensures |t| > 1 ==> t[0] != '0'
   ensures ValidBitString(s) ==> Str2Int(s) == Str2Int(t)
