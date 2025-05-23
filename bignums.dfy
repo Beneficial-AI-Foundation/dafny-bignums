@@ -13,15 +13,17 @@
 // All methods come with specifications ensuring they do what they claim, and we prove correctness using Dafny's function specifications (`ensures`) by comparing the result against the reference functions `Str2Int` and `Int2Str`.
 
 // Theo note: To check that Add/Sub/Mul only use Int2Str and Str2Int for verification:
-// 1. Change those functions to `ghost function`
-// 2. Delete Main (because it uses those functions in executable code, so now won't verify)
+// 1. Change Int2Str and Str2Int to `ghost function`
+// 2. Delete Main (because it uses Int2Str/Str2Int in executable code, so now won't verify)
 // 3. The rest of the code will still verify
 
+// This function will be useful in proofs
 opaque function Pow2(n: nat): nat
 {
   if n == 0 then 1 else 2 * Pow2(n - 1)
 }
 
+// Establish some properties of Pow2
 
 lemma Pow2Zero()
   ensures Pow2(0) == 1
@@ -59,6 +61,9 @@ opaque function OStr2Int(s: string): nat
   Str2Int(s)
 }
 
+
+// The next few lemmas will be needed
+// at various steps in the main proofs
 
 lemma IgnoreInitialZeros(s : string, numZeros:int)
   requires ValidBitString(s)
@@ -246,8 +251,9 @@ lemma TrailingZeros(s: string, numZeros: nat)
   reveal OStr2Int;
 }
 
-// Useful because Dafny often struggles with this step
-// in complicated expressions
+// The next few lemmas are trivial, but they're useful when Dafny struggles with
+// algebra in complicated expressions
+
 lemma MulIsAssociative(a: nat, b: nat, c: nat)
   ensures a * (b * c) == a * b * c
 {
@@ -341,6 +347,7 @@ method NormalizeBitString(s: string) returns(t: string)
   return validBits[j..];
 }
 
+// Eleven and Thirteen will be used in Main
 
 lemma Eleven()
   ensures Str2Int("1011") == 11
@@ -387,6 +394,12 @@ lemma Thirteen()
     13;
   }
 }
+
+// The proof of Add's invariant requires a long calculation that often times
+// out. To make it more robust, I've pulled it into a lemma AddAuxTop, which
+// then calls 14 lemmas, one for each step of the calculation. For conciseness,
+// all the lemmas use AddAuxPred as their precondition (although not all of them
+// need all of AddAuxPred)
 
 predicate AddAuxPred(x: string, y: string, oldSb: string, sb: string, oldI: int,
                      oldJ: int, i:int, j:int, carry:nat, bitX:nat, bitY:nat, digit:nat, sum:nat, oldCarry:nat)
@@ -723,6 +736,7 @@ lemma AddAuxTop(x: string, y: string, oldSb: string, sb: string, oldI: int,
   AddAux14(x, y, oldSb, sb, oldI, oldJ, i, j, carry, bitX, bitY, digit, sum, oldCarry);
 }
 
+// Sub also has a long calcuation step, which again we split into a bunch of lemmas
 
 predicate SubAuxPred(x: string, y: string, oldSb: string, sb: string, oldI: int,
                      oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
@@ -965,8 +979,6 @@ lemma SubAux10(x: string, y: string, oldSb: string, sb: string, oldI: int,
 
 
 // Top-level lemma that combines all the individual steps
-// Originally all these steps happened in 1 calc statement instead of
-// 10 lemmas, but the one massive lemma would time out
 lemma SubAuxTop(x: string, y: string, oldSb: string, sb: string, oldI: int,
                 oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
   requires SubAuxPred(x, y, oldSb, sb, oldI, oldJ, i, j, borrow, bitX, bitY, rawDiff, diff, oldBorrow)
@@ -1213,7 +1225,7 @@ method Sub(s1: string, s2: string) returns (res: string)
   var i := |x| - 1; // pointer on x
   var j := |y| - 1; // pointer on y
   var borrow := 0;
-  var sb := [];  // reversed result
+  var sb := [];
 
   Pow2Zero();
   assert borrow * Pow2(|sb|) == 0;
