@@ -1,10 +1,10 @@
 include "bignums.dfy"
 
 
-// computes res := x^y when y == 2^n
+// computes res := x^y
 opaque function Exp(x: nat, y:nat): nat
 {
-  if y == 0 then 1 else x * Pow2(y - 1)
+  if y == 0 then 1 else x * Exp(x, y - 1)
 }
 
 
