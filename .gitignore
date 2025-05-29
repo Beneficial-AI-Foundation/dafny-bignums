@@ -17,7 +17,7 @@ wheels/
 lib
 *.cs
 *.csproj
-bignums-py
+*-py
 .aider*
-flycheck_bignums.dfy
+flycheck_*.dfy
 TestResults
