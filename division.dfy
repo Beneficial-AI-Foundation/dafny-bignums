@@ -41,6 +41,7 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
       ==
         2 * (Str2Int(old_r) + Str2Int(old_q) * Str2Int(divisor)) + d;
       ==
+        {Rearrange2(Str2Int(old_r), Str2Int(old_q), Str2Int(divisor),d);}
         2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + d);
       ==
         Str2Int(q) * Str2Int(divisor) + Str2Int(r);
@@ -61,6 +62,11 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
   quotient := q;
   remainder := r;
   QuotientIsEquivalent(Str2Int(dividend), Str2Int(divisor), Str2Int(quotient), Str2Int(remainder));
+}
+
+lemma Rearrange2(x:nat, y:nat, z:nat, w:nat)
+  ensures 2 * (x + y * z) + w == 2 * y * z + (2 * x + w)
+{
 }
 
 lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainder: nat)
