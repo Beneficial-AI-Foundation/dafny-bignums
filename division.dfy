@@ -24,12 +24,13 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     r := r + [dividend[i]];
     assert ValidBitString(r);
     ghost var d := if dividend[i] == '1' then 1 else 0;
-    assert a1 : OStr2Int(r) == 2 * OStr2Int(old_r) + d;
+    assert a1 : OStr2Int(r) == 2 * OStr2Int(old_r) + d by {reveal OStr2Int;}
 
     calc {
       OStr2Int(dividend[..i + 1]);
     ==
-      {assert dividend[..i + 1][..|dividend[..i + 1]| -1 ] == dividend[..i];}
+      {assert dividend[..i + 1][..|dividend[..i + 1]| -1 ] == dividend[..i];
+       reveal OStr2Int;}
       2 * OStr2Int(dividend[..i]) + d;
     ==
       2 * (OStr2Int(old_r) + OStr2Int(old_q) * OStr2Int(divisor)) + d;
@@ -42,7 +43,7 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     if Compare(r, divisor) >= 0 {
       // Subtract divisor from remainder
       r := Sub(r, divisor);
-      assert OStr2Int(r) < OStr2Int(divisor);
+      assert OStr2Int(r) < OStr2Int(divisor) by {reveal OStr2Int;}
       assert ValidBitString(r);
       assert a2: OStr2Int(r) == 2 * OStr2Int(old_r) + d - OStr2Int(divisor);
       q := q + "1";
@@ -61,10 +62,10 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
       }
     } else {
       assert ValidBitString(r);
-      assert OStr2Int(r) < OStr2Int(divisor);
+      assert OStr2Int(r) < OStr2Int(divisor) by {reveal OStr2Int;}
       q := q + "0";
       assert ValidBitString(q);
-      assert OStr2Int(q) == 2 * OStr2Int(old_q);
+      assert OStr2Int(q) == 2 * OStr2Int(old_q) by {reveal OStr2Int;}
       calc {
         2 * OStr2Int(old_q) * OStr2Int(divisor) + (2 * OStr2Int(old_r) + d);
       ==
