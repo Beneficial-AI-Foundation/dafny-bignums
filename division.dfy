@@ -7,31 +7,6 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
   ensures Str2Int(quotient) == Str2Int(dividend) / Str2Int(divisor)
   ensures Str2Int(remainder) == Str2Int(dividend) % Str2Int(divisor)
 {
-  // Handle special cases
-  if dividend == "0" {
-    quotient := "0";
-    remainder := "0";
-    return;
-  }
-
-  if Compare(dividend, divisor) < 0 {
-    quotient := "0";
-    remainder := dividend;
-    calc {
-      Str2Int(quotient);
-    ==
-      0;
-    ==
-      {
-        assert Str2Int(divisor) > 0;
-        assert Str2Int(divisor) > Str2Int(dividend);
-      }
-      Str2Int(dividend) / Str2Int(divisor);
-      // TODO This doesn't verify, but do we need this special case?
-    }
-    return;
-  }
-
   // Initialize working variables
   var q := "";
   var r := "";
