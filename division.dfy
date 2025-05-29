@@ -1,6 +1,6 @@
 include "bignums.dfy"
 
-method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (quotient: string, remainder: string)
+method DivMod(dividend: string, divisor: string) returns (quotient: string, remainder: string)
   requires ValidBitString(dividend) && ValidBitString(divisor)
   requires Str2Int(divisor) > 0
   ensures ValidBitString(quotient) && ValidBitString(remainder)
@@ -11,6 +11,8 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
   var q := "";
   var r := "";
 
+  assert OStr2Int(r) < OStr2Int(divisor) by {reveal OStr2Int;}
+  assert OStr2Int(dividend[..0]) == OStr2Int(r) + OStr2Int(q) * OStr2Int(divisor) by {reveal OStr2Int;}
   // Long division algorithm (binary version)
   for i := 0 to |dividend|
     invariant ValidBitString(r)
@@ -88,6 +90,8 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
   quotient := q;
   remainder := r;
   QuotientIsEquivalent(OStr2Int(dividend), OStr2Int(divisor), OStr2Int(quotient), OStr2Int(remainder));
+  assert Str2Int(quotient) == Str2Int(dividend) / Str2Int(divisor) by {reveal OStr2Int;}
+  assert Str2Int(remainder) == Str2Int(dividend) % Str2Int(divisor) by {reveal OStr2Int;}
 }
 
 lemma Rearrange2(x:nat, y:nat, z:nat, w:nat)
