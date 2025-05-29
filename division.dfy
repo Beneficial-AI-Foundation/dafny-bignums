@@ -64,6 +64,7 @@ method DivMod(dividend: string, divisor: string) returns (quotient: string, rema
 
 // Helper function to compare two bit strings
 // Returns: -1 if a < b, 0 if a == b, 1 if a > b
+// TODO Really there should be postconditions about this
 function Compare(a: string, b: string): int {
   if |a| < |b| then
     -1
