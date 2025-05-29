@@ -22,6 +22,7 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     ghost var old_r := r;
     ghost var old_q := q;
     r := r + [dividend[i]];
+    assert ValidBitString(r);
     ghost var d := if dividend[i] == '1' then 1 else 0;
     assert a1 : Str2Int(r) == 2 * Str2Int(old_r) + d;
 
@@ -41,8 +42,10 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     if Compare(r, divisor) >= 0 {
       // Subtract divisor from remainder
       r := Sub(r, divisor);
+      assert ValidBitString(r);
       assert Str2Int(r) == 2 * Str2Int(old_r) + d - Str2Int(divisor);
       q := q + "1";
+      assert ValidBitString(q);
       assert Str2Int(q) == 2 * Str2Int(old_q) + 1;
       calc {
         2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + d);
@@ -52,7 +55,9 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
         Str2Int(q) * Str2Int(divisor) + Str2Int(r);
       }
     } else {
+      assert ValidBitString(r);
       q := q + "0";
+      assert ValidBitString(q);
       assert Str2Int(q) == 2 * Str2Int(old_q);
       calc {
         2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + d);
