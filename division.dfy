@@ -17,6 +17,17 @@ method DivMod(dividend: string, divisor: string) returns (quotient: string, rema
   if Compare(dividend, divisor) < 0 {
     quotient := "0";
     remainder := dividend;
+    calc {
+      Str2Int(quotient);
+    ==
+      0;
+    ==
+      {
+        assert Str2Int(divisor) > 0;
+        assert Str2Int(divisor) > Str2Int(dividend);
+      }
+      Str2Int(dividend) / Str2Int(divisor);
+    }
     return;
   }
 
@@ -62,10 +73,11 @@ method DivMod(dividend: string, divisor: string) returns (quotient: string, rema
   remainder := r;
 }
 
-// Helper function to compare two bit strings
-// Returns: -1 if a < b, 0 if a == b, 1 if a > b
-// TODO Really there should be postconditions about this
-function Compare(a: string, b: string): int {
+function Compare(a: string, b: string): int
+  ensures Str2Int(a) < Str2Int(b) ==> Compare(a, b) == -1
+  ensures Str2Int(a) == Str2Int(b) ==> Compare(a, b) == 0
+  ensures Str2Int(a) > Str2Int(b) ==> Compare(a, b) == 1
+{
   if |a| < |b| then
     -1
   else if |a| > |b| then
