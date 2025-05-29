@@ -24,6 +24,18 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     ghost var d := if dividend[i] == '1' then 1 else 0;
     assert a1 : Str2Int(r) == 2 * Str2Int(old_r) + d;
 
+    calc {
+      Str2Int(dividend[..i + 1]);
+    ==
+      {assert dividend[..i + 1][..|dividend[..i + 1]| -1 ] == dividend[..i];}
+      2 * Str2Int(dividend[..i]) + d;
+    ==
+      2 * (Str2Int(old_r) + Str2Int(old_q) * Str2Int(divisor)) + d;
+    ==
+      {Rearrange2(Str2Int(old_r), Str2Int(old_q), Str2Int(divisor),d);}
+      2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + d);
+    }
+
     // Check if divisor can be subtracted from current remainder
     if Compare(r, divisor) >= 0 {
       // Subtract divisor from remainder
@@ -32,14 +44,6 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
       q := q + "1";
       assert Str2Int(q) == 2 * Str2Int(old_q) + 1;
       calc {
-        Str2Int(dividend[..i + 1]);
-      ==
-        {assert dividend[..i + 1][..|dividend[..i + 1]| -1 ] == dividend[..i];}
-        2 * Str2Int(dividend[..i]) + d;
-      ==
-        2 * (Str2Int(old_r) + Str2Int(old_q) * Str2Int(divisor)) + d;
-      ==
-        {Rearrange2(Str2Int(old_r), Str2Int(old_q), Str2Int(divisor),d);}
         2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + d);
       ==
         (2 * Str2Int(old_q) + 1) * Str2Int(divisor) + (2 * Str2Int(old_r) + d - Str2Int(divisor));
@@ -50,14 +54,6 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
       q := q + "0";
       assert Str2Int(q) == 2 * Str2Int(old_q);
       calc {
-        Str2Int(dividend[..i + 1]);
-      ==
-        {assert dividend[..i + 1][..|dividend[..i + 1]| -1 ] == dividend[..i];}
-        2 * Str2Int(dividend[..i]) + d;
-      ==
-        2 * (Str2Int(old_r) + Str2Int(old_q) * Str2Int(divisor)) + d;
-      ==
-        {Rearrange2(Str2Int(old_r), Str2Int(old_q), Str2Int(divisor),d);}
         2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + d);
       ==
         Str2Int(q) * Str2Int(divisor) + Str2Int(r);
