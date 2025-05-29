@@ -1,6 +1,6 @@
 include "bignums.dfy"
 
-method DivMod(dividend: string, divisor: string) returns (quotient: string, remainder: string)
+method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (quotient: string, remainder: string)
   requires ValidBitString(dividend) && ValidBitString(divisor)
   requires Str2Int(divisor) > 0
   ensures ValidBitString(quotient) && ValidBitString(remainder)
