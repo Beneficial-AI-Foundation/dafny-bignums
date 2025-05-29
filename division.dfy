@@ -85,6 +85,7 @@ lemma Rearrange2(x:nat, y:nat, z:nat, w:nat)
 lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainder: nat)
   requires dividend == divisor * quotient + remainder
   ensures  dividend / divisor == quotient
+  ensures  dividend % divisor == remainder
 {
 
 }
