@@ -38,7 +38,9 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
   var i := 0;
 
   // Long division algorithm (binary version)
-  while i < |dividend| {
+  while i < |dividend|
+    invariant Str2Int(dividend[..i]) == Str2Int(r) + Str2Int(q) * Str2Int(divisor)
+  {
     // Shift remainder left and bring down next bit
     r := r + [dividend[i]];
 
