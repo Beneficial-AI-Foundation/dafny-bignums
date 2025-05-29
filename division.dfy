@@ -45,10 +45,10 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
       r := Sub(r, divisor);
       assert OStr2Int(r) < OStr2Int(divisor) by {reveal OStr2Int;}
       assert ValidBitString(r);
-      assert a2: OStr2Int(r) == 2 * OStr2Int(old_r) + d - OStr2Int(divisor);
+      assert a2: OStr2Int(r) == 2 * OStr2Int(old_r) + d - OStr2Int(divisor) by {reveal OStr2Int;}
       q := q + "1";
       assert ValidBitString(q);
-      assert a3 : OStr2Int(q) == 2 * OStr2Int(old_q) + 1;
+      assert a3 : OStr2Int(q) == 2 * OStr2Int(old_q) + 1 by {reveal OStr2Int;}
       calc {
         2 * OStr2Int(old_q) * OStr2Int(divisor) + (2 * OStr2Int(old_r) + d);
       ==
