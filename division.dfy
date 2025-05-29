@@ -21,7 +21,8 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     ghost var old_r := r;
     ghost var old_q := q;
     r := r + [dividend[i]];
-    assert a1 : Str2Int(r) == 2 * Str2Int(old_r) + if dividend[i] == '1' then 1 else 0;
+    ghost var d := if dividend[i] == '1' then 1 else 0;
+    assert a1 : Str2Int(r) == 2 * Str2Int(old_r) + d;
 
     // Check if divisor can be subtracted from current remainder
     if Compare(r, divisor) >= 0 {
@@ -35,11 +36,11 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
       calc {
         Str2Int(dividend[..i + 1]);
       ==
-        2 * Str2Int(dividend[..i]) + if dividend[i] == '1' then 1 else 0;
+        2 * Str2Int(dividend[..i]) + d;
       ==
-        2 * (Str2Int(old_r) + Str2Int(old_q) * Str2Int(divisor)) + if dividend[i] == '1' then 1 else 0;
+        2 * (Str2Int(old_r) + Str2Int(old_q) * Str2Int(divisor)) + d;
       ==
-        2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + if dividend[i] == '1' then 1 else 0);
+        2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + d);
       ==
         Str2Int(q) * Str2Int(divisor) + Str2Int(r);
       }
