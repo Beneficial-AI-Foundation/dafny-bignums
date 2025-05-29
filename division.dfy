@@ -13,7 +13,11 @@ method DivMod(dividend: string, divisor: string) returns (quotient: string, rema
 
   assert OStr2Int(r) < OStr2Int(divisor) by {reveal OStr2Int;}
   assert OStr2Int(dividend[..0]) == OStr2Int(r) + OStr2Int(q) * OStr2Int(divisor) by {reveal OStr2Int;}
-  // Long division algorithm (binary version)
+  // See section 4.3.1 of The Art of Computer Programming, Volume 2.
+  // i.e. PDF page 284 of
+  // https://github.com/manjunath5496/The-Art-of-Computer-Programming-Books/blob/master/aoc(6).pdf
+  // Except because the base is 2, we can find the next quotient digit by comparing r to the divisor,
+  // instead of guessing and checking
   for i := 0 to |dividend|
     invariant ValidBitString(r)
     invariant ValidBitString(q)
