@@ -64,9 +64,18 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
   ==
     Str2Int(r) + Str2Int(q) * Str2Int(divisor);
   }
+  assert Str2Int(r) < Str2Int(divisor);
 
   quotient := q;
   remainder := r;
+  QuotientIsEquivalent(Str2Int(dividend), Str2Int(divisor), Str2Int(quotient), Str2Int(remainder));
+}
+
+lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainder: nat)
+  requires dividend == divisor * quotient + remainder
+  ensures  dividend / divisor == quotient
+{
+
 }
 
 function Compare(a: string, b: string): int
