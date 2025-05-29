@@ -60,7 +60,7 @@ method DivMod(dividend: string, divisor: string) returns (quotient: string, rema
           reveal a2;
           reveal a3;
         }
-        OStr2Int(q) * OStr2Int(divisor) + OStr2Int(r); // TODO This is slow
+        OStr2Int(q) * OStr2Int(divisor) + OStr2Int(r);
       }
     } else {
       assert ValidBitString(r);
