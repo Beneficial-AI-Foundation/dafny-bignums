@@ -42,20 +42,26 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     if Compare(r, divisor) >= 0 {
       // Subtract divisor from remainder
       r := Sub(r, divisor);
+      assert Str2Int(r) < Str2Int(divisor);
       assert ValidBitString(r);
-      assert Str2Int(r) == 2 * Str2Int(old_r) + d - Str2Int(divisor);
+      assert a2: Str2Int(r) == 2 * Str2Int(old_r) + d - Str2Int(divisor);
       q := q + "1";
       assert ValidBitString(q);
-      assert Str2Int(q) == 2 * Str2Int(old_q) + 1;
+      assert a3 : Str2Int(q) == 2 * Str2Int(old_q) + 1;
       calc {
         2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + d);
       ==
         (2 * Str2Int(old_q) + 1) * Str2Int(divisor) + (2 * Str2Int(old_r) + d - Str2Int(divisor));
       ==
-        Str2Int(q) * Str2Int(divisor) + Str2Int(r);
+        {
+          reveal a2;
+          reveal a3;
+        }
+        Str2Int(q) * Str2Int(divisor) + Str2Int(r); // TODO This is slow
       }
     } else {
       assert ValidBitString(r);
+      assert Str2Int(r) < Str2Int(divisor);
       q := q + "0";
       assert ValidBitString(q);
       assert Str2Int(q) == 2 * Str2Int(old_q);
