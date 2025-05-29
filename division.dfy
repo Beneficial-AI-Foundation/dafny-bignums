@@ -56,6 +56,14 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     }
 
   }
+  calc {
+    Str2Int(dividend);
+  ==
+    {assert dividend[..|dividend|] == dividend;}
+    Str2Int(dividend[..|dividend|]);
+  ==
+    Str2Int(r) + Str2Int(q) * Str2Int(divisor);
+  }
 
   quotient := q;
   remainder := r;
