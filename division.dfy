@@ -35,10 +35,11 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
   // Initialize working variables
   var q := "";
   var r := "";
-  var i := 0;
 
   // Long division algorithm (binary version)
-  while i < |dividend|
+  for i := 0 to |dividend|
+    invariant ValidBitString(r)
+    invariant ValidBitString(q)
     invariant Str2Int(dividend[..i]) == Str2Int(r) + Str2Int(q) * Str2Int(divisor)
   {
     // Shift remainder left and bring down next bit
@@ -54,7 +55,6 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
       q := q + "0";
     }
 
-    i := i + 1;
   }
 
   quotient := q;
