@@ -28,8 +28,24 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     if Compare(r, divisor) >= 0 {
       // Subtract divisor from remainder
       r := Sub(r, divisor);
+      assert Str2Int(r) == 2 * Str2Int(old_r) + d - Str2Int(divisor);
       q := q + "1";
       assert Str2Int(q) == 2 * Str2Int(old_q) + 1;
+      calc {
+        Str2Int(dividend[..i + 1]);
+      ==
+        {assert dividend[..i + 1][..|dividend[..i + 1]| -1 ] == dividend[..i];}
+        2 * Str2Int(dividend[..i]) + d;
+      ==
+        2 * (Str2Int(old_r) + Str2Int(old_q) * Str2Int(divisor)) + d;
+      ==
+        {Rearrange2(Str2Int(old_r), Str2Int(old_q), Str2Int(divisor),d);}
+        2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + d);
+      ==
+        (2 * Str2Int(old_q) + 1) * Str2Int(divisor) + (2 * Str2Int(old_r) + d - Str2Int(divisor));
+      ==
+        Str2Int(q) * Str2Int(divisor) + Str2Int(r);
+      }
     } else {
       q := q + "0";
       assert Str2Int(q) == 2 * Str2Int(old_q);
