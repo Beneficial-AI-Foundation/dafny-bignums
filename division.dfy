@@ -16,6 +16,7 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     invariant ValidBitString(r)
     invariant ValidBitString(q)
     invariant Str2Int(dividend[..i]) == Str2Int(r) + Str2Int(q) * Str2Int(divisor)
+    invariant Str2Int(r) < Str2Int(divisor)
   {
     // Shift remainder left and bring down next bit
     ghost var old_r := r;
