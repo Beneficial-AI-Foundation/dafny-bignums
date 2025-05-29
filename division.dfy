@@ -36,6 +36,7 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
       calc {
         Str2Int(dividend[..i + 1]);
       ==
+        {assert dividend[..i + 1][..|dividend[..i + 1]| -1 ] == dividend[..i];}
         2 * Str2Int(dividend[..i]) + d;
       ==
         2 * (Str2Int(old_r) + Str2Int(old_q) * Str2Int(divisor)) + d;
