@@ -69,6 +69,7 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
       calc {
         2 * OStr2Int(old_q) * OStr2Int(divisor) + (2 * OStr2Int(old_r) + d);
       ==
+        {reveal OStr2Int;}
         OStr2Int(q) * OStr2Int(divisor) + OStr2Int(r);
       }
     }
