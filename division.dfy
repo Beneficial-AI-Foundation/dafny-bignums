@@ -18,16 +18,31 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     invariant Str2Int(dividend[..i]) == Str2Int(r) + Str2Int(q) * Str2Int(divisor)
   {
     // Shift remainder left and bring down next bit
+    ghost var old_r := r;
+    ghost var old_q := q;
     r := r + [dividend[i]];
-
+    assert a1 : Str2Int(r) == 2 * Str2Int(old_r) + if dividend[i] == '1' then 1 else 0;
 
     // Check if divisor can be subtracted from current remainder
     if Compare(r, divisor) >= 0 {
       // Subtract divisor from remainder
       r := Sub(r, divisor);
       q := q + "1";
+      assert Str2Int(q) == 2 * Str2Int(old_q) + 1;
     } else {
       q := q + "0";
+      assert Str2Int(q) == 2 * Str2Int(old_q);
+      calc {
+        Str2Int(dividend[..i + 1]);
+      ==
+        2 * Str2Int(dividend[..i]) + if dividend[i] == '1' then 1 else 0;
+      ==
+        2 * (Str2Int(old_r) + Str2Int(old_q) * Str2Int(divisor)) + if dividend[i] == '1' then 1 else 0;
+      ==
+        2 * Str2Int(old_q) * Str2Int(divisor) + (2 * Str2Int(old_r) + if dividend[i] == '1' then 1 else 0);
+      ==
+        Str2Int(q) * Str2Int(divisor) + Str2Int(r);
+      }
     }
 
   }
