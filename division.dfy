@@ -41,13 +41,6 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     // Shift remainder left and bring down next bit
     r := r + [dividend[i]];
 
-    // Remove leading zeros from remainder
-    while |r| > 0 && r[0] == '0' {
-      r := r[1..];
-    }
-    if |r| == 0 {
-      r := "0";
-    }
 
     // Check if divisor can be subtracted from current remainder
     if Compare(r, divisor) >= 0 {
@@ -59,14 +52,6 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
     }
 
     i := i + 1;
-  }
-
-  // Remove leading zeros from quotient
-  while |q| > 0 && q[0] == '0' {
-    q := q[1..];
-  }
-  if |q| == 0 {
-    q := "0";
   }
 
   quotient := q;
