@@ -27,6 +27,7 @@ method {:isolate_assertions} DivMod(dividend: string, divisor: string) returns (
         assert Str2Int(divisor) > Str2Int(dividend);
       }
       Str2Int(dividend) / Str2Int(divisor);
+      // TODO This doesn't verify, but do we need this special case?
     }
     return;
   }
