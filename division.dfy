@@ -41,7 +41,7 @@ method DivMod(dividend: string, divisor: string) returns (quotient: string, rema
     // Check if divisor can be subtracted from current remainder
     if Compare(r, divisor) >= 0 {
       // Subtract divisor from remainder
-      r := Subtract(r, divisor);
+      r := Sub(r, divisor);
       q := q + "1";
     } else {
       q := q + "0";
