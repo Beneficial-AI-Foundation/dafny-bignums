@@ -176,13 +176,11 @@ method Compare(s1: string, s2: string) returns (res: int)
   ensures Str2Int(s1) < Str2Int(s2) ==> res == -1
   ensures Str2Int(s1) == Str2Int(s2) ==> res == 0
   ensures Str2Int(s1) > Str2Int(s2) ==> res == 1
-  decreases |s1| + |s2|
+  decreases Str2Int(s1) + Str2Int(s2)
 {
   // First normalize both strings
   var a := NormalizeBitString(s1);
   var b := NormalizeBitString(s2);
-  assert |a| <= |s1|;
-  assert |b| <= |s2|;
 
   // Compare lengths first
   if |a| < |b| {
@@ -275,6 +273,12 @@ method Compare(s1: string, s2: string) returns (res: int)
   }
   assert Str2Int(a[1..]) > Str2Int(b[1..]) ==> Str2Int(a) > Str2Int(b);
   assert Str2Int(a[1..]) == Str2Int(b[1..]) ==> Str2Int(a) == Str2Int(b);
+  assert Str2Int(a) > Str2Int(a[1..]) by {
+    Pow2Positive(|a[1..]|);
+  }
+  assert Str2Int(b) > Str2Int(b[1..]) by {
+    Pow2Positive(|b[1..]|);
+  }
   res := Compare(a[1..], b[1..]);
 }
 

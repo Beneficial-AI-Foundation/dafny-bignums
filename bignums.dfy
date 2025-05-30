@@ -31,6 +31,11 @@ lemma Pow2Zero()
   reveal Pow2();
 }
 
+lemma Pow2Positive(n:nat)
+  ensures Pow2(n) > 0
+{
+}
+
 lemma Pow2Inductive(i: nat)
   ensures Pow2(i+1) == 2*Pow2(i)
 {
@@ -310,7 +315,6 @@ method NormalizeBitString(s: string) returns(t: string)
   ensures |t| > 0
   ensures |t| > 1 ==> t[0] != '0'
   ensures ValidBitString(s) ==> Str2Int(s) == Str2Int(t)
-  ensures |s| >= |t|
 {
   // First pass: keep only valid bits
   var validBits := "";
