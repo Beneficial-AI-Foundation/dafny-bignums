@@ -1,6 +1,6 @@
+include "bound.dfy"
 
-
-lemma {:isolate_assertions} ModuloDistributivityAdd_int(a: int, b: int, z: int)
+lemma ModuloDistributivityAdd_int(a: int, b: int, z: int)
   requires z > 0
   ensures (a + b) % z == ((a % z) + (b % z)) % z
 {
@@ -23,7 +23,7 @@ lemma {:isolate_assertions} ModuloDistributivityAdd_int(a: int, b: int, z: int)
   assert ((a % z) + (b % z)) % z == (ra + rb) % z;
 }
 
-lemma {:isolate_assertions} IgnoreMod(a: int, b:nat, c:int, z:nat)
+lemma IgnoreMod(a: int, b:nat, c:int, z:nat)
   requires a * z + b == c
   requires z > 0
   ensures b % z == c % z
@@ -32,15 +32,8 @@ lemma {:isolate_assertions} IgnoreMod(a: int, b:nat, c:int, z:nat)
   assert (c/z)*z + (c % z) - a*z == (b/z)*z + (b % z);
   assert (c/z - a)*z + (c % z) == (b/z)*z + (b % z);
   assert (c/z - a - b/z)*z  == b % z - c % z;
-  BoundingDuplicateTODO(b % z - c % z, z, c/z - a - b/z);
+  Bounding(b % z - c % z, z, c/z - a - b/z);
 }
-
-lemma BoundingDuplicateTODO(x:int, d:int, n: int)
-  requires x == d * n
-  requires x > -d
-  requires x < d
-  ensures x == 0
-{}
 
 lemma ModuloDistributivityMul_int(x: int, y: int, z: int)
   requires z > 0
