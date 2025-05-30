@@ -186,7 +186,42 @@ method Compare(s1: string, s2: string) returns (res: int)
     return -1;
   }
   if |a| > |b| {
-    // CLAUDE
+    // Split a into head and tail
+    var head := a[0];
+    var tail := a[1..];
+    
+    // Since a is normalized and longer than b, its first bit must be 1
+    assert head == '1';
+    assert OStr2Int(a) == Pow2(|a|-1) + OStr2Int(tail) by {
+      reveal OStr2Int;
+    }
+    
+    // The tail's value is bounded
+    assert OStr2Int(tail) < Pow2(|a|-1) by {
+      Bound(tail);
+    }
+    
+    // b's value is bounded
+    assert OStr2Int(b) < Pow2(|b|) by {
+      Bound(b);
+    }
+    
+    // Since |b| < |a|, b's bound is smaller
+    assert Pow2(|b|) <= Pow2(|a|-1);
+    
+    // Therefore a > b
+    calc {
+      OStr2Int(a);
+    ==
+      Pow2(|a|-1) + OStr2Int(tail);
+    >
+      Pow2(|a|-1);
+    >=
+      Pow2(|b|);
+    >
+      OStr2Int(b);
+    }
+    
     return 1;
   }
 
