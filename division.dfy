@@ -105,7 +105,7 @@ lemma Rearrange2(x:nat, y:nat, z:nat, w:nat)
 {
 }
 
-lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainder: nat)
+lemma {:isolate_assertions} QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainder: nat)
   requires dividend == divisor * quotient + remainder
   requires remainder < divisor
   requires divisor != 0
@@ -113,15 +113,29 @@ lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainde
   ensures  dividend % divisor == remainder
 {
 
-  if divisor > dividend {
-    assert quotient == 0;
-    return;
+  assert (dividend / divisor) * divisor + dividend % divisor == dividend;
+  assert quotient * divisor + remainder == dividend;
+  //assume quotient * divisor + remainder - (dividend / divisor) * divisor - dividend % divisor == 0;
+  calc {
+    (quotient - (dividend / divisor)) * divisor;
+  ==
+    dividend % divisor - remainder;
   }
-  QuotientIsEquivalent(dividend - divisor, divisor, quotient - 1, remainder);
-  assert (dividend - divisor) / divisor == quotient - 1;
-  DistributeDivision(dividend, divisor);
-  assert dividend / divisor - 1 == quotient - 1;
+  var d : int := divisor;
+  assert -d < dividend % divisor - remainder;
+  assert d > dividend % divisor - remainder;
+  Bounding(dividend % divisor - remainder, divisor, quotient - (dividend / divisor));
+  assert dividend % divisor - remainder == 0;
+
+
 }
+
+lemma Bounding(x:int, d:int, n: int)
+  requires x == d * n
+  requires x > -d
+  requires x < d
+  ensures x == 0
+{}
 
 lemma DistributeDivision(a: nat, b:nat)
   requires b != 0
