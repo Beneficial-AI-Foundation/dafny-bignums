@@ -186,10 +186,13 @@ method Compare(s1: string, s2: string) returns (res: int)
 
   // Compare lengths first
   if |a| < |b| {
-    res:= CompareUnequal(b, a);
+    var res':= CompareUnequal(b, a);
+    res := -res';
+    return;
   }
   if |a| > |b| {
     res:= CompareUnequal(a, b);
+    return;
   }
 
   // Equal lengths - compare bits from most significant
