@@ -194,7 +194,38 @@ lemma PrependDigitToString(digit: int, s: string)
 lemma Pow2Monotonic(a: nat, b:nat)
   requires a <= b
   ensures Pow2(a) <= Pow2(b)
-{}
+{
+  if b-a == 0 {
+    return;
+  }
+  if b-a == 1 {
+    reveal Pow2;
+    return;
+  }
+  reveal Pow2;
+  Pow2Monotonic(a, b-1);
+}
+
+
+//lemma Pow2MonotonicStrict(a: nat, b:nat)
+//  requires a < b
+//  ensures Pow2(a) < Pow2(b)
+//{
+//   if a == 0 {
+//      if b == 1 {
+//      Pow2Zero();
+//      }
+//      else {
+//      Pow2Zero();
+//      Pow2MonotonicStrict(a, b-1);
+//      }
+//   }
+//   else {
+//    reveal Pow2;
+//    Pow2Monotonic(a-1, b);
+//   }
+//}
+
 
 lemma Bound(s : string)
   requires ValidBitString(s)
