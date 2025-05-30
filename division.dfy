@@ -186,55 +186,10 @@ method Compare(s1: string, s2: string) returns (res: int)
 
   // Compare lengths first
   if |a| < |b| {
-    return -1;
+    res:= CompareUnequal(b, a);
   }
   if |a| > |b| {
-    // Split a into head and tail
-    var head := a[0];
-    var tail := a[1..];
-
-    // Since a is normalized and longer than b, its first bit must be 1
-    assert head == '1';
-    calc {
-      Pow2(|tail|) + Str2Int(tail);
-    ==
-      {PrependDigitToString(1, tail);}
-      Str2Int(['1'] + tail);
-    ==
-      {assert ['1'] + tail == a;}
-      Str2Int(a);
-    }
-
-    // The tail's value is bounded
-    assert Str2Int(tail) < Pow2(|tail|) by {
-      Bound(tail);
-    }
-
-    // b's value is bounded
-    assert Str2Int(b) < Pow2(|b|) by {
-      Bound(b);
-    }
-
-    // Since |b| < |a|, b's bound is smaller
-    assert Pow2(|b|) <= Pow2(|a|-1) by {assert |b| <= |a|-1;
-                                        Pow2Monotonic(|b|, |a|-1);
-
-                                       }
-
-    // Therefore a > b
-    calc {
-      Str2Int(a);
-    ==
-      Pow2(|a|-1) + Str2Int(tail);
-    >=
-      Pow2(|a|-1);
-    >=
-      Pow2(|b|);
-    >
-      Str2Int(b);
-    }
-
-    return 1;
+    res:= CompareUnequal(a, b);
   }
 
   // Equal lengths - compare bits from most significant
@@ -314,4 +269,66 @@ method Compare(s1: string, s2: string) returns (res: int)
   assert Str2Int(a[1..]) > Str2Int(b[1..]) ==> Str2Int(a) > Str2Int(b);
   assert Str2Int(a[1..]) == Str2Int(b[1..]) ==> Str2Int(a) == Str2Int(b);
   res := Compare(a[1..], b[1..]);
+}
+
+method CompareUnequal(s1: string, s2: string) returns (res: int)
+  requires ValidBitString(s1) && ValidBitString(s2)
+  ensures Str2Int(s1) < Str2Int(s2) ==> res == -1
+  ensures Str2Int(s1) == Str2Int(s2) ==> res == 0
+  ensures Str2Int(s1) > Str2Int(s2) ==> res == 1
+  requires |s1| > 0
+  requires |s1| > 1 ==> s1[0] != '0'
+  requires |s2| > 0
+  requires |s2| > 1 ==> s2[0] != '0'
+  requires |s1| > |s2|
+{
+  var a := s1;
+  var b := s2;
+
+  // Split a into head and tail
+  var head := a[0];
+  var tail := a[1..];
+
+  // Since a is normalized and longer than b, its first bit must be 1
+  assert head == '1';
+  calc {
+    Pow2(|tail|) + Str2Int(tail);
+  ==
+    {PrependDigitToString(1, tail);}
+    Str2Int(['1'] + tail);
+  ==
+    {assert ['1'] + tail == a;}
+    Str2Int(a);
+  }
+
+  // The tail's value is bounded
+  assert Str2Int(tail) < Pow2(|tail|) by {
+    Bound(tail);
+  }
+
+  // b's value is bounded
+  assert Str2Int(b) < Pow2(|b|) by {
+    Bound(b);
+  }
+
+  // Since |b| < |a|, b's bound is smaller
+  assert Pow2(|b|) <= Pow2(|a|-1) by {assert |b| <= |a|-1;
+                                      Pow2Monotonic(|b|, |a|-1);
+
+                                     }
+
+  // Therefore a > b
+  calc {
+    Str2Int(a);
+  ==
+    Pow2(|a|-1) + Str2Int(tail);
+  >=
+    Pow2(|a|-1);
+  >=
+    Pow2(|b|);
+  >
+    Str2Int(b);
+  }
+
+  return 1;
 }
