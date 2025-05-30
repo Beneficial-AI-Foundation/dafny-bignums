@@ -207,8 +207,12 @@ method Compare(s1: string, s2: string) returns (res: int)
   if a[0] > b[0] {
     return 1;
   }
+  if a == "0" {
+    return 0;
+  }
 
   // First bits equal, compare rest
+  assert a[0] == b[0];
   assert a[0] == '1';
   assert b[0] == '1';
 
