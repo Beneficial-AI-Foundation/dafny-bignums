@@ -4,7 +4,6 @@ lemma ModuloDistributivityAdd_int(a: int, b: int, z: int)
   requires z > 0
   ensures (a + b) % z == ((a % z) + (b % z)) % z
 {
-  // NOTE: proof below generated with ChatGPt does not work yet
   // Expand a and b using quotient and remainder
   var qa := a / z;
   var ra := a % z;
@@ -17,7 +16,6 @@ lemma ModuloDistributivityAdd_int(a: int, b: int, z: int)
   assert a + b == (qa * z + ra) + (qb * z + rb);
   assert a + b == (qa + qb) * z + (ra + rb);
 
-  // That means (a + b) % z == (ra + rb) % z
   assert (a + b) % z == (ra + rb) % z by {IgnoreMod(qa+qb, ra+rb, a+b, z);}
 
   assert ((a % z) + (b % z)) % z == (ra + rb) % z;
