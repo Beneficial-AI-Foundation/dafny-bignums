@@ -179,6 +179,11 @@ lemma PrependDigitToString(digit: int, s: string)
   assert s[..i] == s;
 }
 
+lemma Pow2Monotonic(a: nat, b:nat)
+  requires a <= b
+  ensures Pow2(a) <= Pow2(b)
+{}
+
 lemma Bound(s : string)
   requires ValidBitString(s)
   ensures Pow2(|s|) > Str2Int(s)

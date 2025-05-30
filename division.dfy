@@ -176,10 +176,13 @@ method Compare(s1: string, s2: string) returns (res: int)
   ensures Str2Int(s1) < Str2Int(s2) ==> res == -1
   ensures Str2Int(s1) == Str2Int(s2) ==> res == 0
   ensures Str2Int(s1) > Str2Int(s2) ==> res == 1
+  decreases |s1| + |s2|
 {
   // First normalize both strings
   var a := NormalizeBitString(s1);
   var b := NormalizeBitString(s2);
+  assert |a| <= |s1|;
+  assert |b| <= |s2|;
 
   // Compare lengths first
   if |a| < |b| {
@@ -189,39 +192,48 @@ method Compare(s1: string, s2: string) returns (res: int)
     // Split a into head and tail
     var head := a[0];
     var tail := a[1..];
-    
+
     // Since a is normalized and longer than b, its first bit must be 1
     assert head == '1';
-    assert OStr2Int(a) == Pow2(|a|-1) + OStr2Int(tail) by {
-      reveal OStr2Int;
+    calc {
+      Pow2(|tail|) + Str2Int(tail);
+    ==
+      {PrependDigitToString(1, tail);}
+      Str2Int(['1'] + tail);
+    ==
+      {assert ['1'] + tail == a;}
+      Str2Int(a);
     }
-    
+
     // The tail's value is bounded
-    assert OStr2Int(tail) < Pow2(|a|-1) by {
+    assert Str2Int(tail) < Pow2(|tail|) by {
       Bound(tail);
     }
-    
+
     // b's value is bounded
-    assert OStr2Int(b) < Pow2(|b|) by {
+    assert Str2Int(b) < Pow2(|b|) by {
       Bound(b);
     }
-    
+
     // Since |b| < |a|, b's bound is smaller
-    assert Pow2(|b|) <= Pow2(|a|-1);
-    
+    assert Pow2(|b|) <= Pow2(|a|-1) by {assert |b| <= |a|-1;
+                                        Pow2Monotonic(|b|, |a|-1);
+
+                                       }
+
     // Therefore a > b
     calc {
-      OStr2Int(a);
+      Str2Int(a);
     ==
-      Pow2(|a|-1) + OStr2Int(tail);
-    >
+      Pow2(|a|-1) + Str2Int(tail);
+    >=
       Pow2(|a|-1);
     >=
       Pow2(|b|);
     >
-      OStr2Int(b);
+      Str2Int(b);
     }
-    
+
     return 1;
   }
 
