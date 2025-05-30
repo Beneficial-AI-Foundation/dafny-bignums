@@ -25,6 +25,7 @@ lemma IgnoreMod(a: int, b:nat, c:int, z:nat)
   requires a * z + b == c
   requires z > 0
   ensures b % z == c % z
+  ensures (a * z) % z == 0
 {
   assert c - a*z == (b/z)*z + (b % z);
   assert (c/z)*z + (c % z) - a*z == (b/z)*z + (b % z);
@@ -33,7 +34,14 @@ lemma IgnoreMod(a: int, b:nat, c:int, z:nat)
   Bounding(b % z - c % z, z, c/z - a - b/z);
 }
 
-lemma ModuloDistributivityMul_int(x: int, y: int, z: int)
+lemma IgnoreMod'(a :int, z:nat)
+  requires z > 0
+  ensures (a * z) % z == 0
+{
+  IgnoreMod(a, 0, a*z, z);
+}
+
+lemma {:isolate_assertions} ModuloDistributivityMul_int(x: int, y: int, z: int)
   requires z > 0
   ensures (x * y) % z == ((x % z) * (y % z)) % z
 {
@@ -49,7 +57,10 @@ lemma ModuloDistributivityMul_int(x: int, y: int, z: int)
 
   assert x * y == (qx*z + rx)*(qy*z + ry);
   assert x * y == qx*qy*z*z + qx*ry*z + qy*rx*z + rx*ry;
-  assert qx*qy*z*z % z == 0;
+  assert qx*qy*z*z % z == 0 by {IgnoreMod'(qx*qy*z, z);}
+  assert qx*ry*z % z == 0 by {IgnoreMod'(qx*ry, z);}
+  assert qy*rx*z % z == 0 by {IgnoreMod'(qy*rx, z);}
+  assert x * y % z == (qx*qy*z*z % z + qx*ry*z % z+ qy*rx*z % z+ rx*ry % z) % z ;
   assert (x * y) % z == (rx * ry) % z;
 
   assert ((x % z) * (y % z)) % z == (rx * ry) % z;
