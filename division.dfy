@@ -186,6 +186,7 @@ method Compare(s1: string, s2: string) returns (res: int)
     return -1;
   }
   if |a| > |b| {
+    // CLAUDE
     return 1;
   }
 
