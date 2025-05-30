@@ -237,9 +237,7 @@ method CompareUnequal(s1: string, s2: string) returns (res: int)
 
   // Since |b| < |a|, b's bound is smaller
   assert Pow2(|b|) <= Pow2(|a|-1) by {assert |b| <= |a|-1;
-                                      Pow2Monotonic(|b|, |a|-1);
-
-                                     }
+                                      Pow2Monotonic(|b|, |a|-1);}
 
   // Therefore a > b
   calc {
