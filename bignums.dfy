@@ -34,6 +34,13 @@ lemma Pow2Zero()
 lemma Pow2Positive(n:nat)
   ensures Pow2(n) > 0
 {
+  if n == 0 {
+    Pow2Zero();
+  }
+  else {
+    Pow2Positive(n-1);
+    reveal Pow2();
+  }
 }
 
 lemma Pow2Inductive(i: nat)
