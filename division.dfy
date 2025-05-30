@@ -170,28 +170,37 @@ lemma Cancellation(x: nat, y: nat, z:nat)
 
 }
 
-function Compare(a: string, b: string): int
-  requires ValidBitString(a) && ValidBitString(b)
-  ensures Str2Int(a) < Str2Int(b) ==> Compare(a, b) == -1
-  ensures Str2Int(a) == Str2Int(b) ==> Compare(a, b) == 0
-  ensures Str2Int(a) > Str2Int(b) ==> Compare(a, b) == 1
+method Compare(s1: string, s2: string) returns (res: int)
+  requires ValidBitString(s1) && ValidBitString(s2)
+  ensures Str2Int(s1) < Str2Int(s2) ==> res == -1
+  ensures Str2Int(s1) == Str2Int(s2) ==> res == 0 
+  ensures Str2Int(s1) > Str2Int(s2) ==> res == 1
 {
-  if |a| < |b| then
-    -1
-  else if |a| > |b| then
-    1
-  else
-    CompareEqualLength(a, b, 0)
-}
+  // First normalize both strings
+  var a := NormalizeBitString(s1);
+  var b := NormalizeBitString(s2);
 
-// Compare bit strings of equal length
-function CompareEqualLength(a: string, b: string, i: int): int {
-  if i == |a| then
-    0
-  else if a[i] < b[i] then
-    -1
-  else if a[i] > b[i] then
-    1
-  else
-    CompareEqualLength(a, b, i+1)
+  // Compare lengths first
+  if |a| < |b| {
+    return -1;
+  }
+  if |a| > |b| {
+    return 1;
+  }
+
+  // Equal lengths - compare bits from most significant
+  if |a| == 0 {
+    return 0;
+  }
+
+  // Recursive case - compare first bits then recurse on tails
+  if a[0] < b[0] {
+    return -1;
+  }
+  if a[0] > b[0] {
+    return 1;
+  }
+  
+  // First bits equal, compare rest
+  res := Compare(a[1..], b[1..]);
 }
