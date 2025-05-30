@@ -1,6 +1,6 @@
 
 
-lemma ModuloDistributivityAdd_int(a: int, b: int, z: int)
+lemma {:isolate_assertions} ModuloDistributivityAdd_int(a: int, b: int, z: int)
   requires z > 0
   ensures (a + b) % z == ((a % z) + (b % z)) % z
 {
@@ -18,10 +18,29 @@ lemma ModuloDistributivityAdd_int(a: int, b: int, z: int)
   assert a + b == (qa + qb) * z + (ra + rb);
 
   // That means (a + b) % z == (ra + rb) % z
-  assert (a + b) % z == (ra + rb) % z;
+  assert (a + b) % z == (ra + rb) % z by {IgnoreMod(qa+qb, ra+rb, a+b, z);}
 
   assert ((a % z) + (b % z)) % z == (ra + rb) % z;
 }
+
+lemma {:isolate_assertions} IgnoreMod(a: int, b:nat, c:int, z:nat)
+  requires a * z + b == c
+  requires z > 0
+  ensures b % z == c % z
+{
+  assert c - a*z == (b/z)*z + (b % z);
+  assert (c/z)*z + (c % z) - a*z == (b/z)*z + (b % z);
+  assert (c/z - a)*z + (c % z) == (b/z)*z + (b % z);
+  assert (c/z - a - b/z)*z  == b % z - c % z;
+  BoundingDuplicateTODO(b % z - c % z, z, c/z - a - b/z);
+}
+
+lemma BoundingDuplicateTODO(x:int, d:int, n: int)
+  requires x == d * n
+  requires x > -d
+  requires x < d
+  ensures x == 0
+{}
 
 lemma ModuloDistributivityMul_int(x: int, y: int, z: int)
   requires z > 0
