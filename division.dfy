@@ -142,10 +142,8 @@ lemma {:isolate_assertions} DistributeDivision(a: nat, b:nat)
       {
         -((a-b) % b) + a % b;
       ==
-        (b-a) % b + a % b;
-      ==
-        {ModuloDistributivityAdd_int(b-a, a, b);}
-        (b-a+a) % b;
+        {IgnoreMod(a,b);}
+        -(a % b) + a % b;
       ==
         0;
       }
@@ -155,6 +153,15 @@ lemma {:isolate_assertions} DistributeDivision(a: nat, b:nat)
     b*(a/b-1);
   }
   Cancellation(b, (a-b)/b, a/b-1);
+}
+
+lemma IgnoreMod(a:int, b:int)
+  requires b > 0
+  //requires a >= b TODO Do I need this?
+  ensures (a-b) % b == a % b
+{
+  ModuloDistributivityAdd_int(a, -b, b);
+  //assert (a - b) % b == ((a % b) + (-b % b)) % b;
 }
 
 // TODO Used?
