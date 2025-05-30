@@ -174,7 +174,7 @@ lemma Cancellation(x: nat, y: nat, z:nat)
 method Compare(s1: string, s2: string) returns (res: int)
   requires ValidBitString(s1) && ValidBitString(s2)
   ensures Str2Int(s1) < Str2Int(s2) ==> res == -1
-  ensures Str2Int(s1) == Str2Int(s2) ==> res == 0 
+  ensures Str2Int(s1) == Str2Int(s2) ==> res == 0
   ensures Str2Int(s1) > Str2Int(s2) ==> res == 1
 {
   // First normalize both strings
@@ -201,7 +201,7 @@ method Compare(s1: string, s2: string) returns (res: int)
   if a[0] > b[0] {
     return 1;
   }
-  
+
   // First bits equal, compare rest
   res := Compare(a[1..], b[1..]);
 }
