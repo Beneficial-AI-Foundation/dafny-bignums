@@ -45,7 +45,6 @@ lemma {:isolate_assertions} ModuloDistributivityMul_int(x: int, y: int, z: int)
   requires z > 0
   ensures (x * y) % z == ((x % z) * (y % z)) % z
 {
-  // NOTE: proof below generated with ChatGPt does not work yet
 
   var qx := x / z;
   var rx := x % z;
@@ -60,7 +59,28 @@ lemma {:isolate_assertions} ModuloDistributivityMul_int(x: int, y: int, z: int)
   assert qx*qy*z*z % z == 0 by {IgnoreMod'(qx*qy*z, z);}
   assert qx*ry*z % z == 0 by {IgnoreMod'(qx*ry, z);}
   assert qy*rx*z % z == 0 by {IgnoreMod'(qy*rx, z);}
-  assert x * y % z == (qx*qy*z*z % z + qx*ry*z % z+ qy*rx*z % z+ rx*ry % z) % z ;
+  calc {
+    (qx*qy*z*z + qx*ry*z + qy*rx*z) % z;
+  ==
+    (qx*qy*z + qx*ry + qy*rx)*z % z;
+  ==
+    {IgnoreMod'(qx*qy*z + qx*ry + qy*rx, z);}
+    0;
+  }
+  calc {
+    x * y % z;
+  ==
+    (qx*qy*z*z + qx*ry*z + qy*rx*z + rx*ry ) % z;
+  ==
+    {
+      ModuloDistributivityAdd_int(qx*qy*z*z + qx*ry*z + qy*rx*z, rx*ry, z);
+    }
+    ((qx*qy*z*z + qx*ry*z + qy*rx*z) % z + rx*ry % z) % z;
+  ==
+    (rx*ry % z) % z;
+  ==
+    rx*ry % z;
+  }
   assert (x * y) % z == (rx * ry) % z;
 
   assert ((x % z) * (y % z)) % z == (rx * ry) % z;
