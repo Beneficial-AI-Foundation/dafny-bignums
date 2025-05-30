@@ -51,7 +51,7 @@ method DivMod(dividend: string, divisor: string) returns (quotient: string, rema
       r := Sub(r, divisor);
       assert OStr2Int(r) < OStr2Int(divisor) by {reveal OStr2Int;}
       assert ValidBitString(r);
-      assert a2: OStr2Int(r) == 2 * OStr2Int(old_r) + d - OStr2Int(divisor) by {reveal OStr2Int;}
+      assert a2: OStr2Int(r) == 2 * OStr2Int(old_r) + d - OStr2Int(divisor) by {reveal a1; reveal OStr2Int;}
       q := q + "1";
       assert ValidBitString(q);
       assert a3 : OStr2Int(q) == 2 * OStr2Int(old_q) + 1 by {reveal OStr2Int;}
