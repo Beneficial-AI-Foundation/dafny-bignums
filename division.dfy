@@ -123,8 +123,37 @@ lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainde
 
 lemma DistributeDivision(a: nat, b:nat)
   requires b != 0
+  requires a - b >= 0
   ensures (a-b)/b == a/b - 1
+{
+  calc {
+    b * ((a-b)/b);
+  ==
+    {
+      InvertDivide(b, a-b);
+    }
+    a-b;
+  ==
+    {InvertDivide(b, a);}
+    b*(a/b)-b*1;
+  ==
+    b*(a/b-1);
+  }
+  Cancellation(b, (a-b)/b, a/b-1);
+}
+
+lemma InvertDivide(x:nat, y:nat)
+  requires x != 0
+  ensures x * (y/x) == y
 {}
+
+lemma Cancellation(x: nat, y: nat, z:nat)
+  requires x != 0
+  requires x*y == x*z
+  ensures y == z
+{
+
+}
 
 function Compare(a: string, b: string): int
   ensures Str2Int(a) < Str2Int(b) ==> Compare(a, b) == -1
