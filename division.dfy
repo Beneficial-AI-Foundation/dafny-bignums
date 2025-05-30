@@ -171,6 +171,7 @@ lemma Cancellation(x: nat, y: nat, z:nat)
 }
 
 function Compare(a: string, b: string): int
+  requires ValidBitString(a) && ValidBitString(b)
   ensures Str2Int(a) < Str2Int(b) ==> Compare(a, b) == -1
   ensures Str2Int(a) == Str2Int(b) ==> Compare(a, b) == 0
   ensures Str2Int(a) > Str2Int(b) ==> Compare(a, b) == 1
