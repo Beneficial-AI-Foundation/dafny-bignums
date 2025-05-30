@@ -1,5 +1,4 @@
 include "bignums.dfy"
-include "modulo-integer-properties.dfy"
 
 method DivMod(dividend: string, divisor: string) returns (quotient: string, remainder: string)
   requires ValidBitString(dividend) && ValidBitString(divisor)
@@ -124,53 +123,7 @@ lemma Bounding(x:int, d:int, n: int)
   ensures x == 0
 {}
 
-lemma DistributeDivision(a: nat, b:nat)
-  requires b != 0
-  requires a - b >= 0
-  ensures (a-b)/b == a/b - 1
-{
-  calc {
-    b * ((a-b)/b);
-  ==
-    a-b - (a-b) % b;
-  ==
-    b*(a/b)-b*1 - (a-b) % b + a % b;
-  ==
-    b*(a/b)-b*1 + (-((a-b) % b) + a % b);
-  ==
-    {
-      calc
-      {
-        -((a-b) % b) + a % b;
-      ==
-        {IgnoreMod(a,b);}
-        -(a % b) + a % b;
-      ==
-        0;
-      }
-    }
-    b*(a/b)-b*1;
-  ==
-    b*(a/b-1);
-  }
-  Cancellation(b, (a-b)/b, a/b-1);
-}
 
-lemma IgnoreMod(a:int, b:int)
-  requires b > 0
-  ensures (a-b) % b == a % b
-{
-  ModuloDistributivityAdd_int(a, -b, b);
-}
-
-
-lemma Cancellation(x: nat, y: nat, z:nat)
-  requires x != 0
-  requires x*y == x*z
-  ensures y == z
-{
-
-}
 
 method Compare(s1: string, s2: string) returns (res: int)
   requires ValidBitString(s1) && ValidBitString(s2)
