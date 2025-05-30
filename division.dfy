@@ -232,47 +232,6 @@ method Compare(s1: string, s2: string) returns (res: int)
     {assert ['1'] + a[1..] == a;}
     Str2Int(a);
   }
-  if Str2Int(a[1..]) < Str2Int(b[1..]) {
-    calc {
-      Str2Int(a);
-    ==
-      Pow2(|a[1..]|) + Str2Int(a[1..]);
-    ==
-      Pow2(|b[1..]|) + Str2Int(a[1..]);
-    <
-      Pow2(|b[1..]|) + Str2Int(b[1..]);
-    ==
-      Str2Int(b);
-    }
-  }
-  if Str2Int(a[1..]) > Str2Int(b[1..]) {
-    calc {
-      Str2Int(a);
-    ==
-      Pow2(|a[1..]|) + Str2Int(a[1..]);
-    ==
-      Pow2(|b[1..]|) + Str2Int(a[1..]);
-    >
-      Pow2(|b[1..]|) + Str2Int(b[1..]);
-    ==
-      Str2Int(b);
-    }
-  }
-  if Str2Int(a[1..]) == Str2Int(b[1..]) {
-    calc {
-      Str2Int(a);
-    ==
-      Pow2(|a[1..]|) + Str2Int(a[1..]);
-    ==
-      Pow2(|b[1..]|) + Str2Int(a[1..]);
-    ==
-      Pow2(|b[1..]|) + Str2Int(b[1..]);
-    ==
-      Str2Int(b);
-    }
-  }
-  assert Str2Int(a[1..]) > Str2Int(b[1..]) ==> Str2Int(a) > Str2Int(b);
-  assert Str2Int(a[1..]) == Str2Int(b[1..]) ==> Str2Int(a) == Str2Int(b);
   assert Str2Int(a) > Str2Int(a[1..]) by {
     Pow2Positive(|a[1..]|);
   }
