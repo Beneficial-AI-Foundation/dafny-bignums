@@ -1,4 +1,5 @@
 include "bignums.dfy"
+include "modulo-integer-properties.dfy"
 
 method DivMod(dividend: string, divisor: string) returns (quotient: string, remainder: string)
   requires ValidBitString(dividend) && ValidBitString(divisor)
@@ -121,7 +122,7 @@ lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainde
   assert dividend / divisor - 1 == quotient - 1;
 }
 
-lemma DistributeDivision(a: nat, b:nat)
+lemma {:isolate_assertions} DistributeDivision(a: nat, b:nat)
   requires b != 0
   requires a - b >= 0
   ensures (a-b)/b == a/b - 1
@@ -129,12 +130,26 @@ lemma DistributeDivision(a: nat, b:nat)
   calc {
     b * ((a-b)/b);
   ==
-    {
-      InvertDivide(b, a-b);
-    }
-    a-b;
+    a-b - (a-b) % b;
   ==
-    {InvertDivide(b, a);}
+    b*(a/b)-b*1 - (a-b) % b + a % b;
+  ==
+    //{Rearrange3(b*(a/b)-b*1, (a-b) % b, a % b);}
+    b*(a/b)-b*1 + (-((a-b) % b) + a % b);
+  ==
+    {
+      calc
+      {
+        -((a-b) % b) + a % b;
+      ==
+        (b-a) % b + a % b;
+      ==
+        {ModuloDistributivityAdd_int(b-a, a, b);}
+        (b-a+a) % b;
+      ==
+        0;
+      }
+    }
     b*(a/b)-b*1;
   ==
     b*(a/b-1);
@@ -142,6 +157,12 @@ lemma DistributeDivision(a: nat, b:nat)
   Cancellation(b, (a-b)/b, a/b-1);
 }
 
+// TODO Used?
+lemma Rearrange3(x:int, y:int, z:int)
+  ensures x - y + z == x + (-y + z)
+{}
+
+// TODO Used?
 lemma InvertDivide(x:nat, y:nat)
   requires x != 0
   ensures x * (y/x) == y
