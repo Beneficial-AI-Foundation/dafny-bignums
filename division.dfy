@@ -105,11 +105,26 @@ lemma Rearrange2(x:nat, y:nat, z:nat, w:nat)
 
 lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainder: nat)
   requires dividend == divisor * quotient + remainder
+  requires remainder < divisor
+  requires divisor != 0
   ensures  dividend / divisor == quotient
   ensures  dividend % divisor == remainder
 {
 
+  if divisor > dividend {
+    assert quotient == 0;
+    return;
+  }
+  QuotientIsEquivalent(dividend - divisor, divisor, quotient - 1, remainder);
+  assert (dividend - divisor) / divisor == quotient - 1;
+  DistributeDivision(dividend, divisor);
+  assert dividend / divisor - 1 == quotient - 1;
 }
+
+lemma DistributeDivision(a: nat, b:nat)
+  requires b != 0
+  ensures (a-b)/b == a/b - 1
+{}
 
 function Compare(a: string, b: string): int
   ensures Str2Int(a) < Str2Int(b) ==> Compare(a, b) == -1
