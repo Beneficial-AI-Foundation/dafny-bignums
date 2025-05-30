@@ -251,5 +251,8 @@ method Compare(s1: string, s2: string) returns (res: int)
   }
 
   // First bits equal, compare rest
+  assert Str2Int(a[1..]) < Str2Int(b[1..]) ==> Str2Int(a) < Str2Int(b);
+  assert Str2Int(a[1..]) > Str2Int(b[1..]) ==> Str2Int(a) > Str2Int(b);
+  assert Str2Int(a[1..]) == Str2Int(b[1..]) ==> Str2Int(a) == Str2Int(b);
   res := Compare(a[1..], b[1..]);
 }
