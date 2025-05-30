@@ -310,6 +310,7 @@ method NormalizeBitString(s: string) returns(t: string)
   ensures |t| > 0
   ensures |t| > 1 ==> t[0] != '0'
   ensures ValidBitString(s) ==> Str2Int(s) == Str2Int(t)
+  ensures |s| >= |t|
 {
   // First pass: keep only valid bits
   var validBits := "";
