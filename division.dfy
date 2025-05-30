@@ -122,7 +122,7 @@ lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainde
   assert dividend / divisor - 1 == quotient - 1;
 }
 
-lemma {:isolate_assertions} DistributeDivision(a: nat, b:nat)
+lemma DistributeDivision(a: nat, b:nat)
   requires b != 0
   requires a - b >= 0
   ensures (a-b)/b == a/b - 1
@@ -134,7 +134,6 @@ lemma {:isolate_assertions} DistributeDivision(a: nat, b:nat)
   ==
     b*(a/b)-b*1 - (a-b) % b + a % b;
   ==
-    //{Rearrange3(b*(a/b)-b*1, (a-b) % b, a % b);}
     b*(a/b)-b*1 + (-((a-b) % b) + a % b);
   ==
     {
@@ -157,23 +156,11 @@ lemma {:isolate_assertions} DistributeDivision(a: nat, b:nat)
 
 lemma IgnoreMod(a:int, b:int)
   requires b > 0
-  //requires a >= b TODO Do I need this?
   ensures (a-b) % b == a % b
 {
   ModuloDistributivityAdd_int(a, -b, b);
-  //assert (a - b) % b == ((a % b) + (-b % b)) % b;
 }
 
-// TODO Used?
-lemma Rearrange3(x:int, y:int, z:int)
-  ensures x - y + z == x + (-y + z)
-{}
-
-// TODO Used?
-lemma InvertDivide(x:nat, y:nat)
-  requires x != 0
-  ensures x * (y/x) == y
-{}
 
 lemma Cancellation(x: nat, y: nat, z:nat)
   requires x != 0
