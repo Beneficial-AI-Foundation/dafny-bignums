@@ -105,7 +105,7 @@ lemma Rearrange2(x:nat, y:nat, z:nat, w:nat)
 {
 }
 
-lemma {:isolate_assertions} QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainder: nat)
+lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainder: nat)
   requires dividend == divisor * quotient + remainder
   requires remainder < divisor
   requires divisor != 0
@@ -115,19 +115,13 @@ lemma {:isolate_assertions} QuotientIsEquivalent(dividend : nat, divisor: nat, q
 
   assert (dividend / divisor) * divisor + dividend % divisor == dividend;
   assert quotient * divisor + remainder == dividend;
-  //assume quotient * divisor + remainder - (dividend / divisor) * divisor - dividend % divisor == 0;
   calc {
     (quotient - (dividend / divisor)) * divisor;
   ==
     dividend % divisor - remainder;
   }
-  var d : int := divisor;
-  assert -d < dividend % divisor - remainder;
-  assert d > dividend % divisor - remainder;
   Bounding(dividend % divisor - remainder, divisor, quotient - (dividend / divisor));
   assert dividend % divisor - remainder == 0;
-
-
 }
 
 lemma Bounding(x:int, d:int, n: int)
