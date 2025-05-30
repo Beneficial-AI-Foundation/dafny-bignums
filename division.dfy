@@ -112,16 +112,9 @@ lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainde
   ensures  dividend / divisor == quotient
   ensures  dividend % divisor == remainder
 {
-
   assert (dividend / divisor) * divisor + dividend % divisor == dividend;
-  assert quotient * divisor + remainder == dividend;
-  calc {
-    (quotient - (dividend / divisor)) * divisor;
-  ==
-    dividend % divisor - remainder;
-  }
+  assert (quotient - (dividend / divisor)) * divisor == dividend % divisor - remainder;
   Bounding(dividend % divisor - remainder, divisor, quotient - (dividend / divisor));
-  assert dividend % divisor - remainder == 0;
 }
 
 lemma Bounding(x:int, d:int, n: int)
