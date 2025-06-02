@@ -1,16 +1,4 @@
-lemma ModuloDistributivityAdd_int(a: int, b: int, z: int)
-  requires z > 0
-  ensures (a + b) % z == ((a % z) + (b % z)) % z
-{
- assume  (a + b) % z == ((a % z) + (b % z)) % z;
-}
-
-lemma ModuloDistributivityMul_int(x: int, y: int, z: int)
-  requires z > 0
-  ensures (x * y) % z == ((x % z) * (y % z)) % z
-{
-    assume (x * y) % z == ((x % z) * (y % z)) % z;
-}
+include "modulo-integer-properties.dfy"
 
 
 // computes res := x^y
