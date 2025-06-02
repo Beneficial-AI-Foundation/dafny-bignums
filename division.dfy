@@ -1,4 +1,5 @@
 include "bignums.dfy"
+include "bound.dfy"
 
 method DivMod(dividend: string, divisor: string) returns (quotient: string, remainder: string)
   requires ValidBitString(dividend) && ValidBitString(divisor)
@@ -116,12 +117,6 @@ lemma QuotientIsEquivalent(dividend : nat, divisor: nat, quotient: nat, remainde
   Bounding(dividend % divisor - remainder, divisor, quotient - (dividend / divisor));
 }
 
-lemma Bounding(x:int, d:int, n: int)
-  requires x == d * n
-  requires x > -d
-  requires x < d
-  ensures x == 0
-{}
 
 
 
