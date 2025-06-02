@@ -31,6 +31,18 @@ lemma Pow2Zero()
   reveal Pow2();
 }
 
+lemma Pow2Positive(n:nat)
+  ensures Pow2(n) > 0
+{
+  if n == 0 {
+    Pow2Zero();
+  }
+  else {
+    Pow2Positive(n-1);
+    reveal Pow2();
+  }
+}
+
 lemma Pow2Inductive(i: nat)
   ensures Pow2(i+1) == 2*Pow2(i)
 {
@@ -178,6 +190,22 @@ lemma PrependDigitToString(digit: int, s: string)
   }
   assert s[..i] == s;
 }
+
+lemma Pow2Monotonic(a: nat, b:nat)
+  requires a <= b
+  ensures Pow2(a) <= Pow2(b)
+{
+  if b-a == 0 {
+    return;
+  }
+  if b-a == 1 {
+    reveal Pow2;
+    return;
+  }
+  reveal Pow2;
+  Pow2Monotonic(a, b-1);
+}
+
 
 lemma Bound(s : string)
   requires ValidBitString(s)
