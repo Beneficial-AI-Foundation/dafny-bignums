@@ -45,7 +45,31 @@ method mpn_add_n(heap: array<bv1>, rp: nat, up: nat, vp: nat, n: nat) returns (c
   return cy;
 }
 
+// TODO If the C code is little-endian,
+// then this and the examples in Main
+// need to be changed
 ghost function BitsToInt(s: seq<bv1>): nat
 {
   if |s| == 0 then  0  else  (2 * BitsToInt(s[0..|s|-1]) + s[|s|-1] as int)
+}
+
+method Main() {
+
+  var heap := new bv1[] [1, 0, 1, 1, // 11
+  1, 1, 0, 1, // 13
+  0, 0, 0, 0];// empty memory to be filled in
+  var up := 0;
+  var vp := 4;
+  var rp := 8;
+
+  var cy := mpn_add_n(heap, rp, up, vp, 4);
+
+  print "These should still be 0, 4, 8";
+  print "up ", up;
+  print "vp ", vp;
+  print "rp ", rp;
+
+  print "heap ", heap;
+  print "carry ", cy;
+
 }
