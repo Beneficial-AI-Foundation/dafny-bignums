@@ -14,10 +14,10 @@ method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, 
   // see gmp/gmp-impl.h, line 2467
   requires MpnSameOrIncrP(rp_const, up_const, n_const)
   requires MpnSameOrIncrP(rp_const, vp_const, n_const)
-  // TODO require that rp, rp + n, up, up + n, vp, vp + n are in-bounds for the heap
   ensures Pow2(n_const) * cy as nat + BitsToInt(heap[rp_const..rp_const+n_const]) ==
           BitsToInt(old(heap[up_const..up_const+n_const]))
           + BitsToInt(old(heap[vp_const..vp_const+n_const]))
+  // This function does not modify any memory except the result:
   ensures heap[..rp_const] == old(heap[..rp_const])
   ensures heap[rp_const+n_const..] == old(heap[rp_const+n_const..])
 {
