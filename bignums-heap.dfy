@@ -56,8 +56,8 @@ ghost function BitsToInt(s: seq<bv1>): nat
 
 method Main() {
 
-  var heap := new bv1[] [1, 0, 1, 1, // 11
-  1, 1, 0, 1, // 13
+  var heap := new bv1[] [1, 0, 1, 1, // 13, little-endian
+  1, 1, 0, 1, // 11
   0, 0, 0, 0];// empty memory to be filled in
   var up := 0;
   var vp := 4;
@@ -65,12 +65,13 @@ method Main() {
 
   var cy := mpn_add_n(heap, rp, up, vp, 4);
 
-  print "These should still be 0, 4, 8";
-  print "up ", up;
-  print "vp ", vp;
-  print "rp ", rp;
+  print "These should still be 0, 4, 8\n";
+  print "up ", up, "\n";
+  print "vp ", vp, "\n";
+  print "rp ", rp, "\n";
 
-  print "heap ", heap;
-  print "carry ", cy;
+  print "heap ", heap[..], "\n";
+  print "carry ", cy, "\n";
 
+  print "16 * carry, plus the last 4 values from the heap (read in little-endian order), should be 24";
 }
