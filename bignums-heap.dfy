@@ -45,6 +45,10 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
     invariant Pow2(rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..rp]) ==
               BitsToInt(old(heap[upConst..up])) + BitsToInt(old(heap[vpConst..vp]))
   {
+    ghost var old_rp := rp;
+    ghost var old_cy := cy;
+    ghost var old_up := up;
+    ghost var old_vp := vp;
     firstTime := false;
     var ul := heap[up];
     up := up + 1;
@@ -58,11 +62,46 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
     heap[rp] := rl;
     rp := rp + 1;
     n := n-1;
+    calc {
+      Pow2(rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..rp]);
+    == // Substitute rp = old_rp + 1
+      Pow2(old_rp + 1 - rpConst) * cy as nat + BitsToInt(heap[rpConst..old_rp+1]);
+    == // Simplify exponent
+      Pow2(old_rp - rpConst + 1) * cy as nat + BitsToInt(heap[rpConst..old_rp+1]);
+    == // Using Pow2(n+1) = 2 * Pow2(n)
+      2 * Pow2(old_rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..old_rp+1]);
+    == // Using BitsToIntAppend lemma
+      2 * Pow2(old_rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..old_rp]) + rl as nat * Pow2(old_rp - rpConst);
+    == // Factor out Pow2(old_rp - rpConst)
+      Pow2(old_rp - rpConst) * (2 * cy as nat + rl as nat) + BitsToInt(heap[rpConst..old_rp]);
+    == // Based on binary addition with carry
+      Pow2(old_rp - rpConst) * (ul as nat + vl as nat + old_cy as nat) + BitsToInt(heap[rpConst..old_rp]);
+    == // Using pre-state invariant
+      Pow2(old_rp - rpConst) * (ul as nat + vl as nat) +
+      (Pow2(old_rp - rpConst) * old_cy as nat + BitsToInt(heap[rpConst..old_rp]));
+    == // Pre-state invariant value
+      Pow2(old_rp - rpConst) * (ul as nat + vl as nat) +
+      BitsToInt(old(heap[upConst..old_up])) + BitsToInt(old(heap[vpConst..old_vp]));
+    == // Expand using old_up = up-1, old_vp = vp-1
+      BitsToInt(old(heap[upConst..old_up])) + BitsToInt(old(heap[vpConst..old_vp])) +
+      (ul as nat * Pow2(old_rp - rpConst) + vl as nat * Pow2(old_rp - rpConst));
+    == // Applying BitsToIntAppend property
+      BitsToInt(old(heap[upConst..old_up])) + BitsToInt(old(heap[vpConst..old_vp])) +
+      BitsToInt(old(heap[old_up..up])) * Pow2(old_up - upConst) +
+      BitsToInt(old(heap[old_vp..vp])) * Pow2(old_vp - vpConst);
+    == // Simplification based on indices
+      BitsToInt(old(heap[upConst..up])) + BitsToInt(old(heap[vpConst..vp]));
+    }
   }
 
 
   return cy;
 }
+
+lemma BitsToIntAppend(bits: seq<bv1>, new_bit: bv1)
+  ensures BitsToInt(bits + [new_bit]) == BitsToInt(bits) + (new_bit as int) * Pow2(|bits|)
+{}
+
 
 // These 3 predicates are from gmp/gmp-impl.h
 opaque predicate MpnSameOrIncrP(dst: nat, src: nat, size: nat){
