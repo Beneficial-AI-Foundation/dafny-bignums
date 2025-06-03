@@ -1,7 +1,10 @@
+include "bignums.dfy"
 // Based on line 37 of gmp/mpn/generic/add_n.c
 // The pointers point to arrays of bits, but for an
 // efficient version it should be something like array<bv64>
 method mpn_add_n(heap: array<bv1>, rp: nat, up: nat, vp: nat, n: nat) returns (cy: bv1)
+ensures Pow2(n) * cy as nat + BitsToInt(heap[rp..rp+n]) ==
+        BitsToInt(heap[up..up+n]) + BitsToInt(heap[vp..vp+n])
 {
   cy := 0;
   // mutable versions of these variables
