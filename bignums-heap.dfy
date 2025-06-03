@@ -51,8 +51,10 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
     ghost var old_vp := vp;
     firstTime := false;
     var ul := heap[up];
+    assert ul == old(heap[old_up]);
     up := up + 1;
     var vl := heap[vp];
+    assert vl == old(heap[old_vp]);
     vp := vp + 1;
     var sl := ul + vl;
     var cy1 := if sl < ul then 1 else 0;
