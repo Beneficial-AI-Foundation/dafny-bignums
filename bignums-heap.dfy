@@ -11,6 +11,9 @@ method mpn_add_n(heap: array<bv1>, rp: nat, up: nat, vp: nat, n: nat) returns (c
   //  ASSERT (n >= 1);
   //  ASSERT (MPN_SAME_OR_INCR_P (rp, up, n));
   //  ASSERT (MPN_SAME_OR_INCR_P (rp, vp, n));
+  // Note that the pointers are allowed to overlap as long as
+  // it's "in a way suitable for an incrementing/decrementing algorithm";
+  // see gmp/gmp-impl.h, line 2467
   ensures Pow2(n) * cy as nat + BitsToInt(heap[rp..rp+n]) ==
           BitsToInt(old(heap[up..up+n])) + BitsToInt(old(heap[vp..vp+n]))
 {
