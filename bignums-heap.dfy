@@ -6,16 +6,17 @@ include "pow2.dfy"
 method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, n_const: nat) returns (cy: bv1)
   modifies heap
   requires n_const >= 1
-  requires MpnSameOrIncrP(rp_const, up_const, n_const)
-  requires MpnSameOrIncrP(rp_const, vp_const, n_const)
-  // TODO require that rp, rp + n, up, up + n, vp, vp + n are in-bounds for the heap
-  // TODO ensure that the only part of the heap that could change is heap[rp..rp+n]
   // Note that the pointers are allowed to overlap as long as
   // it's "in a way suitable for an incrementing/decrementing algorithm";
   // see gmp/gmp-impl.h, line 2467
+  requires MpnSameOrIncrP(rp_const, up_const, n_const)
+  requires MpnSameOrIncrP(rp_const, vp_const, n_const)
+  // TODO require that rp, rp + n, up, up + n, vp, vp + n are in-bounds for the heap
   ensures Pow2(n_const) * cy as nat + BitsToInt(heap[rp_const..rp_const+n_const]) ==
           BitsToInt(old(heap[up_const..up_const+n_const]))
           + BitsToInt(old(heap[vp_const..vp_const+n_const]))
+  ensures heap[..rp_const] == old(heap[..rp_const])
+  ensures heap[rp_const+n_const..] == old(heap[rp_const+n_const..])
 {
   cy := 0;
   // Create mutable versions of these variables
