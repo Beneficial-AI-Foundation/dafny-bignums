@@ -97,6 +97,14 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
       BitsToInt(old(heap[old_up..up])) * Pow2(old_up - upConst) +
       BitsToInt(old(heap[old_vp..vp])) * Pow2(old_vp - vpConst);
     == // Simplification based on indices
+      {
+        BitsToIntAppend(old(heap[upConst..old_up]), old(heap[old_up]));
+        BitsToIntAppend(old(heap[vpConst..old_vp]), old(heap[old_vp]));
+        assert old(heap[upConst..up]) == old(heap[upConst..old_up+1]) == old(heap[upConst..old_up]) + [old(heap[old_up])];
+        assert old(heap[vpConst..vp]) == old(heap[vpConst..old_vp+1]) == old(heap[vpConst..old_vp]) + [old(heap[old_vp])];
+        assert BitsToInt(old(heap[upConst..up])) == BitsToInt(old(heap[upConst..old_up])) + BitsToInt(old(heap[old_up..up])) * Pow2(old_up - upConst);
+        assert BitsToInt(old(heap[vpConst..vp])) == BitsToInt(old(heap[vpConst..old_vp])) + BitsToInt(old(heap[old_vp..vp])) * Pow2(old_vp - vpConst);
+      }
       BitsToInt(old(heap[upConst..up])) + BitsToInt(old(heap[vpConst..vp]));
     }
   }
