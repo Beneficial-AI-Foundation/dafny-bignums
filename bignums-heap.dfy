@@ -1,3 +1,4 @@
+// Based on line 37 of gmp/mpn/generic/add_n.c
 method mpn_add_n(heap: array<bv64>, rp: nat, up: nat, vp: nat, n: nat) returns (cy: bv64)
 {
   var i: nat := 0;
