@@ -1,19 +1,22 @@
 include "bignums.dfy"
+
 // Based on line 37 of gmp/mpn/generic/add_n.c
 // The pointers point to arrays of bits, but for an
 // efficient version it should be something like array<bv64>
 method mpn_add_n(heap: array<bv1>, rp: nat, up: nat, vp: nat, n: nat) returns (cy: bv1)
 modifies heap
+// TODO require that rp, rp + n, up, up + n, vp, vp + n are in-bounds for the heap
+// TODO ensure that the only part of the heap that could change is heap[rp..rp+n]
 ensures Pow2(n) * cy as nat + BitsToInt(heap[rp..rp+n]) ==
-        BitsToInt(heap[up..up+n]) + BitsToInt(heap[vp..vp+n])
+        BitsToInt(old(heap[up..up+n])) + BitsToInt(old(heap[vp..vp+n]))
 {
   cy := 0;
-  // mutable versions of these variables
+  // Create mutable versions of these variables
   var rp' := rp;
   var up' := up;
   var vp' := vp;
   var n' := n;
-  // simulate a do-while loop
+  // The C code uses a do-while loop, so this while loop must execute at least once
   var first_time := true;
   while first_time || n != 0
   {
