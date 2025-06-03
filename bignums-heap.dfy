@@ -69,6 +69,7 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
     == // Simplify exponent
       Pow2(old_rp - rpConst + 1) * cy as nat + BitsToInt(heap[rpConst..old_rp+1]);
     == // Using Pow2(n+1) = 2 * Pow2(n)
+      {reveal Pow2;}
       2 * Pow2(old_rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..old_rp+1]);
     == // Using BitsToIntAppend lemma
       2 * Pow2(old_rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..old_rp]) + rl as nat * Pow2(old_rp - rpConst);
