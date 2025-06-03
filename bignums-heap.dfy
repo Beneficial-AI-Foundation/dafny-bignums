@@ -3,7 +3,7 @@ include "pow2.dfy"
 // Based on line 37 of https://github.com/gmp-mirror/gmp/blob/master/mpn/generic/add_n.c
 // The pointers point to arrays of bits, but for an
 // efficient version it should be something like array<bv64>
-method mpn_add_n(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nConst: nat) returns (cy: bv1)
+method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nConst: nat) returns (cy: bv1)
   modifies heap
   requires upConst + nConst < heap.Length
   requires vpConst + nConst < heap.Length
@@ -85,7 +85,7 @@ method Main() {
   var vp := 4;
   var rp := 8;
 
-  var cy := mpn_add_n(heap, rp, up, vp, 4);
+  var cy := MpnAddN(heap, rp, up, vp, 4);
 
   print "These should still be 0, 4, 8\n";
   print "up ", up, "\n";
