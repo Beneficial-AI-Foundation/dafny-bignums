@@ -6,11 +6,10 @@ include "pow2.dfy"
 method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, n_const: nat) returns (cy: bv1)
   modifies heap
   requires n_const >= 1
+  requires MpnSameOrIncrP(rp_const, up_const, n_const)
+  requires MpnSameOrIncrP(rp_const, vp_const, n_const)
   // TODO require that rp, rp + n, up, up + n, vp, vp + n are in-bounds for the heap
   // TODO ensure that the only part of the heap that could change is heap[rp..rp+n]
-  // TODO Add these as requirements too:
-  //  ASSERT (MPN_SAME_OR_INCR_P (rp, up, n));
-  //  ASSERT (MPN_SAME_OR_INCR_P (rp, vp, n));
   // Note that the pointers are allowed to overlap as long as
   // it's "in a way suitable for an incrementing/decrementing algorithm";
   // see gmp/gmp-impl.h, line 2467
@@ -44,6 +43,19 @@ method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, 
   }
 
   return cy;
+}
+
+// These 3 predicates are from gmp/gmp-impl.h
+opaque predicate MpnSameOrIncrP(dst : nat, src : nat, size :nat ){
+  MpnSameOrIncrP2(dst, size, src, size)
+}
+
+opaque predicate MpnSameOrIncrP2(dst : nat, dsize : nat, src : nat, ssize : nat) {
+  (dst <= src) || !MpnOverlapP(dst, dsize, src, ssize)
+}
+
+opaque predicate MpnOverlapP(xp : nat, xsize : nat, yp : nat, ysize : nat) {
+  (xp + xsize > yp) && (yp + ysize > xp)
 }
 
 // The C code is little-endian
