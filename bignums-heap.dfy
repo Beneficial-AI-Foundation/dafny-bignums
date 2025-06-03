@@ -30,3 +30,8 @@ method mpn_add_n(heap: array<bv1>, rp: nat, up: nat, vp: nat, n: nat) returns (c
 
   return cy;
 }
+
+function BitsToInt(s: seq<bv1>): nat
+{
+  if |s| == 0 then  0  else  (2 * BitsToInt(s[0..|s|-1]) + s[|s|-1] as int)
+}
