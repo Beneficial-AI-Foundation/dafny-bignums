@@ -21,6 +21,7 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
   ensures heap[..rpConst] == old(heap[..rpConst])
   ensures heap[rpConst+nConst..] == old(heap[rpConst+nConst..])
 {
+  ghost var old_heap := heap;
   cy := 0;
   // Create mutable versions of these variables
   var rp := rpConst;
@@ -38,6 +39,8 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
     invariant heap[rpConst+nConst..] == old(heap[rpConst+nConst..])
     invariant heap[..rpConst] == old(heap[..rpConst])
     invariant rp + n == rpConst + nConst
+    invariant Pow2(rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..rp]) ==
+              BitsToInt(old_heap[upConst..up]) + BitsToInt(old_heap[vpConst..vp])
   {
     firstTime := false;
     var ul := heap[up];
