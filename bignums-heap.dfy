@@ -1,4 +1,4 @@
-include "bignums.dfy"
+include "pow2.dfy"
 
 // Based on line 37 of https://github.com/gmp-mirror/gmp/blob/master/mpn/generic/add_n.c
 // The pointers point to arrays of bits, but for an
