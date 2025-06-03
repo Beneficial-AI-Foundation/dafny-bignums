@@ -3,43 +3,43 @@ include "pow2.dfy"
 // Based on line 37 of https://github.com/gmp-mirror/gmp/blob/master/mpn/generic/add_n.c
 // The pointers point to arrays of bits, but for an
 // efficient version it should be something like array<bv64>
-method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, n_const: nat) returns (cy: bv1)
+method mpn_add_n(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nConst: nat) returns (cy: bv1)
   modifies heap
-  requires up_const + n_const < heap.Length
-  requires vp_const + n_const < heap.Length
-  requires rp_const + n_const < heap.Length
-  requires n_const >= 1
+  requires upConst + nConst < heap.Length
+  requires vpConst + nConst < heap.Length
+  requires rpConst + nConst < heap.Length
+  requires nConst >= 1
   // Note that the pointers are allowed to overlap as long as
   // it's "in a way suitable for an incrementing/decrementing algorithm";
   // see gmp/gmp-impl.h, line 2467
-  requires MpnSameOrIncrP(rp_const, up_const, n_const)
-  requires MpnSameOrIncrP(rp_const, vp_const, n_const)
-  ensures Pow2(n_const) * cy as nat + BitsToInt(heap[rp_const..rp_const+n_const]) ==
-          BitsToInt(old(heap[up_const..up_const+n_const]))
-          + BitsToInt(old(heap[vp_const..vp_const+n_const]))
+  requires MpnSameOrIncrP(rpConst, upConst, nConst)
+  requires MpnSameOrIncrP(rpConst, vpConst, nConst)
+  ensures Pow2(nConst) * cy as nat + BitsToInt(heap[rpConst..rpConst+nConst]) ==
+          BitsToInt(old(heap[upConst..upConst+nConst]))
+          + BitsToInt(old(heap[vpConst..vpConst+nConst]))
   // This function does not modify any memory except the result:
-  ensures heap[..rp_const] == old(heap[..rp_const])
-  ensures heap[rp_const+n_const..] == old(heap[rp_const+n_const..])
+  ensures heap[..rpConst] == old(heap[..rpConst])
+  ensures heap[rpConst+nConst..] == old(heap[rpConst+nConst..])
 {
   cy := 0;
   // Create mutable versions of these variables
-  var rp := rp_const;
-  var up := up_const;
-  var vp := vp_const;
-  var n := n_const;
+  var rp := rpConst;
+  var up := upConst;
+  var vp := vpConst;
+  var n := nConst;
   // The C code uses a do-while loop, so this while loop must execute at least once
-  var first_time := true;
-  while first_time || n != 0
+  var firstTime := true;
+  while firstTime || n != 0
     decreases n
     invariant 0 <= up <= up + n < heap.Length
     invariant 0 <= vp <= vp + n < heap.Length
     invariant 0 <= rp <= rp + n < heap.Length
-    invariant !first_time || n >= 1
-    invariant heap[rp_const+n_const..] == old(heap[rp_const+n_const..])
-    invariant heap[..rp_const] == old(heap[..rp_const])
-    invariant rp + n == rp_const + n_const
+    invariant !firstTime || n >= 1
+    invariant heap[rpConst+nConst..] == old(heap[rpConst+nConst..])
+    invariant heap[..rpConst] == old(heap[..rpConst])
+    invariant rp + n == rpConst + nConst
   {
-    first_time := false;
+    firstTime := false;
     var ul := heap[up];
     up := up + 1;
     var vl := heap[vp];
@@ -58,15 +58,15 @@ method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, 
 }
 
 // These 3 predicates are from gmp/gmp-impl.h
-opaque predicate MpnSameOrIncrP(dst : nat, src : nat, size :nat ){
+opaque predicate MpnSameOrIncrP(dst: nat, src: nat, size: nat){
   MpnSameOrIncrP2(dst, size, src, size)
 }
 
-opaque predicate MpnSameOrIncrP2(dst : nat, dsize : nat, src : nat, ssize : nat) {
+opaque predicate MpnSameOrIncrP2(dst: nat, dsize: nat, src: nat, ssize: nat) {
   (dst <= src) || !MpnOverlapP(dst, dsize, src, ssize)
 }
 
-opaque predicate MpnOverlapP(xp : nat, xsize : nat, yp : nat, ysize : nat) {
+opaque predicate MpnOverlapP(xp: nat, xsize: nat, yp: nat, ysize: nat) {
   (xp + xsize > yp) && (yp + ysize > xp)
 }
 
