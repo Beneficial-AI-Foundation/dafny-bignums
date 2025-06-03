@@ -36,6 +36,7 @@ method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, 
     invariant 0 <= rp <= rp + n < heap.Length
     invariant !first_time || n >= 1
     invariant heap[rp_const+n_const..] == old(heap[rp_const+n_const..])
+    invariant heap[..rp_const] == old(heap[..rp_const])
     invariant rp + n == rp_const + n_const
   {
     first_time := false;
