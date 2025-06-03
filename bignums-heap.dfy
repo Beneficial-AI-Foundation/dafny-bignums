@@ -7,6 +7,10 @@ method mpn_add_n(heap: array<bv1>, rp: nat, up: nat, vp: nat, n: nat) returns (c
 modifies heap
 // TODO require that rp, rp + n, up, up + n, vp, vp + n are in-bounds for the heap
 // TODO ensure that the only part of the heap that could change is heap[rp..rp+n]
+// TODO Add these as requirements too:
+//  ASSERT (n >= 1);
+//  ASSERT (MPN_SAME_OR_INCR_P (rp, up, n));
+//  ASSERT (MPN_SAME_OR_INCR_P (rp, vp, n));
 ensures Pow2(n) * cy as nat + BitsToInt(heap[rp..rp+n]) ==
         BitsToInt(old(heap[up..up+n])) + BitsToInt(old(heap[vp..vp+n]))
 {
