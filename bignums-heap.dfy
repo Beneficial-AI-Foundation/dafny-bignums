@@ -5,6 +5,9 @@ include "pow2.dfy"
 // efficient version it should be something like array<bv64>
 method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, n_const: nat) returns (cy: bv1)
   modifies heap
+  requires up_const + n_const < heap.Length
+  requires vp_const + n_const < heap.Length
+  requires rp_const + n_const < heap.Length
   requires n_const >= 1
   // Note that the pointers are allowed to overlap as long as
   // it's "in a way suitable for an incrementing/decrementing algorithm";
