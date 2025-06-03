@@ -3,6 +3,7 @@ include "bignums.dfy"
 // The pointers point to arrays of bits, but for an
 // efficient version it should be something like array<bv64>
 method mpn_add_n(heap: array<bv1>, rp: nat, up: nat, vp: nat, n: nat) returns (cy: bv1)
+modifies heap
 ensures Pow2(n) * cy as nat + BitsToInt(heap[rp..rp+n]) ==
         BitsToInt(heap[up..up+n]) + BitsToInt(heap[vp..vp+n])
 {
