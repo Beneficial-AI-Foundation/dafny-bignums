@@ -1,5 +1,7 @@
 // Based on line 37 of gmp/mpn/generic/add_n.c
-method mpn_add_n(heap: array<bv64>, rp: nat, up: nat, vp: nat, n: nat) returns (cy: bv64)
+// The pointers point to arrays of bits, but for an
+// efficient version it should be something like array<bv64>
+method mpn_add_n(heap: array<bv1>, rp: nat, up: nat, vp: nat, n: nat) returns (cy: bv1)
 {
   cy := 0;
   // mutable versions of these variables
