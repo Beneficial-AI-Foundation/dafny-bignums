@@ -5,10 +5,10 @@ include "pow2.dfy"
 // efficient version it should be something like array<bv64>
 method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, n_const: nat) returns (cy: bv1)
   modifies heap
+  requires n_const >= 1
   // TODO require that rp, rp + n, up, up + n, vp, vp + n are in-bounds for the heap
   // TODO ensure that the only part of the heap that could change is heap[rp..rp+n]
   // TODO Add these as requirements too:
-  //  ASSERT (n >= 1);
   //  ASSERT (MPN_SAME_OR_INCR_P (rp, up, n));
   //  ASSERT (MPN_SAME_OR_INCR_P (rp, vp, n));
   // Note that the pointers are allowed to overlap as long as
