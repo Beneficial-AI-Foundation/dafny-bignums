@@ -73,8 +73,7 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
       2 * Pow2(old_rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..old_rp+1]);
     == // Using BitsToIntAppend lemma
       {BitsToIntAppend(heap[rpConst..old_rp], heap[old_rp]);
-       assert heap[rpConst..old_rp+1] == heap[rpConst..old_rp] + [heap[old_rp]];
-      }
+       assert heap[rpConst..old_rp+1] == heap[rpConst..old_rp] + [heap[old_rp]];}
       2 * Pow2(old_rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..old_rp]) + rl as nat * Pow2(old_rp - rpConst);
     == // Factor out Pow2(old_rp - rpConst)
       Pow2(old_rp - rpConst) * (2 * cy as nat + rl as nat) + BitsToInt(heap[rpConst..old_rp]);
@@ -90,6 +89,10 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
       BitsToInt(old(heap[upConst..old_up])) + BitsToInt(old(heap[vpConst..old_vp])) +
       (ul as nat * Pow2(old_rp - rpConst) + vl as nat * Pow2(old_rp - rpConst));
     == // Applying BitsToIntAppend property
+      {
+        assert ul as nat * Pow2(old_rp - rpConst) == BitsToInt(old(heap[old_up..up]))  * Pow2(old_up - upConst);
+        assert vl as nat * Pow2(old_rp - rpConst) == BitsToInt(old(heap[old_vp..vp]))  * Pow2(old_vp - vpConst);
+      }
       BitsToInt(old(heap[upConst..old_up])) + BitsToInt(old(heap[vpConst..old_vp])) +
       BitsToInt(old(heap[old_up..up])) * Pow2(old_up - upConst) +
       BitsToInt(old(heap[old_vp..vp])) * Pow2(old_vp - vpConst);
