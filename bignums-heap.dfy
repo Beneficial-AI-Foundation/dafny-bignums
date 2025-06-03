@@ -32,6 +32,8 @@ method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, 
   while first_time || n != 0
   decreases n
   invariant 0 <= up <= up + n < heap.Length
+  invariant 0 <= vp <= vp + n < heap.Length
+  invariant 0 <= rp <= rp + n < heap.Length
   {
     first_time := false;
     var ul := heap[up];
