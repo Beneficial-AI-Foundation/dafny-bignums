@@ -39,6 +39,8 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
     invariant heap[rpConst+nConst..] == old(heap[rpConst+nConst..])
     invariant heap[..rpConst] == old(heap[..rpConst])
     invariant rp + n == rpConst + nConst
+    invariant upConst <= up
+    invariant vpConst <= vp
     invariant Pow2(rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..rp]) ==
               BitsToInt(old_heap[upConst..up]) + BitsToInt(old_heap[vpConst..vp])
   {
