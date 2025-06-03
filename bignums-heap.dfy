@@ -21,7 +21,6 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
   ensures heap[..rpConst] == old(heap[..rpConst])
   ensures heap[rpConst+nConst..] == old(heap[rpConst+nConst..])
 {
-  ghost var old_heap := heap;
   cy := 0;
   // Create mutable versions of these variables
   var rp := rpConst;
