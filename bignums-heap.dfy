@@ -46,12 +46,10 @@ method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, 
   return cy;
 }
 
-// TODO If the C code is little-endian,
-// then this and the examples in Main
-// need to be changed
+// The C code is little-endian
 ghost function BitsToInt(s: seq<bv1>): nat
 {
-  if |s| == 0 then  0  else  (2 * BitsToInt(s[0..|s|-1]) + s[|s|-1] as int)
+  if |s| == 0 then  0  else  (2 * BitsToInt(s[1..]) + s[0] as int)
 }
 
 method Main() {
