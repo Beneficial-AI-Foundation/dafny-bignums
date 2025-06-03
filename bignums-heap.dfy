@@ -73,12 +73,7 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
       2 * Pow2(old_rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..old_rp+1]);
     == // Using BitsToIntAppend lemma
       {BitsToIntAppend(heap[rpConst..old_rp], heap[old_rp]);
-       calc {
-         BitsToInt(heap[rpConst..old_rp+1]);
-         {assert heap[rpConst..old_rp+1] == heap[rpConst..old_rp] + [heap[old_rp]];}
-         BitsToInt(heap[rpConst..old_rp] + [heap[old_rp]]);
-         BitsToInt(heap[rpConst..old_rp]) + rl as nat * Pow2(old_rp - rpConst);
-       }
+       assert heap[rpConst..old_rp+1] == heap[rpConst..old_rp] + [heap[old_rp]];
       }
       2 * Pow2(old_rp - rpConst) * cy as nat + BitsToInt(heap[rpConst..old_rp]) + rl as nat * Pow2(old_rp - rpConst);
     == // Factor out Pow2(old_rp - rpConst)
