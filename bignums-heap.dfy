@@ -30,10 +30,10 @@ method mpn_add_n(heap: array<bv1>, rp_const: nat, up_const: nat, vp_const: nat, 
   // The C code uses a do-while loop, so this while loop must execute at least once
   var first_time := true;
   while first_time || n != 0
-  decreases n
-  invariant 0 <= up <= up + n < heap.Length
-  invariant 0 <= vp <= vp + n < heap.Length
-  invariant 0 <= rp <= rp + n < heap.Length
+    decreases n
+    invariant 0 <= up <= up + n < heap.Length
+    invariant 0 <= vp <= vp + n < heap.Length
+    invariant 0 <= rp <= rp + n < heap.Length
     invariant !first_time || n >= 1
   {
     first_time := false;
