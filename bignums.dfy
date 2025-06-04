@@ -18,13 +18,7 @@ include "bignums-lemmas.dfy"
 // 2. Delete Main (because it uses Int2Str/Str2Int in executable code, so now won't verify)
 // 3. The rest of the code will still verify
 
-// This function will be useful in proofs
-opaque function Pow2(n: nat): nat
-{
-  if n == 0 then 1 else 2 * Pow2(n - 1)
-}
 
-// Establish some properties of Pow2
 
 
 predicate ValidBitString(s: string)
