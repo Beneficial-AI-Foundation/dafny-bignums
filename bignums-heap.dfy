@@ -53,20 +53,30 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
     ghost var old_vp := vp;
     firstTime := false;
 
-    reveal MpnSameOrIncrP();
-    reveal MpnSameOrIncrP2();
-    reveal MpnOverlapP();
-    
-    // Establish that up hasn't been modified in a way that would invalidate array contents
-    assert MpnSameOrIncrP(rpConst, upConst, nConst);
-    assert MpnSameOrIncrP2(rpConst, nConst, upConst, nConst);
-    assert (rpConst <= upConst) || !MpnOverlapP(rpConst, nConst, upConst, nConst);
-    
+
     var ul := heap[up];
-    assert ul == old(heap[old_up]);
+    assert ul == old(heap[old_up]) by {
+      // TODO Shorten?
+      reveal MpnSameOrIncrP();
+      reveal MpnSameOrIncrP2();
+      reveal MpnOverlapP();
+      // Establish that up hasn't been modified in a way that would invalidate array contents
+      assert MpnSameOrIncrP(rpConst, upConst, nConst);
+      assert MpnSameOrIncrP2(rpConst, nConst, upConst, nConst);
+      assert (rpConst <= upConst) || !MpnOverlapP(rpConst, nConst, upConst, nConst);
+    }
     up := up + 1;
     var vl := heap[vp];
-    assert vl == old(heap[old_vp]);
+    assert vl == old(heap[old_vp])by {
+      // TODO Shorten?
+      reveal MpnSameOrIncrP();
+      reveal MpnSameOrIncrP2();
+      reveal MpnOverlapP();
+      // Establish that vp hasn't been modified in a way that would invalidate array contents
+      assert MpnSameOrIncrP(rpConst, vpConst, nConst);
+      assert MpnSameOrIncrP2(rpConst, nConst, vpConst, nConst);
+      assert (rpConst <= vpConst) || !MpnOverlapP(rpConst, nConst, vpConst, nConst);
+    }
     vp := vp + 1;
     var sl := ul + vl;
     var cy1 := if sl < ul then 1 else 0;
