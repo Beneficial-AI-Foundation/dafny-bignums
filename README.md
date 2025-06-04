@@ -30,7 +30,7 @@ dafny verify *.dfy
 - `bignums-lemmas.dfy`
   - Other helpful lemmas for proving operations are correct
 - `bitstring-lemmas.dfy`
-  - lemmas for working with bitstrings
+  - Lemmas for working with bitstrings
 - `bound.dfy`
   - A useful lemma for modular arithmetic proofs
 - `mod-exp-integers.dfy`
