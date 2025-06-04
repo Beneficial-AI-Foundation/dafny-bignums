@@ -1,4 +1,4 @@
-include "bignums.dfy"
+include "bitstrings.dfy"
 include "mod-exp-integers.dfy"
 
 function char2int(c: char): nat
