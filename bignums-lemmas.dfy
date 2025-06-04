@@ -1,30 +1,5 @@
 include "pow2.dfy"
 include "bitstrings.dfy"
-// Establish some properties of Pow2
-lemma Pow2Zero()
-  ensures Pow2(0) == 1
-{
-  reveal Pow2();
-}
-
-lemma Pow2Positive(n:nat)
-  ensures Pow2(n) > 0
-{
-  if n == 0 {
-    Pow2Zero();
-  }
-  else {
-    Pow2Positive(n-1);
-    reveal Pow2();
-  }
-}
-
-lemma Pow2Inductive(i: nat)
-  ensures Pow2(i+1) == 2*Pow2(i)
-{
-  reveal Pow2();
-}
-
 // The next few lemmas will be needed
 // at various steps in the main proofs
 
