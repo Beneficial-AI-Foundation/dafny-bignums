@@ -1,4 +1,9 @@
-include "pow2.dfy"
+
+// This function will be useful in proofs
+opaque function Pow2(n: nat): nat
+{
+  if n == 0 then 1 else 2 * Pow2(n - 1)
+}
 // Below is a Dafny program that:
 
 // - Represents natural numbers as binary strings consisting only of `'0'` and `'1'`.
