@@ -1,4 +1,4 @@
-// Below is a self-contained Dafny program that:
+// Below is a Dafny program that:
 
 // - Represents natural numbers as binary strings consisting only of `'0'` and `'1'`.
 // - Has two **conversion** functions:
