@@ -1,5 +1,5 @@
 include "bignums-lemmas.dfy"
-// Sub also has a long calcuation step, which again we split into a bunch of lemmas
+// Sub also has a long calculation step, which again we split into a bunch of lemmas
 
 predicate SubAuxPred(x: string, y: string, oldSb: string, sb: string, oldI: int,
                      oldJ: int, i:int, j:int, borrow:nat, bitX:nat, bitY:nat, rawDiff:int, diff:nat, oldBorrow:nat)
