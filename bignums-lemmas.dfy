@@ -1,4 +1,5 @@
 include "pow2.dfy"
+include "bitstrings.dfy"
 // Establish some properties of Pow2
 lemma Pow2Zero()
   ensures Pow2(0) == 1
