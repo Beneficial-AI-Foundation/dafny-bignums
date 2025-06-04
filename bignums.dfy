@@ -52,7 +52,6 @@ function Int2Str(n: nat): string
 method NormalizeBitString(s: string) returns(t: string)
   // Remove leading zeros, except keep at least one digit
   ensures ValidBitString(t)
-  // I added and proved some extra post-conditions:
   ensures |t| > 0
   ensures |t| > 1 ==> t[0] != '0'
   ensures ValidBitString(s) ==> Str2Int(s) == Str2Int(t)
