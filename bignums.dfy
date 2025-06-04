@@ -5,7 +5,7 @@ include "mul-aux.dfy"
 // Below is a Dafny program that:
 
 // - Represents natural numbers as binary strings consisting only of `'0'` and `'1'`.
-// - Has two **conversion** functions:
+// - Has two **conversion** functions, defined in bitstrings.dfy
 //   1. `Str2Int(s)`: Convert a valid bit-string `s` into a natural number.
 //   2. `Int2Str(n)`: Convert a natural number `n` into its binary representation (with no leading zeros except if `n = 0`).
 //
@@ -22,31 +22,6 @@ include "mul-aux.dfy"
 // 3. The rest of the code will still verify
 
 
-// ----------------------------------------------------
-// Int2Str: nat -> bit-string (reference function)
-//    - "0" if n=0
-//    - no leading zeros otherwise
-// ----------------------------------------------------
-function Int2Str(n: nat): string
-  // I added the following post-condition because Str2Int requires it
-  ensures ValidBitString(Int2Str(n))
-  ensures Str2Int(Int2Str(n)) == n
-  decreases n
-{
-  if n == 0 then
-    "0"
-
-  else (if n == 1
-        then "1"
-        else (
-            // Recursively build from most significant bits.
-            // The last character added is (n % 2).
-            assert ValidBitString(Int2Str(n/2));
-            assert Str2Int(Int2Str(n/2)) == n/2;
-            Int2Str(n / 2) + (if n % 2 == 0 then "0" else "1")
-          )
-       )
-}
 
 
 method NormalizeBitString(s: string) returns(t: string)

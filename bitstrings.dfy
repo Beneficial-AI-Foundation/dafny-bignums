@@ -22,3 +22,30 @@ opaque function OStr2Int(s: string): nat
 {
   Str2Int(s)
 }
+
+
+// ----------------------------------------------------
+// Int2Str: nat -> bit-string (reference function)
+//    - "0" if n=0
+//    - no leading zeros otherwise
+// ----------------------------------------------------
+function Int2Str(n: nat): string
+  // I added the following post-condition because Str2Int requires it
+  ensures ValidBitString(Int2Str(n))
+  ensures Str2Int(Int2Str(n)) == n
+  decreases n
+{
+  if n == 0 then
+    "0"
+
+  else (if n == 1
+        then "1"
+        else (
+            // Recursively build from most significant bits.
+            // The last character added is (n % 2).
+            assert ValidBitString(Int2Str(n/2));
+            assert Str2Int(Int2Str(n/2)) == n/2;
+            Int2Str(n / 2) + (if n % 2 == 0 then "0" else "1")
+          )
+       )
+}
