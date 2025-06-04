@@ -1,6 +1,7 @@
 include "bignums-lemmas.dfy"
 include "sub-aux.dfy"
 include "add-aux.dfy"
+include "mul-aux.dfy"
 // Below is a Dafny program that:
 
 // - Represents natural numbers as binary strings consisting only of `'0'` and `'1'`.
