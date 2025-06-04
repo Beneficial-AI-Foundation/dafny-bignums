@@ -52,6 +52,16 @@ method MpnAddN(heap: array<bv1>, rpConst: nat, upConst: nat, vpConst: nat, nCons
     ghost var old_up := up;
     ghost var old_vp := vp;
     firstTime := false;
+
+    reveal MpnSameOrIncrP();
+    reveal MpnSameOrIncrP2();
+    reveal MpnOverlapP();
+    
+    // Establish that up hasn't been modified in a way that would invalidate array contents
+    assert MpnSameOrIncrP(rpConst, upConst, nConst);
+    assert MpnSameOrIncrP2(rpConst, nConst, upConst, nConst);
+    assert (rpConst <= upConst) || !MpnOverlapP(rpConst, nConst, upConst, nConst);
+    
     var ul := heap[up];
     assert ul == old(heap[old_up]);
     up := up + 1;
