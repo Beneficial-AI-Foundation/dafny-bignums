@@ -299,9 +299,6 @@ lemma Thirteen()
 }
 
 
-
-
-
 // Helper lemma for maintaining the loop invariant in Mul
 lemma MulAux(x: string, y: string, prevProduct: string, product: string,
              prevShift: string, shift: string, idx: int)

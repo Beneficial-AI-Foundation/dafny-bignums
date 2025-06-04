@@ -21,12 +21,6 @@ include "add-aux.dfy"
 // 3. The rest of the code will still verify
 
 
-
-
-
-
-
-
 // ----------------------------------------------------
 // Int2Str: nat -> bit-string (reference function)
 //    - "0" if n=0
