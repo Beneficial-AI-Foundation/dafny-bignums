@@ -47,8 +47,8 @@ method DivMod(dividend: string, divisor: string) returns (quotient: string, rema
     }
 
     // Check if divisor can be subtracted from current remainder
-    var comparision := Compare(r, divisor);
-    if comparision >= 0 {
+    var comparison := Compare(r, divisor);
+    if comparison >= 0 {
       // Subtract divisor from remainder
       r := Sub(r, divisor);
       assert OStr2Int(r) < OStr2Int(divisor) by {reveal OStr2Int;}

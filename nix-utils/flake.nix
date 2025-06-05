@@ -24,6 +24,7 @@
           devShells.default = mkShell {
             buildInputs = [
               dafny
+              mdformat
             ];
           };
         }
