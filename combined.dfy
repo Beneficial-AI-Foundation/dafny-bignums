@@ -1,4 +1,3 @@
-include "bignums-lemmas.dfy"
 // The proof of Add's invariant requires a long calculation that often times
 // out. To make it more robust, I've pulled it into a lemma AddAuxTop, which
 // then calls 14 lemmas, one for each step of the calculation. For conciseness,
@@ -339,8 +338,6 @@ lemma AddAuxTop(x: string, y: string, oldSb: string, sb: string, oldI: int,
   AddAux13(x, y, oldSb, sb, oldI, oldJ, i, j, carry, bitX, bitY, digit, sum, oldCarry);
   AddAux14(x, y, oldSb, sb, oldI, oldJ, i, j, carry, bitX, bitY, digit, sum, oldCarry);
 }
-include "pow2.dfy"
-include "bitstrings.dfy"
 // The next few lemmas will be needed
 // at various steps in the main proofs
 
@@ -613,10 +610,6 @@ lemma Thirteen()
     13;
   }
 }
-include "bignums-lemmas.dfy"
-include "sub-aux.dfy"
-include "add-aux.dfy"
-include "mul-aux.dfy"
 // Below is a Dafny program that:
 
 // - Represents natural numbers as binary strings consisting only of `'0'` and `'1'`.
@@ -1014,8 +1007,6 @@ method Main() {
   var sN := Int2Str(n);
   print "9999 -> ", sN, " -> ", Str2Int(sN), "\n";
 }
-include "bitstrings.dfy"
-include "mod-exp-integers.dfy"
 
 function char2int(c: char): nat
   requires c == '0' || c == '1'
@@ -1168,8 +1159,6 @@ lemma Bounding(x:int, d:int, n: int)
   requires x < d
   ensures x == 0
 {}
-include "bignums.dfy"
-include "bound.dfy"
 
 method DivMod(dividend: string, divisor: string) returns (quotient: string, remainder: string)
   requires ValidBitString(dividend) && ValidBitString(divisor)
@@ -1419,7 +1408,6 @@ method CompareUnequal(s1: string, s2: string) returns (res: int)
 
   return 1;
 }
-include "modulo-integer-properties.dfy"
 
 
 // computes res := x^y
@@ -1546,10 +1534,6 @@ method ModExp_int(x: nat, y:nat, n:nat, z: nat) returns (res:nat)
   }
 
 }
-include "bignums.dfy"
-include "division.dfy"
-include "mod-exp-integers.dfy"
-include "bitstring-lemmas.dfy"
 
 // computes (sx^sy) % sz for bitstrings sx,sy,sz when str2int(sy) == 2^n
 method ModExpPow2(sx: string, sy: string, n: nat, sz: string) returns (res: string)
@@ -1652,7 +1636,6 @@ method ModExp(sx: string, sy: string, sz: string) returns (res: string)
 }
     
 
-include "bound.dfy"
 
 lemma ModuloDistributivityAdd_int(a: int, b: int, z: int)
   requires z > 0
@@ -1736,7 +1719,6 @@ lemma ModuloDistributivityMul_int(x: int, y: int, z: int)
 
   assert ((x % z) * (y % z)) % z == (rx * ry) % z;
 }
-include "bignums-lemmas.dfy"
 // Helper lemma for maintaining the loop invariant in Mul
 lemma MulAux(x: string, y: string, prevProduct: string, product: string,
              prevShift: string, shift: string, idx: int)
@@ -1871,7 +1853,6 @@ lemma Pow2Inductive(i: nat)
 {
   reveal Pow2();
 }
-include "bignums-lemmas.dfy"
 // Sub also has a long calculation step, which again we split into a bunch of lemmas
 
 predicate SubAuxPred(x: string, y: string, oldSb: string, sb: string, oldI: int,
