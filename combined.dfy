@@ -1671,7 +1671,7 @@ lemma IgnoreMod(a: int, b:nat, c:int, z:nat)
   Bounding(b % z - c % z, z, c/z - a - b/z);
 }
 
-lemma IgnoreMod'(a :int, z:nat)
+lemma IgnoreMod2(a :int, z:nat)
   requires z > 0
   ensures (a * z) % z == 0
 {
@@ -1698,7 +1698,7 @@ lemma ModuloDistributivityMul_int(x: int, y: int, z: int)
   ==
     (qx*qy*z + qx*ry + qy*rx)*z % z;
   ==
-    {IgnoreMod'(qx*qy*z + qx*ry + qy*rx, z);}
+    {IgnoreMod2(qx*qy*z + qx*ry + qy*rx, z);}
     0;
   }
   calc {
