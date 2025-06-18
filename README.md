@@ -31,6 +31,8 @@ dafny verify *.dfy
   - Other helpful lemmas for proving operations are correct
 - `bitstring-lemmas.dfy`
   - Lemmas for working with bitstrings
+- `bitstrings.dfy`
+  - Defines the conversions between bitstrings and nats 
 - `bound.dfy`
   - A useful lemma for modular arithmetic proofs
 - `mod-exp-integers.dfy`
